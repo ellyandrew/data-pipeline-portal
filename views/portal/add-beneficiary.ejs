@@ -1,0 +1,234 @@
+<!doctype html>
+<html class="no-js" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti | Add Beneficiary</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jquery.steps@1.1.2/dist/jquery-steps.min.css">
+<script src="https://cdn.jsdelivr.net/npm/jquery.steps@1.1.2/dist/jquery-steps.min.js"></script>
+<link rel="stylesheet" href="/css/jquery-steps.css">
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid mg-t-30" style="margin-top: 60px;">
+            <div class="row admin">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="hpanel">
+                                <div class="panel-body">
+                                    <form action="#" id="loginForm">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="product-cart-inner">
+                                                    <div id="example-basic">
+                                                        <h3>Basic Details</h3>
+                                                        <section>
+                                                            <div class="product-delivary">
+                                                                <div class="row">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">First Name *</label>
+                                                                            <input name="phoneNumber" type="text"
+                                                                                class="form-control" placeholder="First Name"
+                                                                                required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Middle Name *</label>
+                                                                            <input name="phoneNumber" type="text"
+                                                                                class="form-control" placeholder="Middle Name"
+                                                                                required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Last Name *</label>
+                                                                            <input name="phoneNumber" type="text"
+                                                                                class="form-control" placeholder="Last Name"
+                                                                                required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Birth Certificate Number
+                                                                                *</label>
+                                                                            <input name="idNumber" type="text"
+                                                                                placeholder="B. cert No" class="form-control"
+                                                                                required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Date of Birth *</label>
+                                                                            <input name="dob" type="date" class="form-control"
+                                                                                required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Gender *</label>
+                                                                            <select class="form-control required" name="gender"
+                                                                                required>
+                                                                                <option value="">- select gender -</option>
+                                                                                <option value="Male">Male</option>
+                                                                                <option value="Female">Female</option>
+                                                                                <option value="Intersex">Intersex</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Disability *</label>
+                                                                            <select class="form-control required" name="disability"
+                                                                                required>
+                                                                                <option value="">- select status -</option>
+                                                                                <option value="No">None</option>
+                                                                                <option value="Physical">Physical Impairement</option>
+                                                                                <option value="Hearing">Hearing Impairement</option>
+                                                                                <option value="Visual">Visual Impairement</option>
+                                                                                <option value="Intellectual">Intellectual Impairement</option>
+                                                                                <option value="Chronic Progressive Condition">Chronic Progressive Condition</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                        <h3>Family & Care Details</h3>
+                                                        <section>
+                                                            <div class="product-delivary">
+                                                                <div class="row">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Parent/Guardian Full Name
+                                                                                *</label>
+                                                                            <input name="fullName" type="text" class="form-control"
+                                                                                placeholder="Fullname" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Relationship to Child</label>
+                                                                            <select class="form-control required">
+                                                                                <option value="">- select -</option>
+                                                                                <option value="Father">Father</option>
+                                                                                <option value="Mother">Mother</option>
+                                                                                <option value="Sibling">Sibling</option>
+                                                                                <option value="Guardian">Guardian</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Parent/Guardian Phone *</label>
+                                                                            <input name="kinPhone" type="text" class="form-control"
+                                                                                placeholder="e.g 07XXXXXXXX" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Parent/Guardian ID *</label>
+                                                                            <input name="kinPhone" type="text" class="form-control"
+                                                                                placeholder="ID Number" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">County</label>
+                                                                            <select class="form-control required">
+                                                                                <option>- select county -</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Sub-County</label>
+                                                                            <select class="form-control required">
+                                                                                <option>- select sub-county -</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Ward *</label>
+                                                                            <input name="fullName" type="text" class="form-control"
+                                                                                placeholder="Your Ward" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Area/Village *</label>
+                                                                            <input name="fullName" type="text" class="form-control"
+                                                                                placeholder="Area/village" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Physical Address *</label>
+                                                                            <input name="fullName" type="text" class="form-control"
+                                                                                placeholder="e.g Area, Town" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Copy of Beneficiary Birth Certificate
+                                                                                *</label>
+                                                                            <input name="facilityAddress" type="file" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12  text-center">
+                                                                        <button class="btn btn-success loginbtn">Submit Details</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+ <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+<script src="/js/jquery-steps.js"></script>
+</body>
+</html>

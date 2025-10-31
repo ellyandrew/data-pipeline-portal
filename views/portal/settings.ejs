@@ -1,0 +1,456 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Settings</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admin">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="single-pro-review-area mt-t-30 mg-b-15">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="sparkline10-hd">
+                                                <div class="main-sparkline10-hd">
+                                                    <h1>Settings</h1>
+                                                </div>
+                                            </div>
+                                            <div class="admin-pro-accordion-wrap responsive-mg-b-30 hpanel">
+                                                <div class="panel-group adminpro-custon-design panel-body" id="accordion">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-headin mg-b-30 accordion-head">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">General Details</a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapse1" class="panel-collapse panel-ic collapse in">
+                                                            <div class="panel-body admin-panel-content animated bounce">
+                                                               <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="sparkline10-list mt-b-30">
+                                                                        <div class="sparkline13-graph">
+                                                                            <div class="datatable-dashv1-list custom-datatable-overright table-responsive">
+                                                                                <table class="table table-bordered">
+                                                                                    <tr class="bg-red text-white">
+                                                                                        <th>General</th>
+                                                                                        <th>
+                                                                                            <div class="btn-group">
+                                                                                                <% if (isAdmin) { %>
+                                                                                                    <% if(settings) { %>
+                                                                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editDetailsModal"><i class="fa fa-pencil"></i> Edit Details</button>
+                                                                                                    <% } else { %>
+                                                                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#addDetailsModal"><i class="fa fa-user"></i> Add Details</button>
+                                                                                                    <% } %>
+                                                                                                <% } %>
+                                                                                            </div>
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td width="25%" align="right"><strong>Name:</strong></td>
+                                                                                        <td width="25%"><%= settings.sacco_name %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Registration No:</strong></td>
+                                                                                        <td><%= settings.registration_number || '-' %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Contact Email:</strong></td>
+                                                                                        <td><%= settings.contact_email || '-' %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Contact Phone:</strong></td>
+                                                                                        <td><%= settings.contact_phone || '-' %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Address:</strong></td>
+                                                                                        <td><%= settings.address || '-' %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Membership Fee:</strong></td>
+                                                                                        <td>Ksh. <%= parseFloat(settings.membership_fee).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Loan Interest (%):</strong></td>
+                                                                                        <td><%= settings.loan_interest_default %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Savings Interest (%):</strong></td>
+                                                                                        <td><%= settings.savings_interest_rate %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Penalty Rate (%):</strong></td>
+                                                                                        <td><%= settings.penalty_rate %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Max Loan Multiple:</strong></td>
+                                                                                        <td><%= settings.max_loan_multiple %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Financial Year Start:</strong></td>
+                                                                                        <td><%= settings.financial_year_start ? settings.financial_year_start.toISOString().split('T')[0] : '-' %></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                        <td align="right"><strong>Logo:</strong></td>
+                                                                                        <td>
+                                                                                        <% if (settings.logo_path) { %>
+                                                                                            <img src="/uploads/<%= settings.logo_path %>" alt="SACCO Logo" width="80">
+                                                                                        <% } else { %>
+                                                                                            <span>-</span>
+                                                                                        <% } %>
+                                                                                        </td>
+                                                                                    </tr>
+                                                                                </table>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-headin mg-b-30 accordion-head">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Loan Types</a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapse3" class="panel-collapse panel-ic collapse in">
+                                                            <div class="panel-body admin-panel-content animated bounce">
+                                                               <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="sparkline10-list mt-b-30">
+                                                                        <div class="sparkline13-graph">
+                                                                            <div class="datatable-dashv1-list custom-datatable-overright table-responsive">
+                                                                                <table class="table table-bordered">
+                                                                                    <tr class="bg-red text-white">
+                                                                                        <th>Loans</th>
+                                                                                        <th>
+                                                                                            <div class="btn-group">
+                                                                                                <% if (isAdmin) { %>
+                                                                                                    <% if(settings) { %>
+                                                                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#addLoanModal"><i class="fa fa-plus"></i> Add Loan</button>
+                                                                                                    <% } %>
+                                                                                                <% } %>
+                                                                                            </div>
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </table>
+
+                                                                                <table class="table table-bordered align-middle">
+                                                                                    <thead class="table-light">
+                                                                                    <tr>
+                                                                                        <th>#</th>
+                                                                                        <th>Loan Name</th>
+                                                                                        <th>Interest Rate (%)</th>
+                                                                                        <th>Max Term (Months)</th>
+                                                                                        <th>Min Amount</th>
+                                                                                        <th>Max Amount</th>
+                                                                                        <th>Actions</th>
+                                                                                    </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                    <% loanTypes.forEach((loan, index) => { %>
+                                                                                        <tr>
+                                                                                        <td><%= index + 1 %></td>
+                                                                                        <td><%= loan.loan_name %></td>
+                                                                                        <td><%= loan.interest_rate %></td>
+                                                                                        <td><%= loan.max_term_months %></td>
+                                                                                        <td><%= loan.min_amount.toLocaleString() %></td>
+                                                                                        <td><%= loan.max_amount.toLocaleString() %></td>
+                                                                                        <td>
+                                                                                        <% if(isAdmin) { %>
+                                                                                            <button 
+                                                                                            class="btn btn-sm btn-warning edit-btn"
+                                                                                            data-toggle="modal"
+                                                                                            data-target="#editLoanModal"
+                                                                                            data-id="<%= loan.loan_type_id %>"
+                                                                                            data-name="<%= loan.loan_name %>"
+                                                                                            data-rate="<%= loan.interest_rate %>"
+                                                                                            data-term="<%= loan.max_term_months %>"
+                                                                                            data-min="<%= loan.min_amount %>"
+                                                                                            data-max="<%= loan.max_amount %>"
+                                                                                            >Edit</button>
+                                                                                            <% } %>
+                                                                                        </td>
+                                                                                        </tr>
+                                                                                    <% }) %>
+                                                                                    </tbody>
+                                                                                </table>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Save details -->
+ <div id="<%= settings ? 'editDetailsModal' : 'addDetailsModal' %>" class="modal FullColor-popup-AlertModal fade">
+  <div class="modal-dialog modal-lg">
+    <form method="POST" action="/portal/save-settings">
+      <div class="modal-content">
+        <div class="modal-header header-color-modal bg-color-4">
+          <h4 class="modal-title">General Settings</h4>
+          <div class="modal-close-area modal-close-df">
+            <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="row mg-b-30">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="sacco_name" class="form-label">Organization Name *</label>
+                <input type="text" class="form-control" name="saccoName" value="<%= settings.sacco_name || '' %>" required>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="registration_number" class="form-label">Registration Number</label>
+                <input type="text" class="form-control" name="registrationNumber" value="<%= settings.registration_number || '' %>" id="registration_number">
+              </div>
+            </div>
+          </div>
+          <div class="row mg-b-30">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="contact_email" class="form-label">Contact Email</label>
+                <input type="email" class="form-control" name="contactEmail" value="<%= settings.contact_email || '' %>" required>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="contact_phone" class="form-label">Contact Phone</label>
+                <input type="text" class="form-control" name="contactPhone" value="<%= settings.contact_phone || '' %>" required>
+              </div>
+            </div>
+          </div>
+          <div class="row mg-b-30">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <div class="form-group">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" name="address" rows="2"><%= settings.address || '' %></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row mg-b-30">
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="loan_interest_default" class="form-label">Loan Interest (%)</label>
+                <input type="number" step="0.01" class="form-control" name="loan_interest_default" id="loan_interest_default" value="<%= settings.loan_interest_default || 12.00 %>">
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="savings_interest_rate" class="form-label">Savings Interest (%)</label>
+                <input type="number" step="0.01" class="form-control" name="savings_interest_rate" id="savings_interest_rate" value="<%= settings.savings_interest_rate || 3.00 %>">
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="penalty_rate" class="form-label">Penalty Rate (%)</label>
+                <input type="number" step="0.01" class="form-control" name="penalty_rate" id="penalty_rate" value="<%= settings.penalty_rate || 2.00 %>">
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="max_loan_multiple" class="form-label">Max Loan Multiple</label>
+                <input type="number" step="0.01" class="form-control" name="max_loan_multiple" id="max_loan_multiple" value="<%= settings.max_loan_multiple || 3.00 %>">
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="logo_path" class="form-label">Membership Fee</label>
+                <input type="number" class="form-control" name="membershipFee" value="<%= settings.membership_fee || 0.00 %>" required>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+              <div class="form-group">
+                <label for="financial_year_start" class="form-label">Financial Year Start</label>
+                <input type="date" class="form-control" name="financial_year_start" value="<%= settings.financial_year_start ? new Date(settings.financial_year_start).toISOString().split('T')[0] : '' %>" id="financial_year_start">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Save Settings</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Loan Type -->
+<div id="addLoanModal" class="modal fade FullColor-popup-AlertModal" tabindex="-1" role="dialog" aria-labelledby="addLoanTypeLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form method="POST" action="/portal/add-loan-type">
+      <div class="modal-content">
+        <div class="modal-header header-color-modal bg-color-4">
+          <h4 class="modal-title">Add Loan Type</h4>
+          <div class="modal-close-area modal-close-df">
+            <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <div class="row mg-b-30">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="loan_name" class="form-label">Loan Name *</label>
+                <input type="text" class="form-control" id="loan_name" name="loan_name" placeholder="e.g. Business Loan" required>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="interest_rate" class="form-label">Interest Rate (%) *</label>
+                <input type="number" step="0.01" min="0" class="form-control" id="interest_rate" name="interest_rate" value="<%= settings.loan_interest_default %>" readonly>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="max_term_months" class="form-label">Max Term (Months) *</label>
+                <input type="number" class="form-control" id="max_term_months" name="max_term_months" placeholder="e.g. 24" required>
+              </div>
+            </div>
+
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="min_amount" class="form-label">Minimum Amount *</label>
+                <input type="number" step="0.01" class="form-control" id="min_amount" name="min_amount" placeholder="e.g. 5000.00" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+              <div class="form-group">
+                <label for="max_amount" class="form-label">Maximum Amount *</label>
+                <input type="number" step="0.01" class="form-control" id="max_amount" name="max_amount" placeholder="e.g. 100000.00" required>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary"> Save Loan Type</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Loan Modal -->
+<div class="modal FullColor-popup-AlertModal fade" id="editLoanModal" tabindex="-1" aria-labelledby="editLoanModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form method="POST" action="/portal/loan-types-update" class="modal-content">
+      <input type="hidden" name="loan_type_id" id="edit_loan_id">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editLoanModalLabel">Edit Loan Type</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Loan Name</label>
+          <input type="text" name="loan_name" id="edit_loan_name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Interest Rate (%)</label>
+          <input type="number" step="0.01" name="interest_rate"  class="form-control" value="<%= settings.loan_interest_default %>" readonly required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Max Term (Months)</label>
+          <input type="number" name="max_term_months" id="edit_max_term" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Min Amount</label>
+          <input type="number" step="0.01" name="min_amount" id="edit_min_amount" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Max Amount</label>
+          <input type="number" step="0.01" name="max_amount" id="edit_max_amount" class="form-control" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-success">Update Loan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+ <script>
+  // Populate Edit Modal
+  document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.getElementById('edit_loan_id').value = this.dataset.id;
+      document.getElementById('edit_loan_name').value = this.dataset.name;
+      document.getElementById('edit_max_term').value = this.dataset.term;
+      document.getElementById('edit_min_amount').value = this.dataset.min;
+      document.getElementById('edit_max_amount').value = this.dataset.max;
+    });
+  });
+</script>
+</body>
+</html>

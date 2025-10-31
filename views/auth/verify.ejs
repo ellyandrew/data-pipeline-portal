@@ -1,0 +1,121 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Verify Email</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Top script start -->
+    <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+    <style>
+    
+
+    .code-container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      /* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
+      text-align: center;
+    }
+
+    .code-input {
+      font-size: 24px;
+      letter-spacing: 10px;
+      width: 200px;
+      padding: 10px;
+      text-align: center;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: border 0.3s;
+    }
+
+    .code-input:focus {
+      border-color: #007bff;
+    }
+
+    /* Remove arrows in Chrome, Safari, Edge */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Remove arrows in Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="back-link back-backend">
+                    <a href="https://www.uthabitiafrica.org/" class="btn btn-primary">Close Portal</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"></div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+
+                <div class="hpanel">
+                    <div class="panel-body text-center lock-inner">
+                        <i class="fa fa-verify" aria-hidden="true"></i>
+                        <br/>
+                        <h4><strong>Verify Email</strong></h4>
+                        <p>Enter 6-digit code sent to your email</p>
+                        <form action="/auth/verify" method="POST" class="m-t">
+                            <div class="form-group">
+                                <input type="number" id="codeInput" maxlength="6" name="verificationCode" class="code-input" placeholder="------" required>
+                            </div>
+                            <button id="resendBtn" class="btn btn-primary">Resend</button>
+                            <button id="verifyBtn" class="btn btn-primary " style="display:none;">Verify</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-md-12 col-sm-12 col-xs-12 text-center login-footer">
+                <p>Copyright &copy; 2025 <a href="https://uhrtur.co.ke">Uhrtur Group LTD</a> All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom script start -->
+    <%- include('../partials/bottom_script'); %>
+    <!-- / Bottom script end -->
+
+    <script>
+        const codeInput = document.getElementById("codeInput");
+        const resendBtn = document.getElementById("resendBtn");
+        const verifyBtn = document.getElementById("verifyBtn");
+
+        // Prevent typing more than 6 digits
+        codeInput.addEventListener("input", () => {
+          if (codeInput.value.length > 6) {
+            codeInput.value = codeInput.value.slice(0, 6);
+          }
+
+          if (codeInput.value.length === 6) {
+            resendBtn.style.display = "none";
+            verifyBtn.style.display = "inline-block";
+          } else {
+            resendBtn.style.display = "inline-block";
+            verifyBtn.style.display = "none";
+          }
+        });
+  </script>
+</body>
+
+</html>

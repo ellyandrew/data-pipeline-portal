@@ -1,0 +1,154 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Add Institution</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid mg-t-30" style="margin-top: 60px;">
+            <div class="row admin">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="hpanel">
+                                <div class="panel-body">
+                                    <form action="#" id="loginForm">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="product-cart-inner">
+                                                    <div id="example-basic">
+                                                        <h3>Facility Details</h3>
+                                                        <section>
+                                                            <div class="product-delivary">
+                                                                <div class="row">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Facility Name *</label>
+                                                                            <input name="name" type="text"
+                                                                                placeholder="Name of your Facility"
+                                                                                class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Facility Type</label>
+                                                                            <select class="form-control required">
+                                                                                <option value="">- select -</option>
+                                                                                <option value="Daycare">Daycare</option>
+                                                                                <option value="Home-Care">Home-Care</option>
+                                                                                <option value="ECD Playgroup">ECD Playgroup</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Setup Type</label>
+                                                                            <select class="form-control required">
+                                                                                <option value="">- select -</option>
+                                                                                <option value="School Based">School-based (Within
+                                                                                    education system)</option>
+                                                                                <option value="Center Based">Center-based
+                                                                                    (Autonomous rented space)</option>
+                                                                                <option value="Home Based">Home-based (Within your
+                                                                                    house)</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Year Started *</label>
+                                                                            <input name="dateStarted" type="date"
+                                                                                class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Registration Number *</label>
+                                                                            <input name="registrationNumber" type="text"
+                                                                                placeholder="Reg number" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">License Number *</label>
+                                                                            <input name="licenseNumber" type="text"
+                                                                                placeholder="License Number" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Facility Physical Address
+                                                                                *</label>
+                                                                            <input name="facilityAddress" type="text"
+                                                                                placeholder="e.g Area & Town" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Copy of Duly filled Membership Form
+                                                                                *</label>
+                                                                            <input name="facilityAddress" type="file" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Copy of National ID/ Passport
+                                                                                *</label>
+                                                                            <input name="facilityAddress" type="file" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12  text-center">
+                                                                        <button class="btn btn-success loginbtn">Submit Details</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </section>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+</body>
+</html>

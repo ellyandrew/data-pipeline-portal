@@ -1,0 +1,623 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Sacco details</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admin">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="author-area-pro">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                            <div class="personal-info-wrap">
+                                                <div class="membership-card">
+                                                    <div class="card-header te">
+                                                        <h2>Uthabiti Sacco Membership</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="member-photo">
+                                                            <img src="/img/contact/member.jpg" height="200px;" width="200px;" alt="Member Photo">
+                                                        </div>
+                                                        <div class="member-details text-center">
+                                                            <h3 class="member-name"><%= details.full_name %></h3>
+                                                            <p class="member-number">Member No: <strong><%= details.membership_no %></strong></p>
+                                                            <% 
+                                                            let statusClass = 
+                                                                details.sacco_status === 'Active' ? 'label-success' :
+                                                                details.sacco_status === 'Inactive' ? 'label-info' :
+                                                                details.sacco_status === 'Suspended' ? 'label-danger' :
+                                                                details.sacco_status === 'Pending' ? 'label-warning' : '';
+                                                            %>
+                                                            <p class="facility"><strong class="label <%= statusClass %>"><%= details.sacco_status %></strong></p>
+                                                            <p class="reg-date">Joined: <strong><%= formatDate(details.join_date) %></strong></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                                                    <div class="btn-group">
+                                                        <% if (isAdmin) { %>
+                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#issueLoanModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-money"></i> Issue Loan</button>
+                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-pencil"></i> Status</button>
+                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#addContributionModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-tag"></i> Contributions</button>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
+                                                    <div class="btn-group">
+                                                        <a class="btn btn-default btn-sm" href="/portal/sacco-member"><i class="fa fa-arrow-left"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                            <div class="hpanel">
+                                                <div class="panel-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-bordered">
+                                                            <thead>
+                                                                <tr class="bg-red text-white">
+                                                                    <th colspan="4">Member Details</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Contact:</strong></td>
+                                                                    <td width="25%"><%= details.phone %></td>
+                                                                    <td width="25%" align="right"><strong>ID Number:</strong></td>
+                                                                    <td width="25%"><%= details.id_number %></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>DoB</strong></td>
+                                                                    <td width="25%"><%= formatDate(details.dob) %></td>
+                                                                    <td width="25%" align="right"><strong>Gender:</strong></td>
+                                                                    <td width="25%"><%= details.gender %></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Disability Status:</strong></td>
+                                                                    <td width="25%"><%= details.disability %></td>
+                                                                    <td width="25%" align="right"><strong>Level of Education:</strong></td>
+                                                                    <td width="25%"><%= details.education_level %></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Location:</strong></td>
+                                                                    <td colspan="3" align="left"><%= details.county %> County - <%= details.sub_county %> Sub County - <%= details.ward %> Ward</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Next of Kin:</strong></td>
+                                                                    <td colspan="3" align="left"><%= details.next_kin_name %> - (<b><%= details.kin_rln %></b>) -  <b>From:</b> <%= details.kin_location %>. <b>Phone No:</b> <%= details.kin_phone %></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Join Date:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= formatDate(details.join_date) %>
+                                                                    </td>
+                                                                    <td width="25%" align="right"><strong>Shares:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= details.shares %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Savings:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= details.savings %>
+                                                                    </td>
+                                                                    <td width="25%" align="right"><strong>Loan Balance:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= details.loan_balance %>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loan details -->
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mg-t-30">
+                            <div class="author-area-pro">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="admin-pro-accordion-wrap responsive-mg-b-30 hpanel">
+                                                <div class="panel-group adminpro-custon-design panel-body" id="accordion">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-headin mg-b-30 accordion-head">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Loan Details</a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapse3" class="panel-collapse panel-ic collapse in">
+                                                            <div class="panel-body admin-panel-content animated bounce">
+                                                                <% if (loans.length> 0) { %>
+                                                                    <div class="table-responsive" style="overflow-x: 10px;">
+                                                                        <table class="table table-striped table-hover table-mailbox">
+                                                                            <thead class="thead-light">
+                                                                                <tr>
+                                                                                    <th>#</th>
+                                                                                    <th>Loan Type</th>
+                                                                                    <th>Principal</th>
+                                                                                    <th>Interest Rate</th>
+                                                                                    <th>Balance</th>
+                                                                                    <th>Period</th>
+                                                                                    <th>Due Date</th>
+                                                                                    <th>Status</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <% loans.forEach((loan, index)=> { %>
+                                                                                    <tr>
+                                                                                        <td>
+                                                                                            <%= (currentPage - 1) * perPage + index + 1 %>
+                                                                                        </td>
+                                                                                        <td><strong><%= loan.loan_type %></strong></td>
+                                                                                        <td><%= loan.principal %></td>
+                                                                                        <td><%= loan.interest_rate %></td>
+                                                                                        <td><%= loan.balance %></td>
+                                                                                        <td><%= loan.repayment_period %></td>
+                                                                                        <td><%= formatDate(loan.due_date) %></td>
+                                                                                        <td><%= loan.status %></td>
+                                                                                    </tr>
+                                                                                    <% }) %>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+
+                                                                    <div class="custom-pagination mt-4">
+                                                                        <nav aria-label="Page navigation">
+                                                                            <ul class="pagination justify-content-center">
+
+                                                                                <% if (currentPage> 1) { %>
+                                                                                    <li class="page-item">
+                                                                                        <a class="page-link" href="?page=<%= currentPage - 1 %><%= queryString %>">Previous</a>
+                                                                                    </li>
+                                                                                    <% } %>
+
+                                                                                        <% paginationRange.forEach(p=> { %>
+                                                                                            <% if (p==='...' ) { %>
+                                                                                                <li class="page-item disabled">
+                                                                                                    <span class="page-link">...</span>
+                                                                                                </li>
+                                                                                            <% } else { %>
+                                                                                                <li class="page-item <%= p === currentPage ? 'active' : '' %>">
+                                                                                                    <a class="page-link" href="?page=<%= p %><%= queryString %>">
+                                                                                                        <%= p %>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                            <% } %>
+                                                                                        <% }); %>
+
+                                                                                        <% if (currentPage < totalPages) { %>
+                                                                                            <li class="page-item">
+                                                                                                <a class="page-link" href="?page=<%= currentPage + 1 %><%= queryString %>">Next</a></li>
+                                                                                    <% } %>
+                                                                            </ul>
+                                                                        </nav>
+                                                                    </div>
+
+                                                                    <% } else { %>
+                                                                        <div class="alert alert-info mt-3">No loan details found for this member.</div>
+                                                                <% } %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Edit sacco member status -->
+<% 
+  let modalTitle = '';
+  let modalMessage = '';
+
+  switch (details.sacco_status) {
+    case 'Active':
+      modalTitle = 'Suspend Member?';
+      modalMessage = 'This member is currently active. Do you want to suspend this member’s account?';
+      break;
+    case 'Inactive':
+      modalTitle = 'Activate Member?';
+      modalMessage = 'This member is inactive. Do you want to activate their account so they can access the system?';
+      break;
+    case 'Pending':
+      modalTitle = 'Approve Member?';
+      modalMessage = 'This member’s sacco details is pending review. Do you want to approve and activate the account?';
+      break;
+    case 'Suspended':
+      modalTitle = 'Reactivate Member?';
+      modalMessage = 'This member is currently suspended. Do you want to reactivate their account?';
+      break;
+  }
+%>
+<div id="editStatusModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content modal-vertical-centered">
+            <div class="modal-close-area modal-close-df">
+                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+            </div>
+            <form action="/portal/update-member-sacco-status/<%= details.sacco_member_id %>" method="POST">
+                <div class="modal-body">
+                    <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
+                    <h2><%= modalTitle %></h2>
+                    <p><p><%= modalMessage %></p></p>
+                    <div class="row mg-t-30">
+                        <div class="col-md-12">
+                            <textarea class="form-control" name="reason" placeholder="Give reason ..." required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="currentStatus" value="<%= details.sacco_status %>">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Issue Loan Modal -->
+<div class="modal FullColor-popup-AlertModal fade" id="issueLoanModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form action="/portal/loans-issue" method="POST" class="modal-content">
+      <div class="modal-header header-color-modal bg-color-4">
+            <h4 class="modal-title">Issue Loan</h4>
+            <div class="modal-close-area modal-close-df">
+                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+            </div>
+        </div>
+
+      <div class="modal-body">
+        <div class="row mg-b-30">
+          <!-- Member -->
+          <div class="col-md-6">
+            <label>Member</label>
+            <select name="sacco_member_id" id="sacco_member_id" class="form-control" required>
+              <option value="">- select member -</option>
+                <option value="<%= details.sacco_member_id %>"><%= details.full_name %></option>
+            </select>
+          </div>
+
+          <!-- Loan Type -->
+          <div class="col-md-6">
+            <label>Loan Type</label>
+            <select name="loan_type_id" id="loan_type_id" class="form-control" required>
+              <option value="">Loading...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mg-b-30">
+          <!-- Interest rate -->
+          <div class="col-md-6">
+            <label>Interest Rate (%)</label>
+            <input type="number" id="interest_rate" name="interest_rate" step="0.01" class="form-control" readonly>
+          </div>
+
+          <!-- Principal -->
+          <div class="col-md-6">
+            <label>Principal Amount</label>
+            <input type="number" id="principal" name="principal" step="0.01" class="form-control" required>
+            <small id="principalHelp" class="form-text text-muted"></small>
+          </div>
+        </div>
+
+        <div class="row mg-b-30">
+          <!-- Repayment Period -->
+          <div class="col-md-6">
+            <label>Repayment Period (months)</label>
+            <input type="number" id="repayment_period" name="repayment_period" class="form-control" required>
+            <small id="repaymentHelp" class="form-text text-muted"></small>
+          </div>
+
+          <!-- Issue date -->
+          <div class="col-md-6">
+            <label>Issue Date</label>
+            <input type="date" id="issue_date" name="issue_date" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="row mg-b-30">
+          <!-- Due date -->
+          <div class="col-md-6">
+            <label>Due Date</label>
+            <input type="date" id="due_date" name="due_date" class="form-control" readonly>
+          </div>
+
+          <!-- Interest amount -->
+          <div class="col-md-6">
+            <label>Interest Amount</label>
+            <input type="number" id="interest_amount" name="interest_amount" step="0.01" class="form-control" readonly>
+          </div>
+        </div>
+
+        <div class="row mg-b-30">
+          <!-- Total repayment -->
+          <div class="col-md-6">
+            <label>Total Repayment</label>
+            <input type="number" id="total_repayment" name="total_repayment" step="0.01" class="form-control" readonly>
+          </div>
+
+          <!-- Repayment source -->
+          <div class="col-md-6">
+            <label>Repayment Source</label>
+            <select name="repayment_source" class="form-control" required>
+              <option value="Cash Deposit">Cash Deposit</option>
+              <option value="Salary Deduction">Salary Deduction</option>
+              <option value="Standing Order">Standing Order</option>
+              <option value="Savings Account Transfer">Savings Account Transfer</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Issue Loan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Add Contribution Modal -->
+<div class="modal FullColor-popup-AlertModal fade" id="addContributionModal" tabindex="-1" aria-labelledby="addContributionLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      
+      <form id="addContributionForm" action="/portal/add-contributions" method="POST">
+        <div class="modal-header header-color-modal bg-color-4">
+            <h4 class="modal-title">Add Contribution</h4>
+            <div class="modal-close-area modal-close-df">
+                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+            </div>
+        </div>
+        <div class="modal-body">
+          <div class="row mg-b-30">
+            <div class="col-md-6">
+            <label>Member</label>
+                <select name="sacco_member_id" id="mysaccoId" class="form-control" required>
+                <option value="">- select member -</option>
+                    <option value="<%= details.sacco_member_id %>"><%= details.full_name %></option>
+                </select>
+            </div>
+            <div class="col-md-6">
+              <label for="contribution_type" class="form-label">Contribution Type</label>
+              <select class="form-control" id="contributionType" name="contribution_type" required>
+                <option value="">- select type -</option>
+                <option value="Savings">Savings</option>
+                <option value="Shares">Shares</option>
+                <option value="Penalty">Penalty</option>
+                <option value="Loan Repayment">Loan Repayment</option>
+              </select>
+            </div>
+        </div>
+
+        <div class="row mg-b-30">
+            <div class="col-md-6">
+              <label for="payment_method" class="form-label">Available Loans</label>
+              <select class="form-control" id="loanSelect" name="loan_id"></select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="amount" class="form-label">Amount (KSh)</label>
+              <input type="number" class="form-control" name="amount" min="1" step="0.01" required>
+            </div>
+        </div>
+
+        <div class="row mg-b-30">
+            <div class="col-md-6">
+              <label for="payment_method" class="form-label">Payment Method</label>
+              <select class="form-control" name="payment_method" required>
+                <option value="">- select method -</option>
+                <option value="Cash">Cash</option>
+                <option value="Mobile Money">Mobile Money</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Payroll Deduction">Payroll Deduction</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="reference_no" class="form-label">Reference No.</label>
+              <input type="text" class="form-control" id="reference_no" name="reference_no" placeholder="e.g., MPESA TXN1234" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+              <label class="form-label">Remarks</label>
+              <select class="form-control" name="remarks" required>
+                <option value="">Select Common Remark</option>
+                <option value="Monthly contribution">Monthly contribution</option>
+                <option value="Share capital contribution">Share capital contribution</option>
+                <option value="Loan repayment">Loan repayment</option>
+                <option value="Savings top-up">Savings top-up</option>
+                <option value="Late contribution">Late contribution</option>
+                <option value="Correction of previous record">Correction of previous record</option>
+                <option value="New member registration payment">New member registration payment</option>
+                <option value="Penalty payment">Penalty payment</option>
+                <option value="Dividend reinvestment">Dividend reinvestment</option>
+                <option value="Special deposit">Special deposit</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-default"> Save Contribution</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+
+<script>
+$(document).ready(function() {
+  $("#contributionType").change(function() {
+    const payType = $(this).val();
+    const sacco_id = $("#mysaccoId").val();
+
+    $("#loanSelect").empty().append('<option value="">- select loan -</option>');
+
+    if (payType === "Loan Repayment") {
+    $("#loanSelect").attr("required", true);
+      $.get(`/portal/api/loans/applied/${sacco_id}`, function(appliedLoans) {
+        if (appliedLoans.length === 0) {
+          $("#loanSelect").append('<option value="">No active loans found</option>');
+          return;
+        }
+        appliedLoans.forEach(ln => {
+          $("#loanSelect").append(
+            `<option value="${ln.loan_id}" data-balance="${ln.balance}" data-type="${ln.loan_type}">
+              ${ln.loan_type} (Balance: ${ln.balance}) - ${ln.status}
+            </option>`
+          );
+        });
+      }).fail(function() {
+        $("#loanSelect").append('<option value="">Error loading loans</option>');
+      });
+    }else {
+      $("#loanSelect").removeAttr("required");
+    }
+  });
+});
+</script>
+
+
+<script>
+// =============== Load Loan Types When Modal Opens ===============
+$('#issueLoanModal').on('show.bs.modal', async function() {
+  const select = document.getElementById('loan_type_id');
+  select.innerHTML = '<option value="">Loading...</option>';
+
+  try {
+    const res = await fetch('/portal/loan-types'); // Route to get all loan types
+    const loanTypes = await res.json();
+
+    select.innerHTML = '<option value="">Select Loan Type</option>';
+    loanTypes.forEach(lt => {
+      const option = document.createElement('option');
+      option.value = lt.loan_type_id;
+      option.textContent = lt.loan_name;
+      option.dataset.interest = lt.interest_rate;
+      option.dataset.min = lt.min_amount;
+      option.dataset.max = lt.max_amount;
+      option.dataset.maxTerm = lt.max_term_months;
+      select.appendChild(option);
+    });
+  } catch {
+    select.innerHTML = '<option>Error loading loan types</option>';
+  }
+});
+
+// =============== When Loan Type Changes ===============
+document.getElementById('loan_type_id').addEventListener('change', function() {
+  const selected = this.options[this.selectedIndex];
+  if (!selected.dataset.min) return;
+
+  // Set fields and hints
+  document.getElementById('interest_rate').value = selected.dataset.interest;
+  const principalInput = document.getElementById('principal');
+  principalInput.min = selected.dataset.min;
+  principalInput.max = selected.dataset.max;
+  document.getElementById('principalHelp').textContent =
+    `Allowed range: ${selected.dataset.min} - ${selected.dataset.max}`;
+  document.getElementById('repaymentHelp').textContent =
+    `Max term: ${selected.dataset.maxTerm} months`;
+
+  calculateLoanDetails(); // Recalculate if already entered values exist
+});
+
+// =============== Calculation Function ===============
+function calculateLoanDetails() {
+  const principal = parseFloat(document.getElementById('principal').value) || 0;
+  const interestRate = parseFloat(document.getElementById('interest_rate').value) || 0;
+  const repaymentPeriod = parseInt(document.getElementById('repayment_period').value) || 0;
+  const issueDateStr = document.getElementById('issue_date').value;
+
+  if (principal <= 0 || interestRate <= 0 || repaymentPeriod <= 0) return;
+
+  // Calculate interest amount (simple interest)
+  const interestAmount = (principal * (interestRate / 100)) * (repaymentPeriod / 12);
+  const totalRepayment = principal + interestAmount;
+
+  document.getElementById('interest_amount').value = interestAmount.toFixed(2);
+  document.getElementById('total_repayment').value = totalRepayment.toFixed(2);
+
+  // Calculate due date
+  if (issueDateStr) {
+    const issueDate = new Date(issueDateStr);
+    issueDate.setMonth(issueDate.getMonth() + repaymentPeriod);
+    const dueDate = issueDate.toISOString().split('T')[0];
+    document.getElementById('due_date').value = dueDate;
+  }
+}
+
+// Trigger recalculations
+['principal', 'repayment_period', 'interest_rate', 'issue_date']
+  .forEach(id => document.getElementById(id).addEventListener('input', calculateLoanDetails));
+</script>
+
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Facility Details</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+     <style>
+  .card {
+    margin-top: 2rem;
+  }
+  .badge {
+    font-size: 0.9rem;
+    padding: 0.4em 0.7em;
+  }
+</style>
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admin text-center">
+                <div class="col-md-12">
+                    <div class="row mg-b-30">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="hpanel responsive-mg-b-30">
+                                <div class="panel-body">
+                                    <div class="stats-title pull-left">
+                                        <div class="btn-group">
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editFacilityModal"><i class="fa fa-user"></i> Edit Details</button>
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal"><i class="fa fa-pencil"></i> Status</button>
+                                        </div>
+                                    </div>
+                                    <div class="stats-icon pull-right">
+                                        <div class="btn-group">
+                                            <a  href="/portal/facilities"><i class="fa fa-arrow-left"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="hpanel responsive-mg-b-30">
+                                <div class="panel-body">
+                                    <div class="stats-title pull-left">
+                                        <h4><%- facility.facility_name ? facility.facility_name : '<span class="text-danger">Name Required</span>' %></h4>
+                                    </div>
+                                    <div class="m-t-xl">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-striped">
+                                                <tr>
+                                                    <td align="left"><strong>Facility Type:</strong></td>
+                                                    <td ><%= facility.facility_type || '-' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Facility Setup:</strong></td>
+                                                    <td><%= facility.setup_type || '-' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Established Year:</strong></td>
+                                                    <td><%= facility.facility_estab_year || '-' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Registration No.:</strong></td>
+                                                    <td><%= facility.reg_no || '-' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>License No:</strong></td>
+                                                    <td><%= facility.license_no || '-' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Facility Status:</strong></td>
+                                                    <td><span class="badge <%= facility.status === 'Active' ? 'badge-success' : facility.status === 'Closed' ? 'badge-secondary' : 'badge-warning' %>">
+                                                    <%= facility.status %>
+                                                    </span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Registration Date:</strong></td>
+                                                    <td><%= facility.reg_date ? new Date(facility.reg_date).toLocaleDateString() : '-' %></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Location:</strong></td>
+                                                    <td align="left">
+                                                        <p><b>County:</b> <%= facility.f_county || '-' %> <b>Subcounty:</b> <%= facility.f_subcounty || '-' %> <b>Ward:</b> <%= facility.f_area || '-' %></p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="hpanel responsive-mg-b-30">
+                                <div class="panel-body">
+                                    <div class="m-t-xl">
+                                        <div class="table-responsive">
+                                            <table class="table table-striped">
+                                                <tr>
+                                                    <td><strong>Facility Beneficiaries</strong></td>
+                                                    <td align="left">
+                                                        <p><strong>Male Beneficiaries:</strong> <%= facility.male_b || 0 %></p>
+                                                        <p><strong>Female Beneficiaries:</strong> <%= facility.female_b || 0 %></p>
+                                                        <p><strong>Male Beneficiaries (Disability):</strong> <%= facility.male_b_dis || 0 %></p>
+                                                        <p><strong>Female Beneficiaries (Disability):</strong> <%= facility.female_b_dis || 0 %></p>
+                                                        <p><strong>Total Beneficiaries:</strong> <%= facility.total_beneficiaries || 0 %></p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><strong>Facility Caregivers</strong></td>
+                                                    <td align="left">
+                                                        <p><strong>Male Caregivers:</strong> <%= facility.male_c || 0 %></p>
+                                                        <p><strong>Female Caregivers:</strong> <%= facility.female_c || 0 %></p>
+                                                        <p><strong>Total Caregivers:</strong> <%= facility.total_caregivers || 0 %></p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Modals -->
+
+<!-- Edit Status -->
+ <% 
+  let modalTitle = '';
+  let modalMessage = '';
+
+  switch (facility.status) {
+    case 'Active':
+      modalTitle = 'Close Facility?';
+      modalMessage = 'This facility is currently active. Do you want to change the facility to Inactive?';
+      break;
+    case 'Inactive':
+      modalTitle = 'Activate Facility?';
+      modalMessage = 'This facilty is Inactive. Do you want to activate it under the current member?';
+      break;
+    case 'Pending':
+      modalTitle = 'Approve Facility?';
+      modalMessage = 'This facility is not yet approved. Do you want to submit and activate this facility?';
+      break;
+  }
+%>
+<div id="editStatusModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content modal-vertical-centered">
+            <div class="modal-close-area modal-close-df">
+                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+            </div>
+            <form action="/portal/update-facility-status/<%= facility.facility_id %>" method="POST">
+                <div class="modal-body">
+                    <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
+                    <h2><%= modalTitle %></h2>
+                    <p><p><%= modalMessage %></p></p>
+                    <div class="row mg-t-30">
+                        <div class="col-md-12">
+                            <textarea class="form-control" name="reason" placeholder="Give reason ..." required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="currentStatus" value="<%= facility.status %>">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Facility -->
+<div id="editFacilityModal" class="modal FullColor-popup-AlertModal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header header-color-modal bg-color-4">
+                <h4 class="modal-title">Edit Facility</h4>
+                <div class="modal-close-area modal-close-df">
+                    <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                </div>
+            </div>
+            <form action="/portal/update-facility-details" method="POST">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Facility Name *</label>
+                                <input name="facilityName" type="text" placeholder="Name of your Facility" class="form-control"
+                                    value="<%= facility.facility_name || '' %>" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Facility
+                                    Type</label>
+                                <select class="form-control required" name="facilityType" required>
+                                    <option value="" <%=!facility?.facility_type ? 'selected' : '' %>>- select -</option>
+                                    <option value="Daycare" <%=facility?.facility_type==='Daycare' ? 'selected' : '' %>>Daycare</option>
+                                    <option value="Home-Care" <%=facility?.facility_type==='Home-Care' ? 'selected' : '' %>>Home-Care</option>
+                                    <option value="ECD Playgroup" <%=facility?.facility_type==='ECD Playgroup' ? 'selected' : '' %>>ECD Playgroup
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Setup Type</label>
+                                <select class="form-control required" name="setupType" required>
+                                    <option value="" <%=!facility?.setup_type ? 'selected' : '' %>>- select -</option>
+                                    <option value="School Based" <%=facility?.setup_type==='School Based' ? 'selected' : '' %>>
+                                        School-based
+                                        (Within
+                                        education system)</option>
+                                    <option value="Center Based" <%=facility?.setup_type==='Center Based' ? 'selected' : '' %>>
+                                        Center-based
+                                        (Autonomous rented space)
+                                    </option>
+                                    <option value="Home Based" <%=facility?.setup_type==='Home Based' ? 'selected' : '' %>>
+                                        Home-based
+                                        (Within your
+                                        house)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Year Started *</label>
+                                <select name="yearStarted" class="form-control" required>
+                                    <option value="" <%=!facility.facility_estab_year ? 'selected' : '' %>>- select -</option>
+                                    <% for (let y=1950; y <=2025; y++) { %>
+                                        <option value="<%= y %>" <%=facility.facility_estab_year==y ? 'selected' : '' %>><%= y %>
+                                        </option>
+                                        <% } %>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">County</label>
+                                <select class="form-control required" name="county" id="countySelect" required>
+                                    <option value="<%= facility.f_county %>" selected><%= facility.f_county %></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Sub-County *</label>
+                                <select class="form-control required" name="subCounty" id="subCountySelect" required>
+                                    <option value="<%= facility.f_subcounty %>" selected><%= facility.f_subcounty %></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Ward *</label>
+                                <select class="form-control required" name="ward" id="wardSelect" required>
+                                    <option value="<%= facility.f_area %>" selected><%= facility.f_area %></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Registration
+                                    Number
+                                </label>
+                                <input name="registrationNumber" type="text" placeholder="Reg number" class="form-control"
+                                    value="<%= facility.reg_no || '' %>">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">License
+                                    Number
+                                </label>
+                                <input name="licenseNumber" type="text" placeholder="License Number" class="form-control"
+                                    value="<%= facility.license_no || '' %>">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">No of Male
+                                    Beneficiaries
+                                </label>
+                                <input name="maleB" type="number" placeholder="Male Beneficiaries" class="form-control"
+                                    value="<%= facility.male_b || 0 %>">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">No of
+                                    Female Beneficiaries
+                                </label>
+                                <input name="femaleB" type="number" placeholder="Female Beneficiaries" class="form-control"
+                                    value="<%= facility.female_b || 0 %>">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">No of Male
+                                    Beneficiaries with disability
+                                </label>
+                                <input name="maleBD" type="number" placeholder="Male Beneficiaries with disability" class="form-control"
+                                    value="<%= facility.male_b_dis || 0 %>">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">No of
+                                    Female Beneficiaries with
+                                    disability
+                                </label>
+                                <input name="femaleBD" type="number" placeholder="Female Beneficiaries with disability" class="form-control"
+                                    value="<%= facility.female_b_dis || 0 %>">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">No of Male
+                                    Caregivers
+                                </label>
+                                <input name="maleC" type="number" placeholder="Male Caregivers" class="form-control"
+                                    value="<%= facility.male_c || 0 %>">
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">No of
+                                    Female Caregivers
+                                </label>
+                                <input name="femaleC" type="number" placeholder="Female Caregivers" class="form-control"
+                                    value="<%= facility.female_c || 0 %>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" type="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+ <script src="/jsUtils/add-member.js"></script>
+</body>
+</html>

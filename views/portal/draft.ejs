@@ -1,0 +1,900 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Draft Member</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+    <%- include('../partials/top_script'); %>
+        <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+    <%- include('../partials/portal_sidebar'); %>
+        <!-- / Side bar -->
+
+        <!-- Start Welcome area -->
+        <div class="all-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="logo-pro">
+                            <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px"
+                                    width="80px" alt="" /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-advance-area">
+                <!-- Header top start -->
+                    <%- include('../partials/header_top'); %>
+                <!-- / Header top end -->
+                <!-- Mobile Menu start -->
+                    <%- include('../partials/mobile_menu'); %>
+                <!-- Mobile Menu end -->
+            </div>
+            <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+                <div class="row admin">
+                    <div class="col-md-12">
+                        <div class="row">
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <!-- Display Alert Messages -->
+                                <% if (message) { %>
+                                    <div
+                                        class="alert alert-<%= messageType === 'success' ? 'success alert-success-style1 alert-st-bg' : 'danger alert-mg-b alert-success-style4 alert-st-bg3' %>">
+                                        <button type="button" class="close sucess-op" data-dismiss="alert"
+                                            aria-label="Close">
+                                            <span class="icon-sc-cl" aria-hidden="true">&times;</span>
+                                        </button>
+                                        <i class="fa fa-<%= messageType === 'success' ? 'check adminpro-checked-pro admin-check-pro-clr' : 'times adminpro-danger-error admin-check-pro-clr3' %> admin-check-pro"
+                                            aria-hidden="true"></i>
+                                        <p><strong>
+                                                <%= messageType==='success' ? 'Success!' : 'Error!' %>
+                                            </strong>
+                                            <%= message %>
+                                        </p>
+                                    </div>
+                                    <% } %>
+                            </div>
+
+                            <!-- membership details -->
+                            <!-- If member draft -->
+                            <% if (draft && Object.keys(draft).length > 1) { %>
+                            
+                            <!-- if all details complete -->
+                            <% if(!hasProfile || !hasBenefits || (membershipType === 'Facility In' && !hasFacility)) { %>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                        <div class="alert-title">
+                                            <h2><%= member.first_name %> <%= member.middle_name || '' %> <%= member.last_name %> - <%= member.membership_no %></h2>
+                                            <p>Draft details - Please fill only the missing fields.</p>
+                                        </div>
+                                        <div class="panel-group adminpro-custon-design" id="accordion">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading accordion-head bg-purple">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                                            Membership Details Complete
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse1" class="panel-collapse panel-ic collapse">
+                                                    <div class="panel-body admin-panel-content animated bounce">
+                                                        <form action="/portal/add-member" method="POST">
+                                                            <div class="row">
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>First Name</label>
+                                                                        <input type="text" name="firstName" class="form-control"
+                                                                            placeholder="First Name"
+                                                                            value="<%= member.first_name %>" disabled>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Middle Name</label>
+                                                                        <input type="text" name="middleName"
+                                                                            class="form-control"
+                                                                            placeholder="Middle Name(Optional)"
+                                                                            value="<%= member.middle_name || '' %>" disabled>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Last Name</label>
+                                                                        <input type="text" name="lastName" class="form-control"
+                                                                            placeholder="Last Name"
+                                                                            value="<%= member.last_name || '' %>" disabled>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Email Address</label>
+                                                                        <input type="email" name="email" class="form-control"
+                                                                            placeholder="Your email address"
+                                                                            value="<%= member.email || '' %>" disabled>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Membership Type</label>
+                                                                        <select name="membershipType" class="form-control" disabled>
+                                                                        <option value="Facility In" <%= member.membership_type === 'Facility In' ? 'selected' : '' %>>
+                                                                            Facility Owner to Join Uthabiti Africa
+                                                                        </option>
+                                                                        <option value="Individual" <%= member.membership_type === 'Individual' ? 'selected' : '' %>>
+                                                                            Individual Joining Uthabiti Africa Network
+                                                                        </option>
+                                                                        <option value="Sacco In" <%= member.membership_type === 'Sacco In' ? 'selected' : '' %>>
+                                                                            Joining Uthabiti SACCO
+                                                                        </option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="sparkline12-hd">
+                                                                        <div class="main-sparkline12-hd">
+                                                                            <h1>Area of residence or facility location</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p>Note: County to be area of residence or facility location
+                                                                        if you have one.</p>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">County</label>
+                                                                        <select class="form-control required" name="county"
+                                                                            id="countySelect" disabled>
+                                                                            <option value="<%= draft.county || '' %>"><%= draft.county || '' %></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Sub-County *</label>
+                                                                        <select class="form-control required" name="subCounty"
+                                                                            id="subCountySelect" disabled>
+                                                                            <option value="<%= draft.sub_county || '' %>"><%= draft.sub_county || '' %></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Ward *</label>
+                                                                        <select class="form-control required" name="ward"
+                                                                            id="wardSelect" disabled>
+                                                                            <option value="<%= draft.ward || '' %>"><%= draft.ward || '' %></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Personal details -->
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                        <div class="panel-group adminpro-custon-design" id="accordion">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading accordion-head">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2"><%= (!hasProfile) ? 'Personal Details Incomplete' : 'personal Details Complete' %></a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse2" class="panel-collapse panel-ic collapse <%= (hasProfile) ? '' : 'in' %>">
+                                                    <div class="panel-body admin-panel-content animated bounce">
+                                                        <form action="/portal/add-draft-member-profile" method="POST" enctype="multipart/form-data">
+                                                            <div class="row">
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Phone Number *</label>
+                                                                        <input name="phoneNumber" type="number" class="form-control" value="<%= profile.phone || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">National ID/Passport Number *</label>
+                                                                        <input name="idNumber" type="number" placeholder="Enter ID" class="form-control" value="<%= profile.id_number || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Date of Birth *</label>
+                                                                        <input name="dob" type="date" class="form-control"
+                                                                            value="<%= profile.dob ? new Date(profile.dob).toISOString().split('T')[0] : '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Gender *</label>
+                                                                        <select class="form-control required" name="gender" required>
+                                                                            <option value="" <%= !profile.gender ? 'selected' : '' %>>- select gender -</option>
+                                                                            <option value="Male" <%= profile.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                                                                            <option value="Female" <%= profile.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                                                                            <option value="Intersex" <%= profile.gender === 'Intersex' ? 'selected' : '' %>>Intersex</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Disability
+                                                                            *</label>
+                                                                        <select class="form-control required"
+                                                                            name="disability" required>
+                                                                            <option value="" <%= !profile.disability ? 'selected' : '' %>>- disability status -</option>
+                                                                            <option value="None" <%= profile.disability === 'None' ? 'selected' : '' %>>None</option>
+                                                                            <option value="Physical" <%= profile.disability === 'Physical' ? 'selected' : '' %>>Physical
+                                                                                Impairement
+                                                                            </option>
+                                                                            <option value="Hearing" <%= profile.disability === 'Hearing' ? 'selected' : '' %>>Hearing
+                                                                                Impairement
+                                                                            </option>
+                                                                            <option value="Visual" <%= profile.disability === 'Visual' ? 'selected' : '' %>>Visual
+                                                                                Impairement
+                                                                            </option>
+                                                                            <option value="Intellectual" <%= profile.disability === 'Intellectual' ? 'selected' : '' %>>
+                                                                                Intellectual
+                                                                                Impairement</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Education
+                                                                            Level
+                                                                            *</label>
+                                                                        <select class="form-control required"
+                                                                            name="educationLevel" required>
+                                                                            <option value="" <%= !profile.education_level ? 'selected' : '' %>>- education -</option>
+                                                                            <option value="None" <%= profile.education_level === 'None' ? 'selected' : '' %>>No Formal
+                                                                                Education
+                                                                            </option>
+                                                                            <option value="Primary Incomplete" <%= profile.education_level === 'Primary Incomplete' ? 'selected' : '' %>>
+                                                                                Primary
+                                                                                Incomplete</option>
+                                                                            <option value="Primary Complete" <%= profile.education_level === 'Primary Complete' ? 'selected' : '' %>>
+                                                                                Primary
+                                                                                Complete
+                                                                                (KCPE or equivalent)</option>
+                                                                            <option value="Secondary Incomplete" <%= profile.education_level === 'Secondary Incomplete' ? 'selected' : '' %>>
+                                                                                Secondary
+                                                                                Incomplete</option>
+                                                                            <option value="Secondary Complete" <%= profile.education_level === 'Secondary Complete' ? 'selected' : '' %>>
+                                                                                Secondary
+                                                                                Complete (KCSE or equivalent)
+                                                                            </option>
+                                                                            <option value="Certificate" <%= profile.education_level === 'Certificate' ? 'selected' : '' %>>
+                                                                                Certificate /
+                                                                                Artisan
+                                                                                Course</option>
+                                                                            <option value="Diploma" <%= profile.education_level === 'Diploma' ? 'selected' : '' %>>Diploma
+                                                                            </option>
+                                                                            <option value="Bachelors" <%= profile.education_level === 'Bachelors' ? 'selected' : '' %>>Bachelor’s
+                                                                                Degree
+                                                                            </option>
+                                                                            <option value="Masters" <%= profile.education_level === 'Masters' ? 'selected' : '' %>>Master’s
+                                                                                Degree
+                                                                            </option>
+                                                                            <option value="PHD" <%= profile.education_level === 'PHD' ? 'selected' : '' %>>Doctorate (PhD /
+                                                                                equivalent)
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label"><strong>Citizenship
+                                                                                *</strong></label>
+                                                                        <select class="form-control required"
+                                                                            id="citizenshipSelect" name="citizenship"
+                                                                            required>
+                                                                            <option value="<%= profile.citizenship || '' %>"><%= profile.citizenship || '- selected -' %></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Country</label>
+                                                                        <select class="form-control required" name="country"
+                                                                            id="countrySelect" required>
+                                                                            <option value="<%= profile.country || '' %>"><%= profile.country || '- selected -' %></option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Next of Kin
+                                                                            Full Name
+                                                                            *</label>
+                                                                        <input name="kinName" type="text"
+                                                                            class="form-control" placeholder="Fullname"
+                                                                            value="<%= profile.next_kin_name || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Next of Kin
+                                                                            Relationship</label>
+                                                                        <select class="form-control required" name="kinRln"
+                                                                            required>
+                                                                            <option value="" <%= !profile.kin_rln ? 'selected' : '' %>>- select -</option>
+                                                                            <option value="Parent" <%= profile.kin_rln === 'Parent' ? 'selected' : '' %>>Parent
+                                                                            </option>
+                                                                            <option value="Spouse" <%= profile.kin_rln === 'Spouse' ? 'selected' : '' %>>Spouse
+                                                                            </option>
+                                                                            <option value="Sibling" <%= profile.kin_rln === 'Sibling' ? 'selected' : '' %>>Sibling
+                                                                            </option>
+                                                                            <option value="Child" <%= profile.kin_rln === 'Child' ? 'selected' : '' %>>Child</option>
+                                                                            <option value="Relative" <%= profile.kin_rln === 'Relative' ? 'selected' : '' %>>Relative
+                                                                            </option>
+                                                                            <option value="Guardian" <%= profile.kin_rln === 'Guardian' ? 'selected' : '' %>>Guardian
+                                                                            </option>
+                                                                            <option value="Friend" <%= profile.kin_rln === 'Friend' ? 'selected' : '' %>>Friend
+                                                                            </option>
+                                                                            <option value="Other" <%= profile.kin_rln === 'Other' ? 'selected' : '' %>>Other</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Next of Kin
+                                                                            Phone
+                                                                            *</label>
+                                                                        <input name="kinPhone" type="text"
+                                                                            class="form-control"
+                                                                            placeholder="e.g 07XXXXXXXX" value="<%= profile.kin_phone || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Next of Kin
+                                                                            Physical
+                                                                            Address *</label>
+                                                                        <input name="kinLocation" type="text"
+                                                                            placeholder="Enter County & town"
+                                                                            class="form-control" value="<%= profile.kin_location || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Copy of
+                                                                                Duly filled
+                                                                                Membership Form
+                                                                                *</label>
+                                                                            <input name="memberDoc" type="file"
+                                                                                class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Copy of National ID/ Passport *</label>
+                                                                            <input name="memberIdDoc" type="file"
+                                                                                class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                        <% if(!hasProfile) { %>
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary waves-effect waves-light m-r-10">Submit
+                                                                        </button>
+                                                                        <% } %>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                                <!-- Facility details -->
+                                <% if (membershipType === 'Facility In') { %>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                        <div class="panel-group adminpro-custon-design" id="accordion">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading accordion-head">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                                                            <%= (!hasFacility) ? 'Facility Details Incomplete' : 'Facility Details Complete' %>
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse3" class="panel-collapse panel-ic collapse <%= (hasFacility) ? '' : 'in' %>">
+                                                    <div class="panel-body admin-panel-content animated bounce">
+                                                        <form action="/portal/add-draft-facility-details" method="POST">
+                                                                <div class="row">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Facility
+                                                                                Name
+                                                                                *</label>
+                                                                            <input name="facilityName" type="text"
+                                                                                placeholder="Name of your Facility"
+                                                                                class="form-control" value="<%= facility && facility.facility_name ? facility.facility_name : '' %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Facility
+                                                                                Type</label>
+                                                                            <select class="form-control required"
+                                                                                name="facilityType">
+                                                                                <option value="" <%= !facility?.facility_type ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Daycare" <%= facility?.facility_type === 'Daycare' ? 'selected' : '' %>>Daycare</option>
+                                                                                <option value="Home-Care" <%= facility?.facility_type === 'Home-Care' ? 'selected' : '' %>>Home-Care</option>
+                                                                                <option value="ECD Playgroup" <%= facility?.facility_type === 'ECD Playgroup' ? 'selected' : '' %>>ECD Playgroup</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Setup
+                                                                                Type</label>
+                                                                            <select class="form-control required"
+                                                                                name="setupType">
+                                                                                <option value="" <%= !facility?.setup_type ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="School Based" <%= facility?.setup_type === 'School Based' ? 'selected' : '' %>>
+                                                                                    School-based
+                                                                                    (Within
+                                                                                    education system)</option>
+                                                                                <option value="Center Based" <%= facility?.setup_type === 'Center Based' ? 'selected' : '' %>>
+                                                                                    Center-based
+                                                                                    (Autonomous rented space)
+                                                                                </option>
+                                                                                <option value="Home Based" <%= facility?.setup_type === 'Home Based' ? 'selected' : '' %>>
+                                                                                    Home-based
+                                                                                    (Within your
+                                                                                    house)</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Year Started *</label>
+                                                                            <select name="yearStarted" class="form-control" required>
+                                                                                <option value="" <%= !facility || !facility.facility_estab_year ? 'selected' : '' %>>- select -</option>
+                                                                                <% for (let y = 1950; y <= 2025; y++) { %>
+                                                                                    <option value="<%= y %>" <%= facility && facility.facility_estab_year == y ? 'selected' : '' %>><%= y %></option>
+                                                                                <% } %>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Registration
+                                                                                Number
+                                                                            </label>
+                                                                            <input name="registrationNumber" type="text"
+                                                                                placeholder="Reg number"
+                                                                                class="form-control" value="<%= facility && facility.reg_no ? facility.reg_no : '' %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">License
+                                                                                Number
+                                                                            </label>
+                                                                            <input name="licenseNumber" type="text"
+                                                                                placeholder="License Number"
+                                                                                class="form-control" value="<%= facility && facility.license_no ? facility.license_no : '' %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Male Beneficiaries</label>
+                                                                            <input name="maleB" type="number"
+                                                                                placeholder="Male Beneficiaries"
+                                                                                class="form-control" value="<%= facility && facility.male_b != null ? facility.male_b : 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Female Beneficiaries</label>
+                                                                            <input name="femaleB" type="number" placeholder="Female Beneficiaries" 
+                                                                             value="<%= facility && facility.female_b != null ? facility.female_b : 0 %>" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Male Beneficiaries with disability</label>
+                                                                            <input name="maleBD" type="number"
+                                                                                placeholder="Male Beneficiaries with disability"
+                                                                                class="form-control" value="<%= facility && facility.male_b_dis != null ? facility.male_b_dis : 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of
+                                                                                Female Beneficiaries with
+                                                                                disability
+                                                                            </label>
+                                                                            <input name="femaleBD" type="number"
+                                                                                placeholder="Female Beneficiaries with disability"
+                                                                                class="form-control" value="<%= facility && facility.female_b_dis != null ? facility.female_b_dis : 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Male
+                                                                                Caregivers
+                                                                            </label>
+                                                                            <input name="maleC" type="number"
+                                                                                placeholder="Male Caregivers"
+                                                                                class="form-control" value="<%= facility && facility.male_c != null ? facility.male_c : 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Female Caregivers</label>
+                                                                            <input name="femaleC" type="number"
+                                                                                placeholder="Female Caregivers"
+                                                                                class="form-control" value="<%= facility && facility.female_c != null ? facility.female_c : 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                    <% if(!hasFacility) { %>
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary waves-effect waves-light m-r-10">Submit
+                                                                        </button>
+                                                                    <% } %>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+
+                                <!-- Benefits and programs -->
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                        <div class="panel-group adminpro-custon-design" id="accordion">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading accordion-head">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+                                                            <%= (!hasBenefits) ? 'Program, Benefits & Financial Access Incomplete' : 'Program, Benefits & Financial Access Complete' %></a>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse4" class="panel-collapse panel-ic collapse in">
+                                                    <div class="panel-body admin-panel-content animated bounce">
+                                                        <form action="/portal/add-draft-member-benefits" method="POST">
+                                                    <div class="row">
+                                                        <div class="sparkline12-hd">
+                                                            <div class="main-sparkline12-hd">
+                                                                <h1>1. Childcare Course and
+                                                                    Certfication</h1>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Do you
+                                                                    have a
+                                                                    Competency
+                                                                    Validation
+                                                                    Certificate?</label>
+                                                                <select class="form-control required"
+                                                                    name="competency_cert">
+                                                                    <option value="">- select -
+                                                                    </option>
+                                                                    <option value="Yes">Yes
+                                                                    </option>
+                                                                    <option value="No">No
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Do
+                                                                    you/your child
+                                                                    caregiver
+                                                                    have any childcare
+                                                                    training?</label>
+                                                                <select class="form-control required"
+                                                                    name="childcare_training_done">
+                                                                    <option value="">- select -
+                                                                    </option>
+                                                                    <option value="Yes">Yes
+                                                                    </option>
+                                                                    <option value="No">No
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Would
+                                                                    you like to
+                                                                    access
+                                                                    professional childcare
+                                                                    training/refresher/certificate?</label>
+                                                                <select class="form-control required"
+                                                                    name="childcare_training_access">
+                                                                    <option value="">- select -
+                                                                    </option>
+                                                                    <option value="Yes">Yes
+                                                                    </option>
+                                                                    <option value="No">No
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="sparkline12-hd">
+                                                                <div class="main-sparkline12-hd">
+                                                                    <h1>2. Business Skills
+                                                                        Development and
+                                                                        Mentorship</h1>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Would
+                                                                        you like to
+                                                                        access
+                                                                        this benefit?</label>
+                                                                    <select class="form-control required"
+                                                                        name="biz_dev_mentorship">
+                                                                        <option value="">-
+                                                                            select -</option>
+                                                                        <option value="Yes">Yes
+                                                                        </option>
+                                                                        <option value="No">No
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="sparkline12-hd">
+                                                                <div class="main-sparkline12-hd">
+                                                                    <h1>3. Childcare Center
+                                                                        Design and
+                                                                        Renovation</h1>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="form-label">Would
+                                                                        you like to
+                                                                        access
+                                                                        this benefit?</label>
+                                                                    <select class="form-control required"
+                                                                        name="childcare_design_benefit">
+                                                                        <option value="">-
+                                                                            select -</option>
+                                                                        <option value="Yes">Yes
+                                                                        </option>
+                                                                        <option value="No">No
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="sparkline12-hd">
+                                                            <div class="main-sparkline12-hd">
+                                                                <h1>4. Financial Services</h1>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Do you
+                                                                    have an active
+                                                                    bank
+                                                                    account?</label>
+                                                                <select class="form-control required" name="active_bank">
+                                                                    <option value="">- select -
+                                                                    </option>
+                                                                    <option value="Yes">Yes
+                                                                    </option>
+                                                                    <option value="No">No
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Would
+                                                                    you like to
+                                                                    access
+                                                                    banking services?</label>
+                                                                <select class="form-control required"
+                                                                    name="banking_services">
+                                                                    <option value="">- select -
+                                                                    </option>
+                                                                    <option value="Yes">Yes
+                                                                    </option>
+                                                                    <option value="No">No
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="sparkline12-hd">
+                                                            <div class="main-sparkline12-hd">
+                                                                <h1>5. Financial Products</h1>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Emergency Loan?</label>
+                                                                <select class="form-control required" name="emergency_loan">
+                                                                    <option value="">- select -</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Business Loan?</label>
+                                                                <select class="form-control required" name="business_loan">
+                                                                    <option value="">- select -</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Asset Loan?</label>
+                                                                <select class="form-control required" name="asset_loan">
+                                                                    <option value="">- select -</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Education Loan?</label>
+                                                                <select class="form-control required" name="education_loan">
+                                                                    <option value="">- select -</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Health Insurance?</label>
+                                                                <select class="form-control required" name="health_insurance">
+                                                                    <option value="">- select -</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                            <div class="form-group">
+                                                                <label class="form-label">Other?</label>
+                                                                <select class="form-control required" name="other">
+                                                                    <option value="">- select -</option>
+                                                                    <option value="Yes">Yes</option>
+                                                                    <option value="No">No</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                <% if(!hasBenefits) { %>
+                                                                    <button type="submit" class="btn btn-primary waves-effect waves-light m-r-10">Submit</button>
+                                                                <% } %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } else { %>
+                                    <!-- Confirm details -->
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                        <div class="panel-group adminpro-custon-design" id="accordion">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading accordion-head">
+                                                    <h4 class="panel-title">
+                                                        Confirmation
+                                                    </h4>
+                                                </div>
+                                                <div id="collapse1" class="panel-collapse panel-ic collapse in">
+                                                    <div class="panel-body admin-panel-content animated bounce">
+                                                        <form action="/portal/confirm-draft-member-details" method="POST">
+                                                            <div class="row">
+                                                                <div class="product-confarmation">
+                                                                <h2>Commitment to Uthabiti Africa NetworkMembership</h2>
+                                                            </div>
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="bt-df-checkbox">
+                                                                        <label><input class="radio-checked" type="checkbox" required>
+                                                                            I confirm that I understand the
+                                                                            benefits of being a
+                                                                            member of the Network and will
+                                                                            uphold
+                                                                            the vision and values of the
+                                                                            network, as a champion
+                                                                            for quality childcare.
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="bt-df-checkbox">
+                                                                        <label><input class=" radio-checked" type="checkbox" required>
+                                                                            I confirm that the information
+                                                                            provided herein, and
+                                                                            the disclosure made is true.
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="bt-df-checkbox">
+                                                                        <label><input class=" radio-checked" type="checkbox" required>
+                                                                            I Agree to <a href="" class="alert-danger">Terms &
+                                                                                Conditions.</a>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12  text-center">
+                                                                    <button class="btn btn-success loginbtn" type="submit">Confirm
+                                                                        Details</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- Bottom script start -->
+        <%- include('../partials/bottom_script'); %>
+            <!-- / Bottom script end -->
+            <script src="/dataUtils/commonCountryCitizenship.js"></script>
+            <!-- <script src="/dataUtils/counties.js"></script> -->
+            <script src="/jsUtils/add-member.js"></script>
+</body>
+
+</html>

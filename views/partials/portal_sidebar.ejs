@@ -1,0 +1,216 @@
+<div class="left-sidebar-pro">
+    <nav id="sidebar" class="">
+        <div class="sidebar-header mg-t-15">
+            <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+            <strong><img src="/img/logo/logosn.png" alt="" /></strong>
+        </div>
+
+        <div class="left-custom-menu-adp-wrap comment-scrollbar">
+            <nav class="sidebar-nav left-sidebar-menu-pro">
+                <ul class="metismenu" id="menu1">
+
+                    <% if (hasAccess('dashboard')) { %>
+                    <li class="<%= currentPath.startsWith('/portal/dashboard') ? 'active' : '' %>">
+                        <a title="Dashboard" href="/portal/dashboard" aria-expanded="false">
+                            <i class="fa big-icon fa-tachometer icon-wrap"></i>
+                            <span class="mini-click-non">Dashboard</span>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('members') || hasAccess('approval')) { %>
+                    <li class="<%= (currentPath.startsWith('/portal/members') || currentPath.startsWith('/portal/approval')) ? 'active' : '' %>">
+                        <a class="has-arrow" href="#">
+                            <i class="fa big-icon fa-user icon-wrap"></i>
+                            <span class="mini-click-non">Membership</span>
+                        </a>
+                        <ul class="submenu-angle" aria-expanded="true">
+                            <% if (hasAccess('members')) { %>
+                            <li><a title="Members" href="/portal/members">
+                                <i class="fa fa-users sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Members</span></a>
+                            </li>
+                            <% } %>
+
+                            <% if (hasAccess('approval')) { %>
+                            <li><a title="Approval" href="/portal/approval">
+                                <i class="fa fa-check-square sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Approval</span></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('facilities') || hasAccess('add-facility')) { %>
+                    <li class="<%= (currentPath.startsWith('/portal/facilities') || currentPath.startsWith('/portal/add-facility')) ? 'active' : '' %>">
+                        <a class="has-arrow" href="#" aria-expanded="false">
+                            <i class="fa big-icon fa-square icon-wrap"></i>
+                            <span class="mini-click-non">Facilities</span>
+                        </a>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <% if (hasAccess('facilities')) { %>
+                            <li><a title="Facilities" href="/portal/facilities">
+                                <i class="fa fa-list sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Facilities</span></a>
+                            </li>
+                            <% } %>
+
+                            <% if (hasAccess('add-facility')) { %>
+                            <li><a title="Add Facility" href="/portal/add-facility">
+                                <i class="fa fa-plus sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Add Facility</span></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('caregiver') || hasAccess('add-caregiver')) { %>
+                    <li class="<%= (currentPath.startsWith('/portal/caregiver') || currentPath.startsWith('/portal/add-caregiver')) ? 'active' : '' %>">
+                        <a class="has-arrow" href="#" aria-expanded="false">
+                            <i class="fa big-icon fa-user icon-wrap"></i>
+                            <span class="mini-click-non">Caregiver</span>
+                        </a>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <% if (hasAccess('caregiver')) { %>
+                            <li><a title="Caregiver" href="/portal/caregiver">
+                                <i class="fa fa-list sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Caregiver</span></a>
+                            </li>
+                            <% } %>
+
+                            <% if (hasAccess('add-caregiver')) { %>
+                            <li><a title="Add Caregiver" href="/portal/add-caregiver">
+                                <i class="fa fa-user-plus sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Add Caregiver</span></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('beneficiaries') || hasAccess('add-beneficiary')) { %>
+                    <li class="<%= (currentPath.startsWith('/portal/beneficiaries') || currentPath.startsWith('/portal/add-beneficiary')) ? 'active' : '' %>">
+                        <a class="has-arrow" href="#" aria-expanded="false">
+                            <i class="fa big-icon fa-users icon-wrap"></i>
+                            <span class="mini-click-non">Beneficiaries</span>
+                        </a>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <% if (hasAccess('add-beneficiary')) { %>
+                            <li><a title="Add Beneficiary" href="/portal/add-beneficiary">
+                                <i class="fa fa-user-plus sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Add Beneficiary</span></a>
+                            </li>
+                            <% } %>
+
+                            <% if (hasAccess('beneficiaries')) { %>
+                            <li><a title="Beneficiaries" href="/portal/beneficiaries">
+                                <i class="fa fa-users sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Beneficiaries</span></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </li>
+                    <% } %>
+
+                    <% if (
+                        hasAccess('sacco-member') ||
+                        hasAccess('contributions') ||
+                        hasAccess('loans')
+                    ) { %>
+                    <li class="<%= (
+                            currentPath.startsWith('/portal/sacco-member') ||
+                            currentPath.startsWith('/portal/contributions') ||
+                            currentPath.startsWith('/portal/loans')
+                        ) ? 'active' : '' %>">
+                        <a class="has-arrow" href="#" aria-expanded="false">
+                            <i class="fa big-icon fa-briefcase icon-wrap"></i>
+                            <span class="mini-click-non">Sacco</span>
+                        </a>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <% if (hasAccess('sacco-member')) { %>
+                            <li><a href="/portal/sacco-member">
+                                <i class="fa fa-user sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Members</span></a>
+                            </li>
+                            <% } %>
+
+                            <% if (hasAccess('contributions')) { %>
+                            <li><a href="/portal/contributions">
+                                <i class="fa fa-money sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Contributions</span></a>
+                            </li>
+                            <% } %>
+
+                            <% if (hasAccess('loans')) { %>
+                            <li><a href="/portal/loans">
+                                <i class="fa fa-cubes sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Loans</span></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('analysis') || hasAccess('reports')) { %>
+                    <li class="<%= (currentPath.startsWith('/portal/analysis') ||
+                    currentPath.startsWith('/portal/reports')) ? 'active' : '' %>">
+                        <a class="has-arrow" href="#" aria-expanded="false">
+                            <i class="fa big-icon fa-table icon-wrap"></i>
+                            <span class="mini-click-non">Data & Reports</span>
+                        </a>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <li><a title="Power BI" href="/portal/analysis">
+                                <i class="fa fa-bar-chart sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Analysis</span></a>
+                            </li>
+                        </ul>
+                        <!-- <ul class="submenu-angle" aria-expanded="false">
+                            <li><a title="Print Data" href="/portal/reports">
+                                <i class="fa fa-print sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Reports</span></a>
+                            </li>
+                        </ul> -->
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('users') || hasAccess('details') || hasAccess('settings')) { %>
+                    <li class="<%= (
+                            currentPath.startsWith('/portal/users') ||
+                            currentPath.startsWith('/portal/details') ||
+                            currentPath.startsWith('/portal/settings')
+                        ) ? 'active' : '' %>">
+                        <a class="has-arrow" href="#" aria-expanded="false">
+                            <i class="fa big-icon fa-gears icon-wrap"></i>
+                            <span class="mini-click-non">Settings</span>
+                        </a>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <% if (hasAccess('users')) { %>
+                            <li><a title="Access Users" href="/portal/users">
+                                <i class="fa fa-users sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Users</span></a>
+                            </li>
+                            <% } %>
+
+                            <% if (hasAccess('details')) { %>
+                            <!-- <li><a title="Organization Details" href="/portal/details">
+                                <i class="fa fa-institution sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Details</span></a>
+                            </li> -->
+                            <% } %>
+
+                            <% if (hasAccess('settings')) { %>
+                            <li><a title="System Settings" href="/portal/settings">
+                                <i class="fa fa-cog sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Settings</span></a>
+                            </li>
+                            <% } %>
+                        </ul>
+                    </li>
+                    <% } %>
+                </ul>
+            </nav>
+        </div>
+    </nav>
+</div>

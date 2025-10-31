@@ -1,0 +1,819 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Member details</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admin">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="author-area-pro">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                            <div class="personal-info-wrap">
+                                                <div class="membership-card">
+                                                    <div class="card-header te">
+                                                        <h2>Uthabiti Membership</h2>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="member-photo">
+                                                            <img src="/img/contact/member.jpg" alt="Member Photo">
+                                                        </div>
+                                                        <div class="member-details text-center">
+                                                            <h3 class="member-name"><%= details.full_name %></h3>
+                                                            <p class="member-number">Member No: <strong><%= details.membership_no %></strong></p>
+                                                            <% 
+                                                            let statusClass = 
+                                                                details.status === 'Active' ? 'label-success' :
+                                                                details.status === 'Inactive' ? 'label-info' :
+                                                                details.status === 'Suspended' ? 'label-danger' :
+                                                                details.status === 'Pending' ? 'label-warning' :
+                                                                details.status === 'Draft' ? 'label-default' : '';
+                                                            %>
+                                                            <p class="facility"><strong class="label <%= statusClass %>"><%= details.status %></strong></p>
+                                                            <p class="reg-date">Joined: <strong><%= formatDate(details.reg_date) %></strong></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                                                    <div class="btn-group">
+                                                        <% if (isAdmin) { %>
+                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editProfileModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-user"></i> Edit Profile</button>
+                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-pencil"></i> Status</button>
+                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editBenefitsModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-tag"></i> Benefits</button>
+                                                        <% } %>
+                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#idModal"><i class="fa fa-file"></i> Docs</button>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
+                                                    <div class="btn-group">
+                                                        <a class="btn btn-default btn-sm" href="/portal/members"><i class="fa fa-arrow-left"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                            <div class="hpanel">
+                                                <div class="panel-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover table-bordered">
+                                                            <thead>
+                                                                <tr class="bg-red text-white">
+                                                                    <th colspan="4">Member Details</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Contact:</strong></td>
+                                                                    <td width="25%"><%= details.phone %></td>
+                                                                    <td width="25%" align="right"><strong>ID Number:</strong></td>
+                                                                    <td width="25%"><%= details.id_number %></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>DoB</strong></td>
+                                                                    <td width="25%"><%= formatDate(details.dob) %></td>
+                                                                    <td width="25%" align="right"><strong>Gender:</strong></td>
+                                                                    <td width="25%"><%= details.gender %></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Disability Status:</strong></td>
+                                                                    <td width="25%"><%= details.disability %></td>
+                                                                    <td width="25%" align="right"><strong>Level of Education:</strong></td>
+                                                                    <td width="25%"><%= details.education_level %></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Location:</strong></td>
+                                                                    <td colspan="3" align="left"><%= details.county %> County - <%= details.sub_county %> Sub County - <%= details.ward %> Ward</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Next of Kin:</strong></td>
+                                                                    <td colspan="3" align="left"><%= details.next_kin_name %> - (<b><%= details.kin_rln %></b>) -  <b>From:</b> <%= details.kin_location %>. <b>Phone No:</b> <%= details.kin_phone %></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                            <div class="admin-pro-accordion-wrap responsive-mg-b-30 hpanel">
+                                                <div class="panel-group adminpro-custon-design panel-body" id="accordion">
+                                                    <% if(facility.length > 0) { %>
+                                                    <div class="panel panel-default mg-b-30">
+                                                        <div class="panel-headin accordion-head mg-b-30">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Facility Details</a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapse1" class="panel-collapse panel-ic collapse">
+                                                            <div class="panel-body admin-panel-content animated bounce">
+                                                                
+                                                                <% facility.forEach( (f, index) => { %>
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th colspan="4">Facility <%= index + 1 %> - <%= f.status %> </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="25%" align="right"><strong>Name:</strong></td>
+                                                                                <td width="25%"><%= f.facility_name %></td>
+                                                                                <td width="25%" align="right"><strong>Facility Type:</strong></td>
+                                                                                <td width="25%"><%= f.facility_type %></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td width="25%" align="right"><strong>Setup:</strong></td>
+                                                                                <td width="25%"><%= f.setup_type %></td>
+                                                                                <td width="25%" align="right"><strong>Year Started:</strong></td>
+                                                                                <td width="25%"><%= f.facility_estab_year %></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td width="25%" align="right"><strong>Reg Number:</strong></td>
+                                                                                <td width="25%"><%= f.reg_no %></td>
+                                                                                <td width="25%" align="right"><strong>License:</strong></td>
+                                                                                <td width="25%"><%= f.license_no %></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td width="25%" align="right"><strong>Beneficiaries:</strong></td>
+                                                                                <td width="25%"><%= f.total_beneficiaries %></td>
+                                                                                <td width="25%" align="right"><strong>Caregivers:</strong></td>
+                                                                                <td width="25%"><%= f.total_caregivers %></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td width="25%" align="right"><strong>Location:</strong></td>
+                                                                                <td colspan="3" align="left"><%= f.f_county %> County - <%= f.f_subcounty %> Sub County - <%= f.f_area %> Ward</td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                <% }); %>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <% } else { %>
+                                                        <table class="table table-hover table-bordered"><tr><td>No facility found</td></tr></table>
+                                                    <% } %>
+
+                                                    <% if(benefits) { %>
+                                                    <div class="panel panel-default mg-b-30">
+                                                        <div class="panel-headin accordion-head mg-b-30">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Benefits & Programs</a>
+                                                            </h4>
+                                                        </div>
+                                                        <div id="collapse2" class="panel-collapse panel-ic collapse">
+                                                            <div class="panel-body admin-panel-content animated bounce">
+                                                                <table class="table table-bordered">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Benefit</th>
+                                                                            <th>Status</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <% Object.keys(benefits).forEach(key => { %>
+                                                                        <tr>
+                                                                            <td><%= key.replace(/_/g, ' ').toUpperCase() %></td>
+                                                                            <td>
+                                                                            <% if (benefits[key] === 'Yes') { %>
+                                                                                ✅ Yes
+                                                                            <% } else if (benefits[key] === 'No') { %>
+                                                                                ❌ No
+                                                                            <% } else { %>
+                                                                                —
+                                                                            <% } %>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <% }) %>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <% } else { %>
+                                                        <table class="table table-hover table-bordered"><tr><td>No benefit found</td></tr></table>
+                                                    <% } %>
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-headin mg-b-30 accordion-head">
+                                                            <h4 class="panel-title">
+                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Sacco Details</a>
+                                                            </h4>
+                                                        </div>
+                                                        <% if(saccos) { %>
+                                                            <div id="collapse3" class="panel-collapse panel-ic collapse">
+                                                                <div class="panel-body admin-panel-content animated bounce">
+                                                                    <table class="table table-hover table-bordered">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th colspan="4">Sacco Details </th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <td width="25%" align="right"><strong>Join Date:</strong></td>
+                                                                                <td width="25%"><%= formatDate(saccos.join_date) %></td>
+                                                                                <td width="25%" align="right"><strong>Shares:</strong></td>
+                                                                                <td width="25%"><%= saccos.shares %></td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td width="25%" align="right"><strong>Savings:</strong></td>
+                                                                                <td width="25%"><%= saccos.savings %></td>
+                                                                                <td width="25%" align="right"><strong>Loan Balance:</strong></td>
+                                                                                <td width="25%"><%= saccos.loan_balance %></td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        <% } else { %>
+                                                        <div id="collapse3" class="panel-collapse panel-ic collapse">
+                                                            <div class="panel-body admin-panel-content animated bounce">
+                                                                <p>No SACCO membership details.</p>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Edit member status -->
+<% 
+  let modalTitle = '';
+  let modalMessage = '';
+
+  switch (details.status) {
+    case 'Active':
+      modalTitle = 'Suspend Member?';
+      modalMessage = 'This member is currently active. Do you want to suspend this member’s account?';
+      break;
+    case 'Inactive':
+      modalTitle = 'Activate Member?';
+      modalMessage = 'This member is inactive. Do you want to activate their account so they can access the system?';
+      break;
+    case 'Draft':
+      modalTitle = 'Submit Member Profile?';
+      modalMessage = 'This member’s profile is in draft mode. Do you want to submit and activate this profile?';
+      break;
+    case 'Pending':
+      modalTitle = 'Approve Member?';
+      modalMessage = 'This member’s registration is pending review. Do you want to approve and activate the account?';
+      break;
+    case 'Suspended':
+      modalTitle = 'Reactivate Member?';
+      modalMessage = 'This member is currently suspended. Do you want to reactivate their account?';
+      break;
+  }
+%>
+<div id="editStatusModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content modal-vertical-centered">
+            <div class="modal-close-area modal-close-df">
+                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+            </div>
+            <form action="/portal/update-member-status/<%= details.member_id %>" method="POST">
+                <div class="modal-body">
+                    <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
+                    <h2><%= modalTitle %></h2>
+                    <p><p><%= modalMessage %></p></p>
+                    <div class="row mg-t-30">
+                        <div class="col-md-12">
+                            <textarea class="form-control" name="reason" placeholder="Give reason ..." required></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="currentStatus" value="<%= details.status %>">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Members Docs Modal -->
+<div id="idModal" class="modal FullColor-popup-AlertModal fade">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header header-color-modal bg-color-4">
+                <h4 class="modal-title">Member Documents</h4>
+                <div class="modal-close-area modal-close-df">
+                    <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row mg-b-30">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="admintab-wrap mg-t-30">
+                            <ul class="nav nav-tabs custom-menu-wrap custon-tab-menu-style1">
+                                <li class="active"><a data-toggle="tab" href="#TabForm"><span
+                                            class="adminpro-icon adminpro-analytics tab-custon-ic"></span>Membership
+                                        Form Copy</a>
+                                </li>
+                                <li><a data-toggle="tab" href="#TabID"><span
+                                            class="adminpro-icon adminpro-analytics-arrow tab-custon-ic"></span>National
+                                        ID/Passport Copy</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="TabForm" class="tab-pane in active animated flipInX custon-tab-style1">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12"></div>
+                                    <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="pdf-single-pro text-center">
+                                            <% if (details.member_doc && details.member_doc.trim() !=='' ) { %>
+                                                <a class="media" href="<%= details.member_doc %>"></a>
+                                                <% } else { %>
+                                                    <p class="text-muted">No document uploaded.</p>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12"></div>
+                                </div>
+                                <div id="TabID" class="tab-pane animated flipInX custon-tab-style1">
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="pdf-single-pro">
+                                            <% if (details.member_id_doc && details.member_id_doc.trim() !=='' ) { %>
+                                                <a class="media" href="<%= details.member_id_doc %>"></a>
+                                                <% } else { %>
+                                                    <p class="text-muted">No document uploaded.</p>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit profile modal -->
+<div id="editProfileModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header header-color-modal bg-color-4">
+                <h4 class="modal-title">Edit Profile</h4>
+            </div>
+            <form action="/portal/update-member-details" method="POST">
+                <div class="modal-body">
+                    <div class="row mg-b-30">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Phone Number
+                                    *</label>
+                                <input name="phoneNumber" type="number" class="form-control" placeholder="e.g 07XXXXXXXX"
+                                    value="<%= details.phone || '' %>" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">National ID/ Passport Number *</label>
+                                <input name="idNumber" type="number" placeholder="Enter ID" class="form-control"
+                                    value="<%= details.id_number || '' %>" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Date of Birth
+                                    *</label>
+                                <input name="dob" value="<%= details.dob ? new Date(details.dob).toISOString().split('T')[0] : '' %>" type="date"
+                                    class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Gender
+                                    *</label>
+                                <select class="form-control required" name="gender" required>
+                                    <option value="" <%=!details.gender ? 'selected' : '' %>>- select gender -</option>
+                                    <option value="Male" <%=details.gender==='Male' ? 'selected' : '' %>>Male</option>
+                                    <option value="Female" <%=details.gender==='Female' ? 'selected' : '' %>>Female</option>
+                                    <option value="Intersex" <%=details.gender==='Intersex' ? 'selected' : '' %>>Intersex</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Disability
+                                    *</label>
+                                <select class="form-control required" name="disability" required>
+                                    <option value="" <%=!details.disability ? 'selected' : '' %>>- disability status -</option>
+                                    <option value="None" <%=details.disability==='None' ? 'selected' : '' %>>None</option>
+                                    <option value="Physical" <%=details.disability==='Physical' ? 'selected' : '' %>>Physical
+                                        Impairement
+                                    </option>
+                                    <option value="Hearing" <%=details.disability==='Hearing' ? 'selected' : '' %>>Hearing
+                                        Impairement
+                                    </option>
+                                    <option value="Visual" <%=details.disability==='Visual' ? 'selected' : '' %>>Visual
+                                        Impairement
+                                    </option>
+                                    <option value="Intellectual" <%=details.disability==='Intellectual' ? 'selected' : '' %>>
+                                        Intellectual
+                                        Impairement</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Education
+                                    Level
+                                    *</label>
+                                <select class="form-control required" name="educationLevel" required>
+                                    <option value="" <%=!details.education_level ? 'selected' : '' %>>- education -</option>
+                                    <option value="None" <%=details.education_level==='None' ? 'selected' : '' %>>No Formal
+                                        Education
+                                    </option>
+                                    <option value="Primary Incomplete" <%=details.education_level==='Primary Incomplete' ? 'selected' : '' %>>
+                                        Primary
+                                        Incomplete</option>
+                                    <option value="Primary Complete" <%=details.education_level==='Primary Complete' ? 'selected' : '' %>>
+                                        Primary
+                                        Complete
+                                        (KCPE or equivalent)</option>
+                                    <option value="Secondary Incomplete" <%=details.education_level==='Secondary Incomplete' ? 'selected' : ''
+                                        %>>
+                                        Secondary
+                                        Incomplete</option>
+                                    <option value="Secondary Complete" <%=details.education_level==='Secondary Complete' ? 'selected' : '' %>>
+                                        Secondary
+                                        Complete (KCSE or equivalent)
+                                    </option>
+                                    <option value="Certificate" <%=details.education_level==='Certificate' ? 'selected' : '' %>>
+                                        Certificate /
+                                        Artisan
+                                        Course</option>
+                                    <option value="Diploma" <%=details.education_level==='Diploma' ? 'selected' : '' %>>Diploma
+                                    </option>
+                                    <option value="Bachelors" <%=details.education_level==='Bachelors' ? 'selected' : '' %>>Bachelor’s
+                                        Degree
+                                    </option>
+                                    <option value="Masters" <%=details.education_level==='Masters' ? 'selected' : '' %>>Master’s
+                                        Degree
+                                    </option>
+                                    <option value="PHD" <%=details.education_level==='PHD' ? 'selected' : '' %>>Doctorate (PhD /
+                                        equivalent)
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mg-b-30">
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">County</label>
+                                <select class="form-control required" name="county" id="countySelect" required>
+                                    <option value="<%= details.county %>" selected><%= details.county %></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Sub-County *</label>
+                                <select class="form-control required" name="subCounty" id="subCountySelect" required>
+                                    <option value="<%= details.sub_county %>" selected><%= details.sub_county %></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Ward *</label>
+                                <select class="form-control required" name="ward" id="wardSelect" required>
+                                    <option value="<%= details.ward %>" selected><%= details.ward %></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mg-b-30">
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Next of Kin
+                                    Full Name
+                                    *</label>
+                                <input name="kinName" type="text" class="form-control" placeholder="Fullname"
+                                    value="<%= details.next_kin_name || '' %>" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Next of Kin
+                                    Relationship</label>
+                                <select class="form-control required" name="kinRln" required>
+                                    <option value="" <%=!details.kin_rln ? 'selected' : '' %>>- select -</option>
+                                    <option value="Parent" <%=details.kin_rln==='Parent' ? 'selected' : '' %>>Parent
+                                    </option>
+                                    <option value="Spouse" <%=details.kin_rln==='Spouse' ? 'selected' : '' %>>Spouse
+                                    </option>
+                                    <option value="Sibling" <%=details.kin_rln==='Sibling' ? 'selected' : '' %>>Sibling
+                                    </option>
+                                    <option value="Child" <%=details.kin_rln==='Child' ? 'selected' : '' %>>Child</option>
+                                    <option value="Relative" <%=details.kin_rln==='Relative' ? 'selected' : '' %>>Relative
+                                    </option>
+                                    <option value="Guardian" <%=details.kin_rln==='Guardian' ? 'selected' : '' %>>Guardian
+                                    </option>
+                                    <option value="Friend" <%=details.kin_rln==='Friend' ? 'selected' : '' %>>Friend
+                                    </option>
+                                    <option value="Other" <%=details.kin_rln==='Other' ? 'selected' : '' %>>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Next of Kin Phone *</label>
+                                <input name="kinPhone" type="text" class="form-control" placeholder="e.g 07XXXXXXXX"
+                                    value="<%= details.kin_phone || '' %>" required>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Physical Address *</label>
+                                <input name="kinLocation" type="text" placeholder="Enter County & town" class="form-control"
+                                    value="<%= details.kin_location || '' %>" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Benefits -->
+ <div id="editBenefitsModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header header-color-modal bg-color-4">
+                <h4 class="modal-title">Edit Benefits & Programs</h4>
+            </div>
+            <form action="/portal/update-member-benefits" method="POST">
+                <div class="modal-body">
+                    <div class="row mg-b-30">
+                        <div class="sparkline12-hd">
+                            <div class="main-sparkline12-hd">
+                                <h1>1. Childcare Course and Certfication</h1>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Do you have a Competency Validation Certificate?</label>
+                                <select class="form-control required" name="competency_cert">
+                                    <option value="" <%=!benefits?.competency_cert ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.competency_cert==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.competency_cert==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Do
+                                    you/your child
+                                    caregiver
+                                    have any childcare
+                                    training?</label>
+                                <select class="form-control required" name="childcare_training_done">
+                                    <option value="" <%=!benefits?.childcare_training_done ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.childcare_training_done==='Yes' ? 'selected' : '' %>>Yes
+                                    </option>
+                                    <option value="No" <%=benefits?.childcare_training_done==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Would
+                                    you like to
+                                    access
+                                    professional childcare
+                                    training/refresher/certificate?</label>
+                                <select class="form-control required" name="childcare_training_access">
+                                    <option value="" <%=!benefits?.childcare_training_access ? 'selected' : '' %>>- select -
+                                    </option>
+                                    <option value="Yes" <%=benefits?.childcare_training_access==='Yes' ? 'selected' : '' %>>Yes
+                                    </option>
+                                    <option value="No" <%=benefits?.childcare_training_access==='No' ? 'selected' : '' %>>No
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mg-b-30">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="sparkline12-hd">
+                                <div class="main-sparkline12-hd">
+                                    <h1>2. Business Skills
+                                        Development and
+                                        Mentorship</h1>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="form-label">Would
+                                        you like to
+                                        access
+                                        this benefit?</label>
+                                    <select class="form-control required" name="biz_dev_mentorship">
+                                        <option value="" <%=!benefits?.biz_dev_mentorship ? 'selected' : '' %>>- select -</option>
+                                        <option value="Yes" <%=benefits?.biz_dev_mentorship==='Yes' ? 'selected' : '' %>>Yes
+                                        </option>
+                                        <option value="No" <%=benefits?.biz_dev_mentorship==='No' ? 'selected' : '' %>>No</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="sparkline12-hd">
+                                <div class="main-sparkline12-hd">
+                                    <h1>3. Childcare Center
+                                        Design and
+                                        Renovation</h1>
+                                </div>
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group">
+                                    <label class="form-label">Would you like to access this benefit?</label>
+                                    <select class="form-control required" name="childcare_design_benefit">
+                                        <option value="" <%=!benefits?.childcare_design_benefit ? 'selected' : '' %>>- select -
+                                        </option>
+                                        <option value="Yes" <%=benefits?.childcare_design_benefit==='Yes' ? 'selected' : '' %>>Yes
+                                        </option>
+                                        <option value="No" <%=benefits?.childcare_design_benefit==='No' ? 'selected' : '' %>>No
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="sparkline12-hd">
+                            <div class="main-sparkline12-hd">
+                                <h1>4. Financial Services</h1>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Do you have an active bank account?</label>
+                                <select class="form-control required" name="active_bank">
+                                    <option value="" <%=!benefits?.active_bank ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.active_bank==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.active_bank==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Would
+                                    you like to
+                                    access
+                                    banking services?</label>
+                                <select class="form-control required" name="banking_services">
+                                    <option value="" <%=!benefits?.banking_services ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.banking_services==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.banking_services==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="sparkline12-hd">
+                            <div class="main-sparkline12-hd">
+                                <h1>5. Financial Products</h1>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Emergency L.?</label>
+                                <select class="form-control required" name="emergency_loan">
+                                    <option value="" <%=!benefits?.emergency_loan ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.emergency_loan==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.emergency_loan==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Business Loan?</label>
+                                <select class="form-control required" name="business_loan">
+                                    <option value="" <%=!benefits?.business_loan ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.business_loan==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.business_loan==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Asset Loan?</label>
+                                <select class="form-control required" name="asset_loan">
+                                    <option value="" <%=!benefits?.asset_loan ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.asset_loan==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.asset_loan==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Education Loan?</label>
+                                <select class="form-control required" name="education_loan">
+                                    <option value="" <%=!benefits?.education_loan ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.education_loan==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.education_loan==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">H. Insurance?</label>
+                                <select class="form-control required" name="health_insurance">
+                                    <option value="" <%=!benefits?.health_insurance ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.health_insurance==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.health_insurance==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                            <div class="form-group">
+                                <label class="form-label">Other?</label>
+                                <select class="form-control required" name="other">
+                                    <option value="" <%=!benefits?.other ? 'selected' : '' %>>- select -</option>
+                                    <option value="Yes" <%=benefits?.other==='Yes' ? 'selected' : '' %>>Yes</option>
+                                    <option value="No" <%=benefits?.other==='No' ? 'selected' : '' %>>No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+<script src="/jsUtils/add-member.js"></script>
+</body>
+</html>

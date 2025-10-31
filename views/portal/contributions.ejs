@@ -1,0 +1,336 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Contributions</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+    <%- include('../partials/top_script'); %>
+        <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+    <%- include('../partials/portal_sidebar'); %>
+        <!-- / Side bar -->
+
+        <!-- Start Welcome area -->
+        <div class="all-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="logo-pro">
+                            <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px"
+                                    width="80px" alt="" /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-advance-area">
+                <!-- Header top start -->
+                <%- include('../partials/header_top'); %>
+                    <!-- / Header top end -->
+                    <!-- Mobile Menu start -->
+                    <%- include('../partials/mobile_menu'); %>
+                        <!-- Mobile Menu end -->
+            </div>
+            <div class="section-admin container-fluid res-mg-t-15" style="margin-top: 60px;">
+                <div class="row admin">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="sparkline10-list mt-b-30">
+                                    <div class="sparkline10-hd">
+                                        <div class="main-sparkline10-hd">
+                                            <h1>Member Contributions</h1>
+                                        </div>
+                                        <form method="GET" id="filterForm">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="text-center p-xs font-normal">
+                                                        <div class="input-group">
+                                                            <input type="text" name="search" class="form-control input-sm" placeholder="Search reference no..." value="<%= search || '' %>"> 
+                                                            <span class="input-group-btn"> 
+                                                                <button type="button" class="btn btn-sm btn-danger" onclick="this.form.submit()">Search
+                                                                </button> 
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 ">
+                                                    <a href="javascript:;">
+                                                        <b><span class="pull-left">
+                                                            <%= parseFloat(total).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %> Members
+                                                        </span></b>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="btn-group">
+                                                        <a href="/portal/contributions" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>
+                                                        <% if(isAdmin) { %>
+                                                        <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#exportContributionsModal"><i class="fa fa-cloud-download"></i> Export</a>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="limit" onchange="this.form.submit()">
+                                                            <option value="">Show: 10</option>
+                                                            <% perPageOptions.forEach(opt => { %>
+                                                                <option value="<%= opt %>" <%= perPage === opt ? "selected" : "" %>><%= opt %></option>
+                                                            <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="contributionType" onchange="this.form.submit()">
+                                                            <option value="">- contribution type -</option>
+                                                            <% types.forEach(t => { %>
+                                                                <option value="<%= t %>" <%= types === t ? "selected" : "" %>><%= t %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="paymentMethod" onchange="this.form.submit()">
+                                                            <option value="">- payment methods -</option>
+                                                            <% methods.forEach(m => { %>
+                                                                <option value="<%= m %>" <%= methods === m ? "selected" : "" %>><%= m %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <select class="form-control required" name="sortBy" onchange="this.form.submit()">
+                                                            <option value="">Sort By:</option>
+                                                            <option value="contribution_date" <%= sortBy==='contribution_date' ? 'selected' : '' %>>Sort by Contribution Date</option>
+                                                            <option value="amount_high" <%= sortBy==='amount_high' ? 'selected' : '' %>>Sort by High Amount</option>
+                                                            <option value="amount_low" <%= sortBy==='amount_low' ? 'selected' : '' %>>Sort by Less Amount</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="sparkline13-graph">
+                                        <div class="datatable-dashv1-list custom-datatable-overright table-responsive">
+                                            <table class="table table-bordered table-hover table-small">
+                                                <thead>
+                                                    <tr class="bg-red text-white">
+                                                        <th>Membership No.</th>
+                                                        <th>Fullname Name</th>
+                                                        <th>Transaction ID/ REF</th>
+                                                        <th>Contribution Type</th>
+                                                        <th>Amount</th>
+                                                        <th>Contribution Date</th>
+                                                        <th>Status</th>
+                                                        <th>Edit</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                <% if(contributions.length > 0) { %>
+                                                    <% contributions.forEach( c => { %>
+                                                        <% 
+                                                        let statusClass = 
+                                                            c.status === 'Completed' ? 'label-success' :
+                                                            c.status === 'Declined' ? 'label-danger' :
+                                                            c.status === 'Pending' ? 'label-warning' : '';
+                                                        %>
+                                                        <tr>
+                                                            <td><%= c.membership_no %></td>
+                                                            <td class="text-uppercase"><%= c.full_name %></td>
+                                                            <td><%= c.reference_no %></td>
+                                                            <td><%= c.contribution_type %></td>
+                                                            <td><%= parseFloat(c.amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %></td>
+                                                            <td><%= formatDate(c.contribution_date) %></td>
+                                                            <td><span class="label <%= statusClass %>"><%= c.status %></span></td>
+                                                            <td>
+                                                                <div class="button-style-three">
+                                                                    <% if (isAdmin || isDataClerk) { %>
+                                                                        <% if(c.status === 'Pending') { %>
+                                                                        <button class="btn btn-custon-three btn-default btn-xs edit-status-btn"
+                                                                            data-status=""
+                                                                            data-id=""
+                                                                            data-memberid=""
+                                                                            data-toggle="modal" data-target="#editStatusModal"><i class="fa fa-edit"></i></button>
+                                                                        <% } else {} %>
+                                                                    <% } %>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <% }); %>
+                                                <% } else { %>
+                                                    <tr><td colspan="8" style="text-align: center;">No contribution found</td></tr>
+                                                <% } %>
+                                                </tbody>
+                                            </table>
+                                            <!-- Pagination -->
+                                            <div class="custom-pagination">
+                                                <nav aria-label="Page navigation">
+                                                    <ul class="pagination justify-content-center">
+
+                                                    <% if (currentPage > 1) { %>
+                                                        <li class="page-item">
+                                                        <a class="page-link" 
+                                                            href="?page=<%= currentPage - 1 %>&limit=<%= perPage %>&search=<%= search %>&contributionType=<%= contributionType %>&paymentMethod=<%= paymentMethod %>&sortBy=<%= sortBy %>">
+                                                            Previous
+                                                        </a>
+                                                        </li>
+                                                    <% } %>
+
+                                                    <% paginationRange.forEach(p => { %>
+                                                        <% if (p === '...') { %>
+                                                        <li class="page-item disabled">
+                                                            <span class="page-link">...</span>
+                                                        </li>
+                                                        <% } else { %>
+                                                        <li class="page-item <%= p === currentPage ? 'active' : '' %>">
+                                                            <a class="page-link" 
+                                                            href="?page=<%= p %>&limit=<%= perPage %>&search=<%= search %>&contributionType=<%= contributionType %>&paymentMethod=<%= paymentMethod %>&sortBy=<%= sortBy %>">
+                                                            <%= p %>
+                                                            </a>
+                                                        </li>
+                                                        <% } %>
+                                                    <% }); %>
+
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item">
+                                                        <a class="page-link" 
+                                                            href="?page=<%= currentPage + 1 %>&limit=<%= perPage %>&search=<%= search %>&contributionType=<%= contributionType %>&paymentMethod=<%= paymentMethod %>&sortBy=<%= sortBy %>">
+                                                            Next
+                                                        </a>
+                                                        </li>
+                                                    <% } %>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                            <!-- / Pagination -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- Export Contributions -->
+ <div id="exportContributionsModal" class="modal FullColor-popup-AlertModal fade">
+  <div class="modal-dialog modal-lg">
+    <form method="GET" action="/portal/export-contributions">
+      <div class="modal-content">
+        <div class="modal-header header-color-modal bg-color-4">
+          <h4 class="modal-title">Export Contributions</h4>
+          <div class="modal-close-area modal-close-df">
+            <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+          </div>
+        </div>
+        <div class="modal-body">
+
+          <div class="row mg-b-30">
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label>Reference No</label>
+                <input type="text" name="search" class="form-control" placeholder="Search by reference no">
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label>Contribution Type</label>
+                <select class="form-control" name="contributionType">
+                  <option value="">All</option>
+                  <% types.forEach(t => { %>
+                    <option value="<%= t %>"><%= t %></option>
+                  <% }) %>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label>Payment Method</label>
+                <select class="form-control" name="paymentMethod">
+                  <option value="">All</option>
+                  <% methods.forEach(m => { %>
+                    <option value="<%= m %>"><%= m %></option>
+                  <% }) %>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Amount Range</label>
+                <div class="input-group">
+                  <input type="number" class="form-control" name="minAmount" placeholder="Min">
+                  <span class="input-group-addon">to</span>
+                  <input type="number" class="form-control" name="maxAmount" placeholder="Max">
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Sort By</label>
+                <select name="sortBy" class="form-control">
+                  <option value="contribution_date">Contribution Date</option>
+                  <option value="amount_high">Amount (High → Low)</option>
+                  <option value="amount_low">Amount (Low → High)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-md-12">
+              <div class="input-daterange input-group">
+                <input type="date" class="form-control" name="startDate" />
+                <span class="input-group-addon">to</span>
+                <input type="date" class="form-control" name="endDate" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Limit Records</label>
+                <input type="number" name="limit" class="form-control" placeholder="e.g. 100">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label>Export Format</label>
+                <select name="exportType" class="form-control">
+                  <option value="excel">Excel (.xlsx)</option>
+                  <option value="csv">CSV (.csv)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Export</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Bottom script start -->
+    <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+
+</body>
+
+</html>

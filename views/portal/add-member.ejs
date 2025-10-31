@@ -1,0 +1,932 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Add Member</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+    <%- include('../partials/top_script'); %>
+        <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+    <%- include('../partials/portal_sidebar'); %>
+        <!-- / Side bar -->
+
+        <!-- Start Welcome area -->
+        <div class="all-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="logo-pro">
+                            <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px"
+                                    width="80px" alt="" /></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-advance-area">
+                <!-- Header top start -->
+                <%- include('../partials/header_top'); %>
+                    <!-- / Header top end -->
+                    <!-- Mobile Menu start -->
+                    <%- include('../partials/mobile_menu'); %>
+                        <!-- Mobile Menu end -->
+            </div>
+            <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+                <div class="row admin">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="row">
+                                    <% if (data && Object.keys(data).length === 0) { %>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="alert alert-mg-b alert-danger  alert-st-four" role="alert">
+                                            <p class="message-mg-rt message-alert-none">Create Membership</p>
+                                        </div>
+                                    </div>
+                                    <% } else { %>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="alert alert-mg-b <%= data.isStep === 1 ? 'alert-danger  alert-st-four' : '' %>" role="alert">
+                                            <p class="message-mg-rt message-alert-none"><strong>1.</strong> Add Profile Details</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="alert alert-mg-b <%= data.isStep === 2 ? 'alert-danger  alert-st-four' : '' %>" role="alert">
+                                            <p class="message-mg-rt message-alert-none"><strong>2.</strong> Add Facility Details</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="alert alert-mg-b <%= data.isStep === 3 ? 'alert-danger  alert-st-four' : '' %>" role="alert">
+                                            <p class="message-mg-rt message-alert-none"><strong>3.</strong> Add Program, Benefits & Financial Access</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                        <div class="alert alert-mg-b <%= data.isStep === 4 ? 'alert-danger  alert-st-four' : '' %>" role="alert">
+                                            <p class="message-mg-rt message-alert-none"><strong>4.</strong> Confirm Details</p>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+
+                            <!-- membership details -->
+                            <% if (data && Object.keys(data).length === 0) { %>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                        <div class="panel-group adminpro-custon-design" id="accordion">
+                                            <div class="panel panel-default">
+                                                
+                                                <div id="collapse1" class="panel-collapse panel-ic collapse in">
+                                                    <div class="panel-body admin-panel-content animated bounce">
+                                                        <form action="/portal/add-member" method="POST">
+                                                            <div class="row">
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>First Name</label>
+                                                                        <input type="text" name="firstName" class="form-control"
+                                                                            placeholder="First Name" value="<%= value.firstName || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Middle Name</label>
+                                                                        <input type="text" name="middleName" class="form-control"
+                                                                            placeholder="Middle Name(Optional)" value="<%= value.middleName || '' %>">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Last Name</label>
+                                                                        <input type="text" name="lastName" class="form-control" placeholder="Last Name"
+                                                                            value="<%= value.lastName || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Email Address</label>
+                                                                        <input type="email" name="email" class="form-control"
+                                                                            placeholder="Your email address" value="<%= value.email || '' %>" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label>Membership Type</label>
+                                                                        <select name="membershipType" class="form-control" required>
+                                                                            <option value="<%= value.membershipType || '' %>">-
+                                                                                select type -</option>
+                                                                            <option value="Facility In">Facility Owner to Join
+                                                                                Uthabity
+                                                                                Africa</option>
+                                                                            <option value="Individual">Individual Joining
+                                                                                Uthabiti
+                                                                                Africa Network</option>
+                                                                            <option value="Sacco In">Joining uthabiti SACCO
+                                                                            </option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="sparkline12-hd">
+                                                                        <div class="main-sparkline12-hd">
+                                                                            <h1>Area of residence or facility location</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p>Note: County to be area of residence or facility location
+                                                                        if you have one.</p>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">County</label>
+                                                                        <select class="form-control required" name="county" id="countySelect" required>
+                                                                            <option value="">- select county -</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Sub-County *</label>
+                                                                        <select class="form-control required" name="subCounty" id="subCountySelect"
+                                                                            required>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <label class="form-label">Ward *</label>
+                                                                        <select class="form-control required" name="ward" id="wardSelect" required>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary waves-effect waves-light m-r-10">Create
+                                                                        </button>
+                                                                        <!-- <a href="/portal/members" class="btn btn-warning waves-effect waves-light m-r-10">Cancel</a> -->
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            <% } else { %>
+                                <!-- add steps -->
+                                <% if (data.isStep === 1) { %>
+                                    <!-- Profile details -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                                                    <div class="btn-group">
+                                                        <div class="alert-title">
+                                                            <h2><%= data.full_name; %> - <%= data.membership_no %></h2>
+                                                            <p>------------------------------------------------------------------------------------------------------------</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="panel-group adminpro-custon-design" id="accordion">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading accordion-head">
+                                                        <h4 class="panel-title">
+                                                            Add Profile Details
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse panel-ic collapse in">
+                                                        <div class="panel-body admin-panel-content animated bounce">
+                                                            <form action="/portal/add-member-profile" method="POST" enctype="multipart/form-data">
+                                                                <div class="row">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Phone Number
+                                                                                *</label>
+                                                                            <input name="phoneNumber" type="number" class="form-control"
+                                                                                placeholder="e.g 07XXXXXXXX" value="<%= data.phoneNumber || '' %>" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">National ID/
+                                                                                Passport
+                                                                                Number *</label>
+                                                                            <input name="idNumber" type="number" placeholder="Enter ID"
+                                                                                class="form-control" value="<%= data.idNumber || '' %>" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Date of Birth
+                                                                                *</label>
+                                                                            <input name="dob" value="<%= data.dob ? new Date(data.dob).toISOString().split('T')[0] : '' %>" type="date" class="form-control" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Gender
+                                                                                *</label>
+                                                                            <select class="form-control required" name="gender" required>
+                                                                                <option value="" <%= !data.gender ? 'selected' : '' %>>- select gender -</option>
+                                                                                <option value="Male" <%= data.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                                                                                <option value="Female" <%= data.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                                                                                <option value="Intersex" <%= data.gender === 'Intersex' ? 'selected' : '' %>>Intersex</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Disability
+                                                                                *</label>
+                                                                            <select class="form-control required" name="disability" required>
+                                                                                <option value="" <%= !data.disability ? 'selected' : '' %>>- disability status -</option>
+                                                                                <option value="None" <%= data.disability === 'None' ? 'selected' : '' %>>None</option>
+                                                                                <option value="Physical" <%= data.disability === 'Physical' ? 'selected' : '' %>>Physical
+                                                                                    Impairement
+                                                                                </option>
+                                                                                <option value="Hearing" <%= data.disability === 'Hearing' ? 'selected' : '' %>>Hearing
+                                                                                    Impairement
+                                                                                </option>
+                                                                                <option value="Visual" <%= data.disability === 'Visual' ? 'selected' : '' %>>Visual
+                                                                                    Impairement
+                                                                                </option>
+                                                                                <option value="Intellectual" <%= data.disability === 'Intellectual' ? 'selected' : '' %>>
+                                                                                    Intellectual
+                                                                                    Impairement</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Education
+                                                                                Level
+                                                                                *</label>
+                                                                            <select class="form-control required"
+                                                                            name="educationLevel" required>
+                                                                            <option value="" <%= !data.educationLevel ? 'selected' : '' %>>- education -</option>
+                                                                            <option value="None" <%= data.educationLevel === 'None' ? 'selected' : '' %>>No Formal
+                                                                                Education
+                                                                            </option>
+                                                                            <option value="Primary Incomplete" <%= data.educationLevel === 'Primary Incomplete' ? 'selected' : '' %>>
+                                                                                Primary
+                                                                                Incomplete</option>
+                                                                            <option value="Primary Complete" <%= data.educationLevel === 'Primary Complete' ? 'selected' : '' %>>
+                                                                                Primary
+                                                                                Complete
+                                                                                (KCPE or equivalent)</option>
+                                                                            <option value="Secondary Incomplete" <%= data.educationLevel === 'Secondary Incomplete' ? 'selected' : '' %>>
+                                                                                Secondary
+                                                                                Incomplete</option>
+                                                                            <option value="Secondary Complete" <%= data.educationLevel === 'Secondary Complete' ? 'selected' : '' %>>
+                                                                                Secondary
+                                                                                Complete (KCSE or equivalent)
+                                                                            </option>
+                                                                            <option value="Certificate" <%= data.educationLevel === 'Certificate' ? 'selected' : '' %>>
+                                                                                Certificate /
+                                                                                Artisan
+                                                                                Course</option>
+                                                                            <option value="Diploma" <%= data.educationLevel === 'Diploma' ? 'selected' : '' %>>Diploma
+                                                                            </option>
+                                                                            <option value="Bachelors" <%= data.educationLevel === 'Bachelors' ? 'selected' : '' %>>Bachelor’s
+                                                                                Degree
+                                                                            </option>
+                                                                            <option value="Masters" <%= data.educationLevel === 'Masters' ? 'selected' : '' %>>Master’s
+                                                                                Degree
+                                                                            </option>
+                                                                            <option value="PHD" <%= data.educationLevel === 'PHD' ? 'selected' : '' %>>Doctorate (PhD /
+                                                                                equivalent)
+                                                                            </option>
+                                                                        </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label"><strong>Citizenship
+                                                                                    *</strong></label>
+                                                                            <select class="form-control required" id="citizenshipSelect"
+                                                                                name="citizenship" required>
+                                                                                <option value="<%= data.citizenship || '' %>"><%= data.citizenship || '- selected -' %></option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Country</label>
+                                                                            <select class="form-control required" name="country" id="countrySelect"
+                                                                                required>
+                                                                                <option value="<%= data.country || '' %>"><%= data.country || '- selected -' %></option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Next of Kin
+                                                                                Full Name
+                                                                                *</label>
+                                                                            <input name="kinName" type="text" class="form-control"
+                                                                                placeholder="Fullname" value="<%= data.kinName || '' %>" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Next of Kin
+                                                                                Relationship</label>
+                                                                            <select class="form-control required" name="kinRln"
+                                                                            required>
+                                                                                <option value="" <%= !data.kinRln ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Parent" <%= data.kinRln === 'Parent' ? 'selected' : '' %>>Parent
+                                                                                </option>
+                                                                                <option value="Spouse" <%= data.kinRln === 'Spouse' ? 'selected' : '' %>>Spouse
+                                                                                </option>
+                                                                                <option value="Sibling" <%= data.kinRln === 'Sibling' ? 'selected' : '' %>>Sibling
+                                                                                </option>
+                                                                                <option value="Child" <%= data.kinRln === 'Child' ? 'selected' : '' %>>Child</option>
+                                                                                <option value="Relative" <%= data.kinRln === 'Relative' ? 'selected' : '' %>>Relative
+                                                                                </option>
+                                                                                <option value="Guardian" <%= data.kinRln === 'Guardian' ? 'selected' : '' %>>Guardian
+                                                                                </option>
+                                                                                <option value="Friend" <%= data.kinRln === 'Friend' ? 'selected' : '' %>>Friend
+                                                                                </option>
+                                                                                <option value="Other" <%= data.kinRln === 'Other' ? 'selected' : '' %>>Other</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Next of Kin
+                                                                                Phone
+                                                                                *</label>
+                                                                            <input name="kinPhone" type="text" class="form-control"
+                                                                                placeholder="e.g 07XXXXXXXX" value="<%= data.kinPhone || '' %>" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Next of Kin
+                                                                                Physical
+                                                                                Address *</label>
+                                                                            <input name="kinLocation" type="text" placeholder="Enter County & town"
+                                                                                class="form-control" value="<%= data.kinLocation || '' %>" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Copy of
+                                                                                Duly filled
+                                                                                Membership Form
+                                                                                *</label>
+                                                                            <input name="memberDoc" type="file" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Copy of
+                                                                                National ID/
+                                                                                Passport
+                                                                                *</label>
+                                                                            <input name="memberIdDoc" type="file" class="form-control">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                            <button type="submit" class="btn btn-primary waves-effect waves-light m-r-10">Next</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } else if (data.isStep === 2) { %>
+                                    <!-- Facility details if any -->
+                                    <% if (data.membership_type === 'Facility In') { %>
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                                                    <div class="btn-group">
+                                                        <div class="alert-title">
+                                                            <h2><%= data.full_name; %> - <%= data.membership_no %></h2>
+                                                            <p>------------------------------------------------------------------------------------------------------------</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
+                                                    <div class="btn-group">
+                                                        <a href="/portal/previous-profile" class="btn btn-custon-four btn-xsm btn-default"><i class="fa fa-arrow-left adminpro-home-admin" aria-hidden="true"></i> Previous</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-group adminpro-custon-design" id="accordion">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading accordion-head">
+                                                        <h4 class="panel-title">
+                                                            Add Facility Details
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse panel-ic collapse in">
+                                                        <div class="panel-body admin-panel-content animated bounce">
+                                                            <form action="/portal/add-facility-details" method="POST">
+                                                                <div class="row">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Facility
+                                                                                Name
+                                                                                *</label>
+                                                                            <input name="facilityName" type="text" placeholder="Name of your Facility"
+                                                                                class="form-control" value="<%= data.facilityName || '' %>" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Facility
+                                                                                Type</label>
+                                                                            <select class="form-control required" name="facilityType" required>
+                                                                                <option value="" <%= !data?.facilityType ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Daycare" <%= data?.facilityType === 'Daycare' ? 'selected' : '' %>>Daycare</option>
+                                                                                <option value="Home-Care" <%= data?.facilityType === 'Home-Care' ? 'selected' : '' %>>Home-Care</option>
+                                                                                <option value="ECD Playgroup" <%= data?.facilityType === 'ECD Playgroup' ? 'selected' : '' %>>ECD Playgroup</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Setup Type</label>
+                                                                            <select class="form-control required" name="setupType" required>
+                                                                                <option value="" <%= !data?.setupType ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="School Based" <%= data?.setupType === 'School Based' ? 'selected' : '' %>>
+                                                                                    School-based
+                                                                                    (Within
+                                                                                    education system)</option>
+                                                                                <option value="Center Based" <%= data?.setupType === 'Center Based' ? 'selected' : '' %>>
+                                                                                    Center-based
+                                                                                    (Autonomous rented space)
+                                                                                </option>
+                                                                                <option value="Home Based" <%= data?.setupType === 'Home Based' ? 'selected' : '' %>>
+                                                                                    Home-based
+                                                                                    (Within your
+                                                                                    house)</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Year Started *</label>
+                                                                            <select name="yearStarted" class="form-control" required>
+                                                                                <option value="" <%= !data.yearStarted ? 'selected' : '' %>>- select -</option>
+                                                                                <% for (let y = 1950; y <= 2025; y++) { %>
+                                                                                    <option value="<%= y %>" <%= data.yearStarted == y ? 'selected' : '' %>><%= y %></option>
+                                                                                <% } %>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Registration
+                                                                                Number
+                                                                            </label>
+                                                                            <input name="registrationNumber" type="text" placeholder="Reg number"
+                                                                                class="form-control" value="<%= data.regNo || '' %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">License
+                                                                                Number
+                                                                            </label>
+                                                                            <input name="licenseNumber" type="text" placeholder="License Number"
+                                                                                class="form-control" value="<%= data.licenseNo || '' %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Male
+                                                                                Beneficiaries
+                                                                            </label>
+                                                                            <input name="maleB" type="number" placeholder="Male Beneficiaries"
+                                                                                class="form-control" value="<%= data.male_b || 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of
+                                                                                Female Beneficiaries
+                                                                            </label>
+                                                                            <input name="femaleB" type="number" placeholder="Female Beneficiaries"
+                                                                                class="form-control" value="<%= data.female_b || 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Male
+                                                                                Beneficiaries with disability
+                                                                            </label>
+                                                                            <input name="maleBD" type="number"
+                                                                                placeholder="Male Beneficiaries with disability" class="form-control" value="<%= data.male_b_dis || 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of
+                                                                                Female Beneficiaries with
+                                                                                disability
+                                                                            </label>
+                                                                            <input name="femaleBD" type="number"
+                                                                                placeholder="Female Beneficiaries with disability" class="form-control" value="<%= data.female_b_dis || 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of Male
+                                                                                Caregivers
+                                                                            </label>
+                                                                            <input name="maleC" type="number" placeholder="Male Caregivers"
+                                                                                class="form-control" value="<%= data.male_c || 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">No of
+                                                                                Female Caregivers
+                                                                            </label>
+                                                                            <input name="femaleC" type="number" placeholder="Female Caregivers"
+                                                                                class="form-control" value="<%= data.female_c || 0 %>">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                            <button type="submit" class="btn btn-primary waves-effect waves-light m-r-10">Next</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } else { } %>
+
+                                <% } else if (data.isStep === 3) { %>
+                                    <!-- Benefits details -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                                                    <div class="btn-group">
+                                                        <div class="alert-title">
+                                                            <h2><%= data.full_name; %> - <%= data.membership_no %></h2>
+                                                            <p>------------------------------------------------------------------------------------------------------------</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
+                                                    <div class="btn-group">
+                                                        <% if(data.membership_type === 'Facility In') { %>
+                                                            <a href="/portal/previous-facility" class="btn btn-custon-four btn-xsm btn-default"><i class="fa fa-arrow-left adminpro-home-admin" aria-hidden="true"></i> Previous</a>
+                                                        <% } else { %>
+                                                            <a href="/portal/previous-profile" class="btn btn-custon-four btn-xsm btn-default"><i class="fa fa-arrow-left adminpro-home-admin" aria-hidden="true"></i> Previous</a>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-group adminpro-custon-design" id="accordion">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading accordion-head">
+                                                        <h4 class="panel-title">
+                                                            Add Program, Benefits & Financial Access
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse panel-ic collapse in">
+                                                        <div class="panel-body admin-panel-content animated bounce">
+                                                            <form action="/portal/add-member-benefits" method="POST">
+                                                                <div class="row mg-b-30">
+                                                                    <div class="sparkline12-hd">
+                                                                        <div class="main-sparkline12-hd">
+                                                                            <h1>1. Childcare Course and
+                                                                                Certfication</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Do you
+                                                                                have a
+                                                                                Competency
+                                                                                Validation
+                                                                                Certificate?</label>
+                                                                            <select class="form-control required" name="competency_cert">
+                                                                                <option value="" <%= !data.benefitsJson?.competency_cert ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.competency_cert === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.competency_cert === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Do
+                                                                                you/your child
+                                                                                caregiver
+                                                                                have any childcare
+                                                                                training?</label>
+                                                                            <select class="form-control required" name="childcare_training_done">
+                                                                                <option value="" <%= !data.benefitsJson?.childcare_training_done ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.childcare_training_done === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.childcare_training_done === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Would
+                                                                                you like to
+                                                                                access
+                                                                                professional childcare
+                                                                                training/refresher/certificate?</label>
+                                                                            <select class="form-control required" name="childcare_training_access">
+                                                                                <option value="" <%= !data.benefitsJson?.childcare_training_access ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.childcare_training_access === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.childcare_training_access === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row mg-b-30">
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                        <div class="sparkline12-hd">
+                                                                            <div class="main-sparkline12-hd">
+                                                                                <h1>2. Business Skills
+                                                                                    Development and
+                                                                                    Mentorship</h1>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Would
+                                                                                    you like to
+                                                                                    access
+                                                                                    this benefit?</label>
+                                                                                <select class="form-control required" name="biz_dev_mentorship">
+                                                                                    <option value="" <%= !data.benefitsJson?.biz_dev_mentorship ? 'selected' : '' %>>- select -</option>
+                                                                                    <option value="Yes" <%= data.benefitsJson?.biz_dev_mentorship === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                    <option value="No" <%= data.benefitsJson?.biz_dev_mentorship === 'No' ? 'selected' : '' %>>No</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                        <div class="sparkline12-hd">
+                                                                            <div class="main-sparkline12-hd">
+                                                                                <h1>3. Childcare Center
+                                                                                    Design and
+                                                                                    Renovation</h1>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                            <div class="form-group">
+                                                                                <label class="form-label">Would
+                                                                                    you like to
+                                                                                    access
+                                                                                    this benefit?</label>
+                                                                                <select class="form-control required" name="childcare_design_benefit">
+                                                                                    <option value="" <%= !data.benefitsJson?.childcare_design_benefit ? 'selected' : '' %>>- select -</option>
+                                                                                    <option value="Yes" <%= data.benefitsJson?.childcare_design_benefit === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                    <option value="No" <%= data.benefitsJson?.childcare_design_benefit === 'No' ? 'selected' : '' %>>No</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="sparkline12-hd">
+                                                                        <div class="main-sparkline12-hd">
+                                                                            <h1>4. Financial Services and
+                                                                                Products</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Do you
+                                                                                have an active
+                                                                                bank
+                                                                                account?</label>
+                                                                            <select class="form-control required" name="active_bank">
+                                                                                <option value="" <%= !data.benefitsJson?.active_bank ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.active_bank === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.active_bank === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Would
+                                                                                you like to
+                                                                                access
+                                                                                banking services?</label>
+                                                                            <select class="form-control required" name="banking_services">
+                                                                                <option value="" <%= !data.benefitsJson?.banking_services ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.banking_services === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.banking_services === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="sparkline12-hd">
+                                                                        <div class="main-sparkline12-hd">
+                                                                            <h1>5. Financial Products</h1>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Emergency Loan?</label>
+                                                                            <select class="form-control required" name="emergency_loan">
+                                                                                <option value="" <%= !data.benefitsJson?.emergency_loan ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.emergency_loan === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.emergency_loan === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Business Loan?</label>
+                                                                            <select class="form-control required" name="business_loan">
+                                                                                <option value="" <%= !data.benefitsJson?.business_loan ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.business_loan === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.business_loan === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Asset Loan?</label>
+                                                                            <select class="form-control required" name="asset_loan">
+                                                                                <option value="" <%= !data.benefitsJson?.asset_loan ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.asset_loan === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.asset_loan === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Education Loan?</label>
+                                                                            <select class="form-control required" name="education_loan">
+                                                                                <option value="" <%= !data.benefitsJson?.education_loan ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.education_loan === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.education_loan === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Health Insurance?</label>
+                                                                            <select class="form-control required" name="health_insurance">
+                                                                                <option value="" <%= !data.benefitsJson?.health_insurance ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.health_insurance === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.health_insurance === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="form-label">Other?</label>
+                                                                            <select class="form-control required" name="other">
+                                                                                <option value="" <%= !data.benefitsJson?.other ? 'selected' : '' %>>- select -</option>
+                                                                                <option value="Yes" <%= data.benefitsJson?.other === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                                <option value="No" <%= data.benefitsJson?.other === 'No' ? 'selected' : '' %>>No</option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                            <button type="submit" class="btn btn-primary waves-effect waves-light m-r-10">Next</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } else if (data.isStep === 4) { %>
+                                    <!-- Confirm details -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="admin-pro-accordion-wrap responsive-mg-b-30">
+                                            <div class="row">
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                                                    <div class="btn-group">
+                                                        <div class="alert-title">
+                                                            <h2><%= data.full_name; %> - <%= data.membership_no %></h2>
+                                                            <p>------------------------------------------------------------------------------------------------------------</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
+                                                    <div class="btn-group">
+                                                        <a href="/portal/previous-benefit" class="btn btn-custon-four btn-xsm btn-default"><i class="fa fa-arrow-left adminpro-home-admin" aria-hidden="true"></i> Previous</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel-group adminpro-custon-design" id="accordion">
+                                                <div class="panel panel-default">
+                                                    <div class="panel-heading accordion-head">
+                                                        <h4 class="panel-title">
+                                                            Confirmation
+                                                        </h4>
+                                                    </div>
+                                                    <div id="collapse1" class="panel-collapse panel-ic collapse in">
+                                                        <div class="panel-body admin-panel-content animated bounce">
+                                                            <form action="/portal/confirm-member-details" method="POST">
+                                                                <div class="row">
+                                                                    <div class="product-confarmation">
+                                                                        <div class="alert-title">
+                                                                            <h2>
+                                                                                <%= data.full_name; %> - <%= data.membership_no %>
+                                                                            </h2>
+                                                                            <p>------------------------------------------------------------------------------------------------------------
+                                                                            </p>
+                                                                        </div>
+                                                                        <h2>Commitment to Uthabiti Africa Network
+                                                                            Membership.</h2>
+                                                                    </div>
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="bt-df-checkbox">
+                                                                            <label><input class="radio-checked" type="checkbox" required>
+                                                                                I confirm that I understand the
+                                                                                benefits of being a
+                                                                                member of the Network and will
+                                                                                uphold
+                                                                                the vision and values of the
+                                                                                network, as a champion
+                                                                                for quality childcare.
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="bt-df-checkbox">
+                                                                            <label><input class=" radio-checked" type="checkbox" required>
+                                                                                I confirm that the information
+                                                                                provided herein, and
+                                                                                the disclosure made is true.
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="bt-df-checkbox">
+                                                                            <label><input class=" radio-checked" type="checkbox" required>
+                                                                                I Agree to <a href="" class="alert-danger">Terms &
+                                                                                    Conditions.</a>
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12  text-center">
+                                                                        <button class="btn btn-success loginbtn" type="submit">Confirm
+                                                                            Details</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            <% } %>                            
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <!-- Bottom script start -->
+        <%- include('../partials/bottom_script'); %>
+        <!-- / Bottom script end -->
+        <script src="/dataUtils/commonCountryCitizenship.js"></script>
+        <!-- <script src="/dataUtils/counties.js"></script> -->
+        <script src="/jsUtils/add-member.js"></script>
+</body>
+</html>

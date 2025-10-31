@@ -1,0 +1,331 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Reports</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+    <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+        <!-- Header top start -->
+        <%- include('../partials/header_top'); %>
+        <!-- / Header top end -->
+        <!-- Mobile Menu start -->
+        <%- include('../partials/mobile_menu'); %>
+        <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admin">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="sparkline10-list mt-b-30">
+                                <div class="sparkline10-hd">
+                                    <div class="main-sparkline10-hd">
+                                        <h1>Reports</h1>
+                                    </div>
+                                </div>
+                                <div class="sparkline13-graph">
+                                    <div class="datatable-dashv1-list custom-datatable-overright table-responsive">
+                                        <div class="widget-program-bg">
+                                            <div class="container-fluid">
+                                                <div class="row">
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mg-b-30">
+                                                        <div class="hpanel responsive-mg-b-30">
+                                                            <div class="panel-body">
+                                                                <div class="text-center content-box">
+                                                                    <h2 class="m-b-xs">Export Member Details</h2>
+                                                                    <p class="font-bold text-success">Lorem ipsum</p>
+                                                                    <div class="m icon-box">
+                                                                        <i class="fa fa-users" aria-hidden="true"></i>
+                                                                    </div>
+                                                                    <p class="small mg-t-box">
+                                                                        Use the filters to generate and download a detailed members report.
+                                                                        You can export all members or narrow your results by county, sub-county, ward, status, disability, registration date range, age group, or membership type.
+                                                                        Choose your preferred export format (Excel or CSV) and click Export to download the file.
+                                                                    </p>
+                                                                    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportMembersModal">View Filters</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                        <div class="hpanel responsive-mg-b-30">
+                                                            <div class="panel-body">
+                                                                <div class="text-center content-box">
+                                                                    <h2 class="m-b-xs">Export Facility Details</h2>
+                                                                    <p class="font-bold text-success">Lorem ipsum</p>
+                                                                    <div class="m icon-box">
+                                                                        <i class="fa fa-users" aria-hidden="true"></i>
+                                                                    </div>
+                                                                    <p class="small mg-t-box">
+                                                                        Use the filters below to generate and download facility reports.
+                                                                        You can export all facilities or narrow your selection by county, sub-county, ward, status, facility type, and registration dates.
+                                                                        The data includes each facility’s registration details, member information, beneficiaries, and caregivers. Choose your preferred format (Excel or CSV) and click Export to download.
+                                                                    </p>
+                                                                    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#exportFacilityModal">View Filters</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Members Modal -->
+        <div id="exportMembersModal" class="modal FullColor-popup-AlertModal fade">
+            <div class="modal-dialog modal-lg">
+                <form method="GET" action="/portal/export-members">
+                    <div class="modal-content">
+                        <div class="modal-header header-color-modal bg-color-4">
+                            <h4 class="modal-title">Export Members</h4>
+                            <div class="modal-close-area modal-close-df">
+                                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mg-b-30">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">County</label>
+                                        <select class="form-control required" name="county" id="countySelect" required></select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Sub-County *</label>
+                                        <select class="form-control required" name="subCounty" id="subCountySelect" required></select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Ward *</label>
+                                        <select class="form-control required" name="ward" id="wardSelect" required></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mg-b-30">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="status" class="form-label">Member Status</label>
+                                        <select id="status" name="status" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Inactive">Inactive</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Suspended">Suspended</option>
+                                            <option value="Draft">Draft</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="membershipType" class="form-label">Membership Type</label>
+                                        <select id="membershipType" name="membershipType" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="Facility In">Facility Owner to Join Uthabity Africa</option>
+                                            <option value="Individual">Individual Joining Uthabiti Africa Network</option>
+                                            <option value="Sacco In">Joining uthabiti SACCO</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="ageGroup" class="form-label">Age Group</label>
+                                        <select id="ageGroup" name="ageGroup" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="18-25">18–25</option>
+                                            <option value="26-35">26–35</option>
+                                            <option value="36-45">36–45</option>
+                                            <option value="46-60">46–60</option>
+                                            <option value="60-100">60+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mg-b-30">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="limit" class="form-label">Limit Members</label>
+                                        <input type="number" id="limit" name="limit" class="form-control" placeholder="e.g. 100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mg-b-30">
+                                 <div class="col-md-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="btn-group">
+                                        <div class="form-group data-custon-pick data-custom-mg" id="data_5">
+                                            <div class="input-daterange input-group" id="datepicker">
+                                                <input type="date" class="form-control" name="startDate" />
+                                                    <span class="input-group-addon">to</span>
+                                                <input type="date" class="form-control" name="endDate" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row mg-b-30">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="exportType" class="form-label">Export Format</label>
+                                            <select id="exportType" name="exportType" class="form-control">
+                                                <option value="excel">Excel (.xlsx)</option>
+                                                <option value="csv">CSV (.csv)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Export</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Export Facility Modal -->
+        <div id="exportFacilityModal" class="modal FullColor-popup-AlertModal fade">
+            <div class="modal-dialog modal-lg">
+                <form method="GET" action="/portal/export-facilities">
+                    <div class="modal-content">
+                        <div class="modal-header header-color-modal bg-color-4">
+                            <h4 class="modal-title">Export Facilities</h4>
+                            <div class="modal-close-area modal-close-df">
+                                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mg-b-30">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">County</label>
+                                        <select class="form-control required" name="county" id="countySelect" required></select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Sub-County *</label>
+                                        <select class="form-control required" name="subCounty" id="subCountySelect" required></select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Ward *</label>
+                                        <select class="form-control required" name="ward" id="wardSelect" required></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mg-b-30">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <select id="status" name="status" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Closed">Closed</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="membershipType" class="form-label">Facility Type</label>
+                                        <select id="membershipType" name="facilityType" class="form-control">
+                                            <option value="">All</option>
+                                            <option value="Daycare">Daycare</option>
+                                            <option value="Home-Care">Home-Care</option>
+                                            <option value="ECD Playgroup">ECD Playgroup</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="orderBy" class="form-label">Order By</label>
+                                        <select id="orderBy" name="orderBy" class="form-control">
+                                            <option value="reg_date">Registration Date</option>
+                                            <option value="beneficiaries">Beneficiaries</option>
+                                            <option value="caregivers">Caregivers</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mg-b-30">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label for="limit" class="form-label">Limit Members</label>
+                                        <input type="number" id="limit" name="limit" class="form-control" placeholder="e.g. 100">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mg-b-30">
+                                 <div class="col-md-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="btn-group">
+                                        <div class="form-group data-custon-pick data-custom-mg" id="data_5">
+                                            <div class="input-daterange input-group" id="datepicker">
+                                                <input type="date" class="form-control" name="startDate" />
+                                                    <span class="input-group-addon">to</span>
+                                                <input type="date" class="form-control" name="endDate" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row mg-b-30">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="exportType" class="form-label">Export Format</label>
+                                            <select id="exportType" name="exportType" class="form-control">
+                                                <option value="excel">Excel (.xlsx)</option>
+                                                <option value="csv">CSV (.csv)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Export</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+
+<script src="/jsUtils/add-member.js"></script>
+</body>
+</html>

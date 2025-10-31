@@ -1,0 +1,270 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Profile</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+     <style>
+    .membership-card {
+        width: 400px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        color: #222;
+        margin: 20px auto;
+        border: 2px solid tomato;
+    }
+
+    .card-header {
+        background: tomato;
+        color: white;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .card-header h2 {
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: 1px;
+    }
+
+    .card-body {
+    display: flex;
+    padding: 16px;
+    gap: 15px;
+    align-items: center;
+    }
+
+    .member-photo {
+    flex-shrink: 0;
+    }
+
+    .member-photo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid tomato;
+    object-fit: cover;
+    }
+
+    .member-details {
+    flex: 1;
+    }
+
+    .member-details h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+    color: black;
+    }
+
+    .member-details p {
+    margin: 3px 0;
+    font-size: 14px;
+    color: #444;
+    }
+
+    .member-number strong {
+    color: tomato;
+    }
+
+    .card-footer {
+    background: black;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    padding: 6px;
+    }
+</style>
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admin">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 text-center">
+                            <div class="hpanel blog-box responsive-mg-b-30">
+                                <div class="panel-heading custom-blog-hd">
+                                    <div class="media clearfix">
+                                        <a class="pull-left">
+                                            <img class="img-circle" src="/img/contact/member.jpg" height="200px;" width="200px;"
+                                                alt="User Photo">
+                                        </a>
+                                        <div class="media-body blog-std">
+                                            <span class="label 
+                                                <% if (user.status === 'Active') { %> label-success 
+                                                <% } else if (user.status === 'Pending') { %> label-warning text-dark 
+                                                <% } else { %> label-danger 
+                                                <% } %>">
+                                                <%= user.status %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body blog-pra">
+                                    <a href="javascript:;">
+                                        <h4>
+                                            <%= user.fullname %>
+                                        </h4>
+                                    </a>
+                                </div>
+                                <div class="panel-footer">
+                                    <table class="table">
+                                        <tr>
+                                            <td>
+                                                <button class="btn btn-custon-three btn-xs btn-default btn-xs" data-toggle="modal"
+                                                    data-target="#editRoleModal"><i class="fa fa-edit"></i>
+                                                    Edit Name
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-custon-three btn-default btn-xs" data-toggle="modal"
+                                                            data-target="#changePasswordModal"><i class="fa fa-edit"></i> Edit Password</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                            <div class="hpanel">
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr class="bg-red text-white">
+                                                    <th colspan="2">Account Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td align="left"><strong>Passport/ID Number:</strong></td>
+                                                    <td align="left">
+                                                        <%= user.idNumber %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Email Address:</strong></td>
+                                                    <td align="left">
+                                                        <%= user.email %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Account Created On:</strong></td>
+                                                    <td align="left">
+                                                        <%= new Date(user.create_at).toLocaleDateString() %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Account Last Update:</strong></td>
+                                                    <td align="left">
+                                                        <%= new Date(user.updated_at).toLocaleDateString() %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>User Role:</strong></td>
+                                                    <td align="left"><span class="label label-info">
+                                                            <%= user.role %>
+                                                        </span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Last Login:</strong></td>
+                                                    <td align="left">
+                                                        <%= user.last_login ? new Date(user.last_login).toLocaleString() : 'None' %>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Change password modal -->
+<!-- Add User Modal -->
+        <div id="changePasswordModal" class="modal FullColor-popup-AlertModal fade">
+            <div class="modal-dialog">
+                <form method="POST" action="/portal/user-change-password">
+                    <div class="modal-content">
+                        <div class="modal-header header-color-modal bg-color-4">
+                            <h4 class="modal-title">Change Password</h4>
+                            <div class="modal-close-area modal-close-df">
+                                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Current Password</label>
+                                        <input type="password" name="currentPassword" placeholder="Current Password" id="currentPassword" class="form-control required" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">New Password</label>
+                                        <input type="password" name="newPassword" placeholder="New Password" id="newPassword" class="form-control required" required>
+                                        <span class="help-block small text-danger mg-t-30" id="passwordFeedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Confirm Password</label>
+                                        <input type="password" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword" class="form-control required" required>
+                                        <span class="help-block small text-danger mg-t-30" id="confirmPasswordFeedback"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger" id="submitPassword">Save Password</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+<script src="/jsUtils/change-password.js"></script>
+
+</body>
+</html>
