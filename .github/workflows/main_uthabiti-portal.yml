@@ -60,6 +60,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'uthabiti-portal'
-          slot-name: 'Production'
+          # slot-name: 'Production'
           package: .
+
           
