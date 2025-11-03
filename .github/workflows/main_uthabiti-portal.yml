@@ -51,15 +51,16 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_65E4D3D6E4D34BB894298EE00AD677C0 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_066BEB8D6D1E43C0963206CA4ACE4DE2 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_8F27A97082434223A8C8524315B74E8F }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_9BBDCA3026E9405D8E23B195CA1C2F7F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B925378B9ABF4F82AFE226221123888C }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_9B8B476330E84199AC4C106EC1515FD1 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'uthabiti-portal'
-          slot-name: 'Production'
           package: .
+
           
+

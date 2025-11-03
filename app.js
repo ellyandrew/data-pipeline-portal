@@ -9,7 +9,11 @@ const { formatDate } = require('./utils/dateFormat');
 // const cookieParser = require('cookie-parser');
 const { ensureAuthenticated } = require('./middleware/authMiddleware');
 
-dotenv.config({ path: './.env'});
+// dotenv.config({ path: './.env'});
+// Only load the .env file when running locally
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: './.env' });
+}
 
 const secretKey = require('./generateKey');
 
@@ -32,19 +36,23 @@ app.use(express.json());
 
 app.set('view engine', 'ejs');
 
+app.set('trust proxy', 1); // trust Azure reverse proxy
+
 app.use(
-    session({
-        name: 'uthabitiSession',
-        secret: secretKey,
-        resave: false,
-        saveUninitialized: true,
-        cookie: { 
-            httpOnly: true,      
-            secure: true, //true only on production
-            maxAge: 12 * 60 * 60 * 1000,
-        }, 
-    })
+  session({
+    name: 'uthabitiSession',
+    secret: secretKey,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // secure only in production
+      sameSite: 'lax',
+      maxAge: 12 * 60 * 60 * 1000,
+    },
+  })
 );
+
 
 // app date format dd/mm/yyyy
 app.locals.formatDate = formatDate;
