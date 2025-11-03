@@ -1994,6 +1994,15 @@ router.get('/export-loans', ensureAuthenticated, ensureRole(['Admin']), async (r
   }
 });
 
+// ------------------------------------------------------------------------------------------------
+// COLLECT DATA
+// ------------------------------------------------------------------------------------------------
+
+router.get('/collect-data', ensureAuthenticated, (req, res) => {
+  res.render('portal/collect-data');
+});
+
+
 
 // -------------------------------------------------------------------------------------------------
 // SETTINGS
@@ -2051,6 +2060,8 @@ const pageAccessMap = {
   'details': ['Admin'],
   'users': ['Admin'],
   'analysis': ['Admin'],
+  'survey': ['Admin'],
+  'collect-data': ['Admin'],
   'reports': ['Admin'],
   'view-user': ['Admin'],
   'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],

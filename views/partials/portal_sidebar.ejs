@@ -153,9 +153,9 @@
                     </li>
                     <% } %>
 
-                    <% if (hasAccess('analysis') || hasAccess('reports')) { %>
+                    <% if (hasAccess('analysis') || hasAccess('collect-data') || hasAccess('survey')) { %>
                     <li class="<%= (currentPath.startsWith('/portal/analysis') ||
-                    currentPath.startsWith('/portal/reports')) ? 'active' : '' %>">
+                    currentPath.startsWith('/portal/collect-data') || currentPath.startsWith('/portal/survey')) ? 'active' : '' %>">
                         <a class="has-arrow" href="#" aria-expanded="false">
                             <i class="fa big-icon fa-table icon-wrap"></i>
                             <span class="mini-click-non">Data & Reports</span>
@@ -166,12 +166,18 @@
                                 <span class="mini-sub-pro">Analysis</span></a>
                             </li>
                         </ul>
-                        <!-- <ul class="submenu-angle" aria-expanded="false">
-                            <li><a title="Print Data" href="/portal/reports">
-                                <i class="fa fa-print sub-icon-mg"></i>
-                                <span class="mini-sub-pro">Reports</span></a>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <li><a title="Collect Conduct" href="/portal/collect-data">
+                                <i class="fa fa-users sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Collect Data</span></a>
                             </li>
-                        </ul> -->
+                        </ul>
+                        <ul class="submenu-angle" aria-expanded="false">
+                            <li><a title="Collect Conduct" href="/portal/survey">
+                                <i class="fa fa-database sub-icon-mg"></i>
+                                <span class="mini-sub-pro">Survey</span></a>
+                            </li>
+                        </ul>
                     </li>
                     <% } %>
 

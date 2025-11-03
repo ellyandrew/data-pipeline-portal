@@ -26,6 +26,7 @@ const pageAccessMap = {
   'details': ['Admin'],
   'users': ['Admin'],
   'analysis': ['Admin'],
+  'collect-data': ['Admin', 'Data Clerk', 'Champion'],
   'reports': ['Admin'],
   'view-user': ['Admin'],
   'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
