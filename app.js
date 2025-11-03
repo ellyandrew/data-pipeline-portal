@@ -9,7 +9,11 @@ const { formatDate } = require('./utils/dateFormat');
 // const cookieParser = require('cookie-parser');
 const { ensureAuthenticated } = require('./middleware/authMiddleware');
 
-dotenv.config({ path: './.env'});
+// dotenv.config({ path: './.env'});
+// Only load the .env file when running locally
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config({ path: './.env' });
+}
 
 const secretKey = require('./generateKey');
 
