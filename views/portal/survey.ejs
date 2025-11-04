@@ -37,18 +37,383 @@
             <!-- Mobile Menu end -->
         </div>
         <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
-            <div class="row admin text-center">
+            <div class="row admin">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="sparkline10-list mt-b-30">
+                                    <div class="sparkline10-hd">
+                                        <div class="main-sparkline10-hd">
+                                            <h1>Surverys</h1>
+                                        </div>
+                                        <form method="GET" id="filterForm">
+                                            <div class="row">
+                                                <div class="col-md-2">
+                                                    <div class="text-center p-xs font-normal">
+                                                        <div class="input-group">
+                                                        <input type="text" class="form-control input-sm" name="search"
+                                                            placeholder="Search facility, enumerator..."
+                                                            value="<%= search || '' %>"> 
+                                                        <span class="input-group-btn"> 
+                                                            <button type="button" class="btn btn-sm btn-default" onclick="this.form.submit()">Search</button> 
+                                                        </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <a href="javascript:;">
+                                                        <b><span class="pull-left">
+                                                        <%= parseFloat(total).toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0}); %> Surveys
+                                                        </span></b>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="limit" onchange="this.form.submit()">
+                                                        <option value="">Show: 10</option>
+                                                        <% perPageOptions.forEach(opt => { %>
+                                                            <option value="<%= opt %>" <%= perPage === opt ? "selected" : "" %>><%= opt %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="county" onchange="this.form.submit()">
+                                                        <option value="">- county -</option>
+                                                        <% counties.forEach(c => { %>
+                                                            <option value="<%= c %>" <%= county === c ? "selected" : "" %>><%= c %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="subcounty" onchange="this.form.submit()">
+                                                        <option value="">- sub-county -</option>
+                                                        <% subcounties.forEach(s => { %>
+                                                            <option value="<%= s %>" <%= subcounty === s ? "selected" : "" %>><%= s %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="ward" onchange="this.form.submit()">
+                                                        <option value="">- ward -</option>
+                                                        <% wards.forEach(w => { %>
+                                                            <option value="<%= w %>" <%= ward === w ? "selected" : "" %>><%= w %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="gender" onchange="this.form.submit()">
+                                                        <option value="">- gender -</option>
+                                                        <% genderOptions.forEach(g => { %>
+                                                            <option value="<%= g %>" <%= gender === g ? "selected" : "" %>><%= g %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="education" onchange="this.form.submit()">
+                                                        <option value="">- education -</option>
+                                                        <% educationLevels.forEach(e => { %>
+                                                            <option value="<%= e %>" <%= education === e ? "selected" : "" %>><%= e %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="status" onchange="this.form.submit()">
+                                                        <option value="">- status -</option>
+                                                        <% statuses.forEach(st => { %>
+                                                            <option value="<%= st %>" <%= status === st ? "selected" : "" %>><%= st %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="sortBy" onchange="this.form.submit()">
+                                                        <option value="">Sort By:</option>
+                                                        <% sortOptions.forEach(opt => { %>
+                                                            <option value="<%= opt.value %>" <%= sortBy === opt.value ? "selected" : "" %>><%= opt.label %></option>
+                                                        <% }); %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                <div class="btn-group">
+                                                    <a href="/portal/survey" class="btn btn-danger btn-sm"><i class="fa fa-refresh"></i></a>
+                                                    <a class="btn btn-default btn-sm" data-toggle="modal" data-target="#exportSurveyModal">
+                                                    <i class="fa fa-cloud-download"></i> Export
+                                                    </a>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </form>
+
+                                    </div>
+                                    <div class="sparkline10-graph">
+                                        <div class="static-table-list">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-hover table-responsive">
+                                                    <thead>
+                                                        <tr class="bg-red text-white">
+                                                        <th>#</th>
+                                                        <th>Respondent</th>
+                                                        <th>ID Number</th>
+                                                        <th>Enumerator Name</th>
+                                                        <th>Facility Name</th>
+                                                        <th>Worker Category</th>
+                                                        <th>Gender</th>
+                                                        <th>County / Subcounty</th>
+                                                        <th>Children (T/G/B)</th>
+                                                        <th>Year Established</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% if (surveys.length > 0) { %>
+                                                        <% surveys.forEach((s, index) => { %>
+                                                            <%
+                                                            let statusClass = 
+                                                                s.status === 'Active' ? 'label-success' :
+                                                                s.status === 'Pending' ? 'label-warning' :
+                                                                s.status === 'Inactive' ? 'label-danger' : '';
+                                                            %>
+                                                            <tr>
+                                                            <td><%= index + 1 + ((currentPage - 1) * perPage) %></td>
+                                                            <td class="text-capitalize"><%= s.provider_name || '-' %></td>
+                                                            <td>
+                                                                <%- s.id_number ? s.id_number : '<p class="text-danger text-lowercase">Required</p>' %>
+                                                            </td>
+                                                            <td class="text-capitalize"><%= s.enumerator_name || '-' %></td>
+                                                            <td class="text-uppercase">
+                                                                <%- s.facility_name ? s.facility_name : '<p class="text-danger text-lowercase">Required</p>' %>
+                                                            </td>
+                                                            <td><%= s.worker_category || '-' %></td>
+                                                            <td><%= s.gender || '-' %></td>
+                                                            <td><%= s.county_name %> / <%= s.sub_county_name %></td>
+                                                            <td>
+                                                                <%= s.total_children || 0 %> /
+                                                                <%= s.girls || 0 %> /
+                                                                <%= s.boys || 0 %>
+                                                            </td>
+                                                            <td><%= s.year_established || '-' %></td>
+                                                            <td><span class="label <%= statusClass %>"><%= s.status %></span></td>
+                                                            <td>
+                                                                <div class="button-style-three">
+                                                                <form action="/portal/view-survey-details" method="POST">
+                                                                    <input type="hidden" name="survey_id" value="<%= s.survey_id %>" required>
+                                                                    <button type="submit" class="btn btn-custon-three btn-default btn-xs">
+                                                                    <i class="fa fa-ellipsis-h"></i>
+                                                                    </button>
+                                                                </form>
+                                                                </div>
+                                                            </td>
+                                                            </tr>
+                                                        <% }) %>
+                                                        <% } else { %>
+                                                        <tr>
+                                                            <td colspan="12" align="center">No survey data found</td>
+                                                        </tr>
+                                                        <% } %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            
+                                            <!-- Pagination -->
+                                            <div class="custom-pagination mt-4">
+                                                <nav aria-label="Page navigation">
+                                                    <ul class="pagination justify-content-center">
+                                                    <% if (currentPage > 1) { %>
+                                                        <li class="page-item">
+                                                        <a class="page-link" 
+                                                            href="?page=<%= currentPage - 1 %>&limit=<%= perPage %>&search=<%= search %>&county=<%= county %>&subcounty=<%= subcounty %>&ward=<%= ward %>&status=<%= status %>&sortBy=<%= sortBy %>">
+                                                            Previous
+                                                        </a>
+                                                        </li>
+                                                    <% } %>
+
+                                                    <% paginationRange.forEach(p => { %>
+                                                        <% if (p === '...') { %>
+                                                        <li class="page-item disabled">
+                                                            <span class="page-link">...</span>
+                                                        </li>
+                                                        <% } else { %>
+                                                        <li class="page-item <%= p === currentPage ? 'active' : '' %>">
+                                                            <a class="page-link" 
+                                                            href="?page=<%= p %>&limit=<%= perPage %>&search=<%= search %>&county=<%= county %>&subcounty=<%= subcounty %>&ward=<%= ward %>&status=<%= status %>&sortBy=<%= sortBy %>">
+                                                            <%= p %>
+                                                            </a>
+                                                        </li>
+                                                        <% } %>
+                                                    <% }); %>
+
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item">
+                                                        <a class="page-link" 
+                                                            href="?page=<%= currentPage + 1 %>&limit=<%= perPage %>&search=<%= search %>&county=<%= county %>&subcounty=<%= subcounty %>&ward=<%= ward %>&status=<%= status %>&sortBy=<%= sortBy %>">
+                                                            Next
+                                                        </a>
+                                                        </li>
+                                                    <% } %>
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                            <!-- / Pagination -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+<!-- Survery export modal -->
+ <div id="exportSurveyModal" class="modal FullColor-popup-AlertModal fade">
+  <div class="modal-dialog modal-lg">
+    <form method="GET" action="/portal/export-survey">
+      <div class="modal-content">
+        <div class="modal-header header-color-modal bg-color-4">
+          <h4 class="modal-title">Export Survey Data</h4>
+          <div class="modal-close-area modal-close-df">
+            <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <div class="row mg-b-30">
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label class="form-label">County</label>
+                <select class="form-control" name="county_name" id="countySelect">
+                  <option value="">All</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label class="form-label">Sub-County</label>
+                <select class="form-control" name="sub_county_name" id="subCountySelect">
+                  <option value="">All</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label class="form-label">Ward</label>
+                <select class="form-control" name="ward_name" id="wardSelect">
+                  <option value="">All</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="status" class="form-label">Status</label>
+                <select id="status" name="status" class="form-control">
+                  <option value="">All</option>
+                  <option value="Active">Active</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Draft">Draft</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="worker_category" class="form-label">Worker Category</label>
+                <select id="worker_category" name="worker_category" class="form-control">
+                  <option value="">All</option>
+                  <option value="Facility Owner">Facility Owner</option>
+                  <option value="Domestic Worker">Domestic Worker</option>
+                  <option value="Center Worker">Center Worker</option>
+                  <option value="Volunteer">Volunteer</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="form-group">
+                <label for="education_level" class="form-label">Education Level</label>
+                <select id="education_level" name="education_level" class="form-control">
+                    <option value="">All</option>
+                    <option value="No Schooling">None</option>
+                    <option value="Primary">Primary</option>
+                    <option value="Secondary">Secondary</option>
+                    <option value="Certificate">Certificate</option>
+                    <option value="Diploma">Diploma</option>
+                    <option value="Degree">Degree</option>
+                    <option value="Masters">Masters</option>
+                    <option value="PhD">PhD</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="startDate" class="form-label">Start Date</label>
+                <input type="date" class="form-control" name="startDate" />
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="endDate" class="form-label">End Date</label>
+                <input type="date" class="form-control" name="endDate" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row mg-b-30">
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="limit" class="form-label">Limit Records</label>
+                <input type="number" id="limit" name="limit" class="form-control" placeholder="e.g. 100">
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="form-group">
+                <label for="exportType" class="form-label">Export Format</label>
+                <select id="exportType" name="exportType" class="form-control">
+                  <option value="excel">Excel (.xlsx)</option>
+                  <option value="csv">CSV (.csv)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Export</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 <!-- Bottom script start -->
   <%- include('../partials/bottom_script'); %>
 <!-- / Bottom script end -->
+
+<script src="/jsUtils/add-member.js"></script>
+
 </body>
 </html>

@@ -1666,6 +1666,286 @@ exports.issueLoan = async (req, res) => {
   }
 };
 
+// ------------------------------------------------------------------------------------------
+// COLLECT DATA
+// ------------------------------------------------------------------------------------------
+
+exports.addDataCollect = async (req, res) => {
+  try {
+
+    const userRole = req.session.user_role;
+
+    let status = 'Draft';
+    if (userRole === 'Admin') status = 'Active';
+    else if (userRole === 'Data Clerk') status = 'Pending';
+
+    const {
+      countyName, subCountyName,wardName,enumeratorName, idNumber, workerCategory, gender, age, educationLevel, receivedTraining, receivedCertificate, facilityName,
+      facilityClassification, geoLocation, yearEstablished, totalChildren, girls, boys, age_under6, age_6_12, age_12_24, age_24_36, age_36_plus,
+      children_with_disabilities, boys_with_disabilities, girls_with_disabilities, total_workers, female_workers, male_workers,
+      workers_with_disabilities, member_institutions, loan_institutions, interested_in_finance, provider_name, phone_number } = req.body;
+
+      const total_children = normalizeNumber(totalChildren);
+      const t_girls = normalizeNumber(girls);
+      const t_boys = normalizeNumber(boys);
+      const under_6 = normalizeNumber(age_under6);
+      const a_6_12 = normalizeNumber(age_6_12);
+      const a_12_24 = normalizeNumber(age_12_24);
+      const a_24_36 = normalizeNumber(age_24_36);
+      const a_36_p = normalizeNumber(age_36_plus);
+      const c_w_d = normalizeNumber(children_with_disabilities);
+      const b_w_d = normalizeNumber(boys_with_disabilities);
+      const g_w_d = normalizeNumber(girls_with_disabilities);
+      const t_workers = normalizeNumber(total_workers);
+      const f_worker = normalizeNumber(female_workers);
+      const m_worker = normalizeNumber(male_workers);
+      const w_w_d = normalizeNumber(workers_with_disabilities);
+
+      const [checkRespondent] = await db.query(`SELECT * FROM childcare_survey_tbl WHERE id_number = ? LIMIT 1`, [idNumber]);
+
+      if (checkRespondent.length > 0) {
+        req.session.message = "Respondent with simillar ID already added";
+        req.session.messageType = "error";
+        return res.redirect('/portal/collect-data');
+      }
+
+    await db.execute(
+      `INSERT INTO childcare_survey_tbl 
+      (county_name, sub_county_name, ward_name, enumerator_name, id_number, worker_category, gender, age, education_level, received_training, received_certificate,
+      facility_name, facility_classification, geo_location, year_established, total_children, girls, boys, age_under6, age_6_12, age_12_24, age_24_36, age_36_plus,
+      children_with_disabilities, boys_with_disabilities, girls_with_disabilities, total_workers, female_workers, male_workers, workers_with_disabilities,
+      member_institutions, loan_institutions, interested_in_finance, provider_name, phone_number, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        countyName, subCountyName, wardName, enumeratorName, idNumber, workerCategory, gender, age, educationLevel, receivedTraining, receivedCertificate,
+        facilityName, facilityClassification, geoLocation, yearEstablished, total_children, t_girls, t_boys, under_6, a_6_12, a_12_24, a_24_36, a_36_p,
+        c_w_d, b_w_d, g_w_d, t_workers, f_worker, m_worker, w_w_d, Array.isArray(member_institutions) ? member_institutions.join(',') : member_institutions,
+        Array.isArray(loan_institutions) ? loan_institutions.join(',') : loan_institutions, interested_in_finance, provider_name, phone_number, status
+      ]
+    );
+
+    // Log activity
+    await logActivity(req.session.userId, null, "SURVEY_CREATED", `New childcare survey submitted for ${facilityName} (${countyName})`, req);
+
+    req.session.message = 'Survey data submitted successfully.';
+    req.session.messageType = 'success';
+    res.redirect('/portal/collect-data');
+
+  } catch (error) {
+    console.error(error);
+    req.session.message = error.message;
+    req.session.messageType = 'error';
+    res.redirect('/portal/collect-data');
+  }
+};
+
+exports.getSurveyDetails = async (req, res) => {
+  if (!req.session.userId) {
+    req.session.message = 'Session expired, please try again!';
+    req.session.messageType = 'error';
+    return res.redirect('/auth/login');
+  }
+
+  const { survey_id } = req.body;
+
+  try {
+    // Fetch survey record
+    const [rows] = await db.query(
+      `SELECT survey_id, county_name, sub_county_name, ward_name, enumerator_name, id_number, 
+              worker_category, gender, age, education_level, received_training, received_certificate,
+              facility_name, facility_classification, geo_location, year_established, total_children,
+              girls, boys, age_under6, age_6_12, age_12_24, age_24_36, age_36_plus,
+              children_with_disabilities, boys_with_disabilities, girls_with_disabilities,
+              total_workers, female_workers, male_workers, workers_with_disabilities,
+              member_institutions, loan_institutions, interested_in_finance, provider_name,
+              phone_number, status, created_at
+       FROM childcare_survey_tbl
+       WHERE survey_id = ?
+       LIMIT 1`,
+      [survey_id]
+    );
+
+    if (rows.length === 0) {
+      req.session.message = "Survey data not found for this record.";
+      req.session.messageType = "error";
+      return res.redirect('/portal/survey');
+    }
+
+    const surveyDetails = rows[0];
+
+    // Store in session for the details page
+    req.session.surveyDetails = surveyDetails;
+
+    res.redirect('/portal/survey-details');
+
+  } catch (error) {
+    console.error(error);
+    req.session.message = error.message;
+    req.session.messageType = "error";
+    return res.redirect('/portal/survey');
+  }
+};
+
+exports.editSurveyStatus = async (req, res) => {
+
+  const surveyId = req.params.survey_id;
+  const { currentStatus, reason } = req.body;
+
+  try {
+
+    let newStatus;
+
+    switch (currentStatus) {
+      case 'Pending':
+        newStatus = 'Active';
+        break;
+      case 'Active':
+        newStatus = 'Inactive';
+        break;
+      case 'Inactive':
+        newStatus = 'Active';
+        break;
+      default:
+        req.session.message = 'Invalid status action.';
+        req.session.messageType = 'error';
+        return res.redirect('/portal/survey-details');
+    }
+    
+    await db.execute(`UPDATE childcare_survey_tbl SET status = ? WHERE survey_id = ? LIMIT 1`,[newStatus, surveyId]);
+
+    await logActivity(req.session.userId, null,'SURVEY_STATUS_UPDATE',`Changed survey status from ${currentStatus} to ${newStatus}. ${reason}`,req);
+
+    req.session.message = `Survey status updated from ${currentStatus} to ${newStatus}.`;
+    req.session.messageType = 'success';
+    return res.redirect('/portal/survey-details');
+
+  } catch (err) {
+    console.error('Error updating survey status:', err);
+    req.session.message = 'An error occurred while updating survey status.';
+    req.session.messageType = 'error';
+    return res.redirect('/portal/survey-details');
+  }
+};
+
+exports.getEditSurveyDetails = async (req, res) => {
+  if (!req.session.userId) {
+    req.session.message = 'Session expired, please try again!';
+    req.session.messageType = 'error';
+    return res.redirect('/auth/login');
+  }
+
+  const surveyId = req.params.survey_id;
+
+  try {
+    // Fetch survey record
+    const [rows] = await db.query(
+      `SELECT survey_id, county_name, sub_county_name, ward_name, enumerator_name, id_number, 
+              worker_category, gender, age, education_level, received_training, received_certificate,
+              facility_name, facility_classification, geo_location, year_established, total_children,
+              girls, boys, age_under6, age_6_12, age_12_24, age_24_36, age_36_plus,
+              children_with_disabilities, boys_with_disabilities, girls_with_disabilities,
+              total_workers, female_workers, male_workers, workers_with_disabilities,
+              member_institutions, loan_institutions, interested_in_finance, provider_name,
+              phone_number, status, created_at
+       FROM childcare_survey_tbl
+       WHERE survey_id = ?
+       LIMIT 1`,
+      [surveyId]
+    );
+
+    if (rows.length === 0) {
+      req.session.message = "Survey data not found for this record.";
+      req.session.messageType = "error";
+      return res.redirect('/portal/survey');
+    }
+
+    const surveyDetails = rows[0];
+
+    surveyDetails.member_institutions = surveyDetails.member_institutions 
+      ? surveyDetails.member_institutions.split(',').map(i => i.trim()) 
+      : [];
+
+    surveyDetails.loan_institutions = surveyDetails.loan_institutions 
+      ? surveyDetails.loan_institutions.split(',').map(i => i.trim()) 
+      : [];
+
+    req.session.surveyEdits = surveyDetails;
+
+    res.redirect('/portal/edit-survey');
+
+  } catch (error) {
+    console.error('Error fetching survey details:', error);
+    req.session.message = "An unexpected error occurred while fetching survey details.";
+    req.session.messageType = "error";
+    return res.redirect('/portal/survey');
+  }
+};
+
+exports.updateSurveyData = async (req, res) => {
+
+  if (!req.session.surveyEdits || !req.session.surveyEdits.survey_id) {
+    req.session.message = "Session expired or invalid edit context. Please try again.";
+    req.session.messageType = "error";
+    return res.redirect('/portal/survey');
+  }
+
+  const { survey_id } = req.session.surveyEdits;
+  try {
+    const {
+      countyName, subCountyName,wardName, idNumber, workerCategory, gender, age, educationLevel, receivedTraining, receivedCertificate, facilityName,
+      facilityClassification, geoLocation, yearEstablished, totalChildren, girls, boys, age_under6, age_6_12, age_12_24, age_24_36, age_36_plus,
+      children_with_disabilities, boys_with_disabilities, girls_with_disabilities, total_workers, female_workers, male_workers,
+      workers_with_disabilities, member_institutions, loan_institutions, interested_in_finance, provider_name, phone_number } = req.body;
+
+      const total_children = normalizeNumber(totalChildren);
+      const t_girls = normalizeNumber(girls);
+      const t_boys = normalizeNumber(boys);
+      const under_6 = normalizeNumber(age_under6);
+      const a_6_12 = normalizeNumber(age_6_12);
+      const a_12_24 = normalizeNumber(age_12_24);
+      const a_24_36 = normalizeNumber(age_24_36);
+      const a_36_p = normalizeNumber(age_36_plus);
+      const c_w_d = normalizeNumber(children_with_disabilities);
+      const b_w_d = normalizeNumber(boys_with_disabilities);
+      const g_w_d = normalizeNumber(girls_with_disabilities);
+      const t_workers = normalizeNumber(total_workers);
+      const f_worker = normalizeNumber(female_workers);
+      const m_worker = normalizeNumber(male_workers);
+      const w_w_d = normalizeNumber(workers_with_disabilities);
+
+    const memberInstitutions = Array.isArray(member_institutions) ? member_institutions.join(', ') : member_institutions || null;
+    const loanInstitutions = Array.isArray(loan_institutions) ? loan_institutions.join(', ') : loan_institutions || null;
+
+    const query = `
+      UPDATE childcare_survey_tbl SET county_name = ?, sub_county_name = ?, ward_name = ?, id_number = ?, worker_category = ?, gender = ?, age = ?, 
+      education_level = ?, received_training = ?, received_certificate = ?, facility_name = ?, facility_classification = ?, geo_location = ?, 
+      year_established = ?, total_children = ?, girls = ?, boys = ?, age_under6 = ?, age_6_12 = ?, age_12_24 = ?, age_24_36 = ?, age_36_plus = ?, 
+      children_with_disabilities = ?, boys_with_disabilities = ?, girls_with_disabilities = ?, total_workers = ?, 
+      female_workers = ?, male_workers = ?, workers_with_disabilities = ?, member_institutions = ?, loan_institutions = ?, interested_in_finance = ?, 
+      provider_name = ?, phone_number = ?  WHERE survey_id = ? LIMIT 1`;
+
+    const [editSurvey] = await db.execute(query, [
+      countyName, subCountyName, wardName, idNumber, workerCategory, gender, age, educationLevel, receivedTraining, receivedCertificate,
+      facilityName, facilityClassification, geoLocation, yearEstablished, total_children, t_girls, t_boys, under_6, a_6_12, a_12_24, a_24_36, a_36_p,
+      c_w_d, b_w_d, g_w_d, t_workers, f_worker, m_worker, w_w_d, memberInstitutions, loanInstitutions, interested_in_finance, provider_name,
+      phone_number, survey_id]);
+
+      if (editSurvey.affectedRows > 0) {
+        
+      }
+
+    req.session.message = 'Survey record updated successfully!';
+    req.session.messageType = 'success';
+    res.redirect('/portal/edit-survey');
+  } catch (error) {
+    console.error('Error updating survey:', error);
+    req.session.message = 'Error updating record: ' + error.message;
+    req.session.messageType = 'error';
+    res.redirect('/portal/survey');
+  }
+};
+
+
 // -------------------------------------------------------------------------------------------
 // SETTINGS
 // -------------------------------------------------------------------------------------------

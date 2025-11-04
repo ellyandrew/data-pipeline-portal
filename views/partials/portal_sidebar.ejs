@@ -155,31 +155,43 @@
 
                     <% if (hasAccess('analysis') || hasAccess('collect-data') || hasAccess('survey')) { %>
                     <li class="<%= (currentPath.startsWith('/portal/analysis') ||
-                    currentPath.startsWith('/portal/collect-data') || currentPath.startsWith('/portal/survey')) ? 'active' : '' %>">
+                                    currentPath.startsWith('/portal/collect-data') ||
+                                    currentPath.startsWith('/portal/survey')) ? 'active' : '' %>">
                         <a class="has-arrow" href="#" aria-expanded="false">
                             <i class="fa big-icon fa-table icon-wrap"></i>
                             <span class="mini-click-non">Data & Reports</span>
                         </a>
                         <ul class="submenu-angle" aria-expanded="false">
-                            <li><a title="Power BI" href="/portal/analysis">
-                                <i class="fa fa-bar-chart sub-icon-mg"></i>
-                                <span class="mini-sub-pro">Analysis</span></a>
+                            <% if (hasAccess('analysis')) { %>
+                            <li>
+                                <a href="/portal/analysis">
+                                    <i class="fa fa-bar-chart sub-icon-mg"></i>
+                                    <span class="mini-sub-pro">Analysis</span>
+                                </a>
                             </li>
-                        </ul>
-                        <ul class="submenu-angle" aria-expanded="false">
-                            <li><a title="Collect Conduct" href="/portal/collect-data">
-                                <i class="fa fa-users sub-icon-mg"></i>
-                                <span class="mini-sub-pro">Collect Data</span></a>
+                            <% } %>
+
+                            <% if (hasAccess('collect-data')) { %>
+                            <li>
+                                <a href="/portal/collect-data">
+                                    <i class="fa fa-edit sub-icon-mg"></i>
+                                    <span class="mini-sub-pro">Collect Data</span>
+                                </a>
                             </li>
-                        </ul>
-                        <ul class="submenu-angle" aria-expanded="false">
-                            <li><a title="Collect Conduct" href="/portal/survey">
-                                <i class="fa fa-database sub-icon-mg"></i>
-                                <span class="mini-sub-pro">Survey</span></a>
+                            <% } %>
+
+                            <% if (hasAccess('survey')) { %>
+                            <li>
+                                <a href="/portal/survey">
+                                    <i class="fa fa-users sub-icon-mg"></i>
+                                    <span class="mini-sub-pro">Survey</span>
+                                </a>
                             </li>
+                            <% } %>
                         </ul>
                     </li>
                     <% } %>
+
 
                     <% if (hasAccess('users') || hasAccess('details') || hasAccess('settings')) { %>
                     <li class="<%= (

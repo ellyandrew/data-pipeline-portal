@@ -11,6 +11,8 @@ const membershipDocsUpload = require('../uploadsConfig/membershipDocs');
 const { ensureAuthenticated, ensureRole } = require('../middleware/authMiddleware');
 const { logActivity } = require('../utils/logger');
 const { getUserNotifications } = require('../controllers/portalNotification');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 // ------------------------------------------------------------------------------------------------
 // GET NOTIFICATIONS & NAME
@@ -925,7 +927,6 @@ router.get('/export-facilities', ensureAuthenticated, ensureRole(['Admin']), asy
     res.status(500).send('Error exporting facilities data.');
   }
 });
-
 
 
 // ------------------------------------------------------------------------------------------------
@@ -1998,11 +1999,309 @@ router.get('/export-loans', ensureAuthenticated, ensureRole(['Admin']), async (r
 // COLLECT DATA
 // ------------------------------------------------------------------------------------------------
 
-router.get('/collect-data', ensureAuthenticated, (req, res) => {
-  res.render('portal/collect-data');
+router.get('/survey', ensureAuthenticated, async (req, res) => {
+  const perPageOptions = [10, 25, 50, 100, 250];
+  const perPage = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
+  const offset = (page - 1) * perPage;
+
+  const search = (req.query.search || '').trim();
+  const county = req.query.county || '';
+  const subcounty = req.query.subcounty || '';
+  const ward = req.query.ward || '';
+  const gender = req.query.gender || '';
+  const education = req.query.education || '';
+  const status = req.query.status || '';
+  const sortBy = req.query.sortBy || 'created_at'; // Sorting field
+
+  let conditions = [];
+  let params = [];
+
+  if (search) {
+    conditions.push(`
+      (enumerator_name LIKE ? OR facility_name LIKE ? OR provider_name LIKE ? OR phone_number LIKE ?)
+    `);
+    params.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
+  }
+
+  if (county) {
+    conditions.push(`county_name = ?`);
+    params.push(county);
+  }
+
+  if (subcounty) {
+    conditions.push(`sub_county_name = ?`);
+    params.push(subcounty);
+  }
+
+  if (ward) {
+    conditions.push(`ward_name = ?`);
+    params.push(ward);
+  }
+
+  if (gender) {
+    conditions.push(`gender = ?`);
+    params.push(gender);
+  }
+
+  if (education) {
+    conditions.push(`education_level = ?`);
+    params.push(education);
+  }
+
+  if (status) {
+    conditions.push(`status = ?`);
+    params.push(status);
+  }
+
+  const whereSQL = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  
+  let orderSQL = 'created_at DESC';
+  if (sortBy === 'year_oldest') orderSQL = 'year_established ASC';
+  if (sortBy === 'year_newest') orderSQL = 'year_established DESC';
+  if (sortBy === 'children_high') orderSQL = 'total_children DESC';
+  if (sortBy === 'children_low') orderSQL = 'total_children ASC';
+
+  try {
+  
+    const [countResult] = await db.execute(`SELECT COUNT(*) AS total FROM childcare_survey_tbl ${whereSQL}`, params);
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / perPage);
+
+    const [surveys] = await db.query(`
+      SELECT survey_id, county_name, sub_county_name, ward_name, enumerator_name, facility_name, 
+      facility_classification, year_established, total_children, total_workers, gender, education_level, 
+      received_training, received_certificate, interested_in_finance, worker_category, provider_name, phone_number, status, created_at
+      FROM childcare_survey_tbl
+      ${whereSQL}
+      ORDER BY ${orderSQL}
+      LIMIT ? OFFSET ?`,
+      [...params, perPage, offset]
+    );
+
+    const [counties] = await db.query(`SELECT DISTINCT county_name FROM childcare_survey_tbl WHERE county_name IS NOT NULL`);
+    let subcounties = [];
+    let wards = [];
+
+    if (county) {
+      [subcounties] = await db.query(`SELECT DISTINCT sub_county_name FROM childcare_survey_tbl WHERE county_name = ?`, [county]);
+    }
+    if (subcounty) {
+      [wards] = await db.query(`SELECT DISTINCT ward_name FROM childcare_survey_tbl WHERE sub_county_name = ?`, [subcounty]);
+    }
+
+    const [educationLevels] = await db.query(`SELECT DISTINCT education_level FROM childcare_survey_tbl WHERE education_level IS NOT NULL`);
+    const [statuses] = await db.query(`SELECT DISTINCT status FROM childcare_survey_tbl WHERE status IS NOT NULL`);
+
+    res.render('portal/survey', {
+      total,
+      surveys,
+      currentPage: page,
+      totalPages,
+      paginationRange: getPaginationRange(page, totalPages),
+      perPageOptions,
+      perPage,
+      search,
+      county,
+      subcounty,
+      ward,
+      gender,
+      education,
+      status,
+      sortBy,
+      counties: counties.map(c => c.county_name),
+      subcounties: subcounties.map(s => s.sub_county_name),
+      wards: wards.map(w => w.ward_name),
+      educationLevels: educationLevels.map(e => e.education_level),
+      statuses: statuses.map(s => s.status),
+      genderOptions: ['Male', 'Female'],
+      sortOptions: [
+        { label: 'Newest Year', value: 'year_newest' },
+        { label: 'Oldest Year', value: 'year_oldest' },
+        { label: 'Children (High-Low)', value: 'children_high' },
+        { label: 'Children (Low-High)', value: 'children_low' }
+      ]
+    });
+
+  } catch (error) {
+    console.error('Survey fetch error:', error);
+    res.status(500).send('Server Error');
+  }
 });
 
+router.get('/collect-data', async (req, res) => {
+  if (!req.session.userId) {
+      req.session.message = "Unauthorized data collection";
+      req.session.messageType = "error";
+      return res.redirect('/auth/login');
+  }
 
+  try {
+
+    const [row] = await db.query(`SELECT fullname FROM user_tbl WHERE user_id = ? LIMIT 1`, [req.session.userId]);
+
+    const enumerator = row[0] || {};
+    
+    res.render('portal/collect-data', { enumerator});
+  } catch (error) {
+    console.error(error);
+    req.session.message = error.message;
+    req.session.messageType = 'error';
+    res.redirect('/portal/dashboard');
+  }
+});
+
+router.post('/save-survey-data', ensureAuthenticated, portalController.addDataCollect);
+
+router.get('/export-survey', ensureAuthenticated, ensureRole(['Admin']), async (req, res) => {
+  try {
+    const {
+      county_name,
+      sub_county_name,
+      ward_name,
+      status,
+      worker_category,
+      education_level,
+      startDate,
+      endDate,
+      limit,
+      exportType = 'excel'
+    } = req.query;
+
+    let query = `
+      SELECT 
+        survey_id, county_name, sub_county_name, ward_name,
+        enumerator_name, id_number, worker_category, gender, age, education_level,
+        received_training, received_certificate, facility_name, facility_classification,
+        geo_location, year_established, total_children, girls, boys, age_under6,
+        age_6_12, age_12_24, age_24_36, age_36_plus, children_with_disabilities,
+        boys_with_disabilities, girls_with_disabilities, total_workers, female_workers,
+        male_workers, workers_with_disabilities, member_institutions, loan_institutions,
+        interested_in_finance, provider_name, phone_number, status, created_at
+      FROM childcare_survey_tbl
+      WHERE 1=1
+    `;
+    const params = [];
+
+    if (county_name) {
+      query += ` AND county_name = ?`;
+      params.push(county_name);
+    }
+    if (sub_county_name) {
+      query += ` AND sub_county_name = ?`;
+      params.push(sub_county_name);
+    }
+    if (ward_name) {
+      query += ` AND ward_name = ?`;
+      params.push(ward_name);
+    }
+    if (status) {
+      query += ` AND status = ?`;
+      params.push(status);
+    }
+    if (worker_category) {
+      query += ` AND worker_category = ?`;
+      params.push(worker_category);
+    }
+    if (education_level) {
+      query += ` AND education_level = ?`;
+      params.push(education_level);
+    }
+    if (startDate && endDate) {
+      query += ` AND DATE(created_at) BETWEEN ? AND ?`;
+      params.push(startDate, endDate);
+    } else if (startDate) {
+      query += ` AND DATE(created_at) >= ?`;
+      params.push(startDate);
+    } else if (endDate) {
+      query += ` AND DATE(created_at) <= ?`;
+      params.push(endDate);
+    }
+
+    query += ` ORDER BY created_at DESC`;
+    if (limit && !isNaN(limit)) {
+      query += ` LIMIT ?`;
+      params.push(Number(limit));
+    }
+
+    const [rows] = await db.execute(query, params);
+
+    if (!rows.length) {
+      req.session.message = "No survey records found for the selected filters.";
+      req.session.messageType = "error";
+      return res.redirect('/portal/survey');
+    }
+
+    const fields = Object.keys(rows[0] || {});
+
+    // --- CSV Export ---
+    if (exportType === 'csv') {
+      const { Parser } = require('json2csv');
+      const parser = new Parser({ fields });
+      const csv = parser.parse(rows);
+
+      res.header('Content-Type', 'text/csv');
+      res.attachment(`survey_export_${Date.now()}.csv`);
+      return res.send(csv);
+    }
+
+    // --- Excel Export ---
+    if (exportType === 'excel') {
+      const xlsx = require('xlsx');
+      const data = rows.map(r => {
+        const obj = {};
+        fields.forEach(f => {
+          obj[f.toUpperCase()] = r[f];
+        });
+        return obj;
+      });
+
+      const worksheet = xlsx.utils.json_to_sheet(data);
+      const workbook = xlsx.utils.book_new();
+      xlsx.utils.book_append_sheet(workbook, worksheet, 'Survey');
+      const buffer = xlsx.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+
+      res.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.attachment(`survey_export_${Date.now()}.xlsx`);
+      return res.send(buffer);
+    }
+
+    return res.json(rows);
+
+  } catch (err) {
+    console.error('Error exporting survey:', err);
+    res.status(500).send('Error exporting survey data.');
+  }
+});
+
+router.post('/view-survey-details', ensureAuthenticated, portalController.getSurveyDetails);
+
+router.get('/survey-details', async (req, res) => {
+
+  if (!req.session.userId) return res.redirect('/auth/login');
+  if (!req.session.surveyDetails) return res.redirect('/portal/survey');
+
+  const details = req.session.surveyDetails;
+  res.render('portal/survey-details', { details });
+});
+
+router.post('/edit-survey-status/:survey_id', ensureAuthenticated, ensureRole(['Admin']), portalController.editSurveyStatus);
+
+router.post('/get-edit-survey-details/:survey_id', ensureAuthenticated, ensureRole(['Admin']), portalController.getEditSurveyDetails);
+
+router.get('/edit-survey', async (req, res) => {
+
+  if (!req.session.userId) return res.redirect('/auth/login');
+
+  if (!req.session.surveyEdits) return res.redirect('/portal/survey');
+
+  const edits = req.session.surveyEdits;
+  
+  res.render('portal/edit-survey', { edits });
+});
+
+router.post('/update-survey-data', ensureAuthenticated, ensureRole(['Admin']), portalController.updateSurveyData);
 
 // -------------------------------------------------------------------------------------------------
 // SETTINGS
@@ -2054,14 +2353,15 @@ const pageAccessMap = {
   'loans': ['Admin', 'Data Clerk'],
   'sacco-member': ['Admin', 'Data Clerk'],
   'sacco-details': ['Admin', 'Data Clerk'],
-  'analysis': ['Admin', 'Data Clerk'],
   'profile': ['Admin', 'Data Clerk','Viewer', 'Champion'],
   'settings': ['Admin'],
   'details': ['Admin'],
   'users': ['Admin'],
-  'analysis': ['Admin'],
-  'survey': ['Admin'],
-  'collect-data': ['Admin'],
+  'analysis': ['Admin', 'Data Clerk', 'Viewer'],
+  'survey': ['Admin', 'Data Clerk', 'Viewer'],
+  'survey-details': ['Admin', 'Data Clerk'],
+  'collect-data': ['Admin', 'Data Clerk', 'Champion'],
+  'edit-survey': ['Admin'],
   'reports': ['Admin'],
   'view-user': ['Admin'],
   'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],

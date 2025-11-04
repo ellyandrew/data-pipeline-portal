@@ -1,0 +1,271 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | Survey Details</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admin text-center">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="author-area-pro">
+                            <div class="container-fluid">
+                            <div class="row">
+
+                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+                                <div class="personal-info-wrap">
+                                    <div class="membership-card">
+                                    <div class="card-header te">
+                                        <h2>Childcare Facility Survey</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="member-photo">
+                                        <img src="/img/contact/member.jpg" height="200px" width="200px" alt="Facility Photo">
+                                        </div>
+                                        <div class="member-details text-center">
+                                        <h3 class="member-name text-uppercase"><%= details.facility_name %></h3>
+                                        <p class="member-number">Classification: <strong><%= details.facility_classification %></strong></p>
+                                        <% 
+                                            let statusClass = 
+                                            details.status === 'Active' ? 'label-success' :
+                                            details.status === 'Pending' ? 'label-warning' :
+                                            details.status === 'Inactive' ? 'label-danger' : '';
+                                        %>
+                                        <p class="facility"><strong class="label <%= statusClass %>"><%= details.status %></strong></p>
+                                        <p class="reg-date">Year Established: 
+                                            <strong><%= details.year_established %></strong>
+                                        </p>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+
+                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                    <div class="row">
+                                        <div class="col-md-2 col-sm-2 col-xs-12 mg-b-15">
+                                        <div class="btn-group">
+                                            <% if (isAdmin) { %>
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal"><i class="fa fa-pencil"></i> Status</button>
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editSurveyModal"><i class="fa fa-edit"></i> Edit</button>
+                                            <% } %>
+                                        </div>
+                                        </div>
+                                        <div class="col-md-10 col-sm-10 col-xs-12 mailbox-pagination mg-b-15">
+                                        <div class="btn-group">
+                                            <a class="btn btn-default btn-sm" href="/portal/survey"><i class="fa fa-arrow-left"></i></a>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                <div class="hpanel">
+                                    <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-bordered">
+                                        <thead>
+                                            <tr class="bg-red text-white">
+                                            <th colspan="4">Facility Details</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                            <td align="right"><strong>Enumerator:</strong></td>
+                                            <td><%= details.enumerator_name %></td>
+                                            <td align="right"><strong>ID Number:</strong></td>
+                                            <td><%= details.id_number %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Worker Category:</strong></td>
+                                            <td><%= details.worker_category %></td>
+                                            <td align="right"><strong>Gender:</strong></td>
+                                            <td><%= details.gender %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Age:</strong></td>
+                                            <td><%= details.age %></td>
+                                            <td align="right"><strong>Education Level:</strong></td>
+                                            <td><%= details.education_level %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Training Received:</strong></td>
+                                            <td><%= details.received_training %></td>
+                                            <td align="right"><strong>Certificate Received:</strong></td>
+                                            <td><%= details.received_certificate %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Location:</strong></td>
+                                            <td colspan="3"><%= details.county_name %> / <%= details.sub_county_name %> / <%= details.ward_name %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Geo Location:</strong></td>
+                                            <td colspan="3"><%= details.geo_location %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Total Children:</strong></td>
+                                            <td><%= details.total_children %></td>
+                                            <td align="right"><strong>Girls:</strong></td>
+                                            <td><%= details.girls %> | Boys: <%= details.boys %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Children with Disabilities:</strong></td>
+                                            <td colspan="3"><%= details.children_with_disabilities %> (Girls: <%= details.girls_with_disabilities %>, Boys: <%= details.boys_with_disabilities %>)</td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Total Workers:</strong></td>
+                                            <td><%= details.total_workers %></td>
+                                            <td align="right"><strong>Workers with Disabilities:</strong></td>
+                                            <td><%= details.workers_with_disabilities %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Member Institutions:</strong></td>
+                                            <td colspan="3"><%= details.member_institutions %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Loan Institutions:</strong></td>
+                                            <td colspan="3"><%= details.loan_institutions %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Interested in Finance:</strong></td>
+                                            <td><%= details.interested_in_finance %></td>
+                                            <td align="right"><strong>Provider Name:</strong></td>
+                                            <td><%= details.provider_name %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Phone Number:</strong></td>
+                                            <td colspan="3"><%= details.phone_number %></td>
+                                            </tr>
+                                            <tr>
+                                            <td align="right"><strong>Survey Date:</strong></td>
+                                            <td colspan="3"><%= formatDate(details.created_at) %></td>
+                                            </tr>
+                                        </tbody>
+                                        </table>
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Edit status Modal -->
+<%
+  let modalTitle = '';
+  let modalMessage = '';
+
+  switch (details.status) {
+    case 'Active':
+      modalTitle = 'Deactivate Respondent';
+      modalMessage = 'This respondent is currently active. Do you want to deactivate from the survey records?';
+      break;
+    case 'Inactive':
+      modalTitle = 'Activate Respondent?';
+      modalMessage = 'This respondent is inactive. Do you want to activate back to the active survey list?';
+      break;
+    case 'Pending':
+      modalTitle = 'Approve Respondent?';
+      modalMessage = 'This survey record is pending review. Do you want to approve and mark it as active?';
+      break;
+    default:
+      modalTitle = 'Update Facility Status';
+      modalMessage = 'Do you want to update the current facility status?';
+  }
+%>
+
+<div id="editStatusModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content modal-vertical-centered">
+      <div class="modal-close-area modal-close-df">
+        <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+      </div>
+      <form action="/portal/edit-survey-status/<%= details.survey_id %>" method="POST">
+        <div class="modal-body">
+          <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
+          <h2><%= modalTitle %></h2>
+          <p><%= modalMessage %></p>
+          <div class="row mg-t-30">
+            <div class="col-md-12">
+              <textarea class="form-control" name="reason" placeholder="Give reason ..." required></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" name="currentStatus" value="<%= details.status %>">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Confirm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="editSurveyModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content modal-vertical-centered">
+      <div class="modal-close-area modal-close-df">
+        <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+      </div>
+      <form action="/portal/get-edit-survey-details/<%= details.survey_id %>" method="POST">
+        <div class="modal-body">
+          <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
+          <h2>Edit Details</h2>
+          <p>Do you want to edit Respondent's details?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger">Yes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+</body>
+</html>

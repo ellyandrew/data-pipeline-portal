@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Uthabiti Africa | Collect Data</title>
+    <title>Uthabiti Africa | Edit Survey</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Top script start -->
@@ -41,10 +41,24 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="main-sparkline10-hd">
-                                <h1>Collect Data</h1>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-md-2 col-sm-2 col-xs-12 mg-b-15">
+                                        <div class="btn-group">
+                                            <div class="main-sparkline10-hd">
+                                                <h1>Edit Data</h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 col-sm-10 col-xs-12 mailbox-pagination mg-b-15">
+                                        <div class="btn-group">
+                                            <a class="btn btn-default btn-sm" href="/portal/survey-details"><i class="fa fa-arrow-left"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <form id="surveyForm" method="POST" action="/portal/save-survey-data">
+                            
+                            <form id="surveyForm" method="POST" action="/portal/update-survey-data">
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mg-b-15">
                                         <div class="admin-pro-accordion-wrap responsive-mg-b-30">
@@ -54,36 +68,31 @@
                                                     <div id="collapse1" class="panel-collapse panel-ic collapse in">
                                                         <div class="panel-body admin-panel-content animated bounce">
                                                             <div class="row">
-                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                                     <div class="form-group">
                                                                         <label class="form-label">County Name</label>
                                                                         <select name="countyName" class="form-control" id="countySelect" required>
-                                                                            <option value="">- select county -</option>
+                                                                            <option value="<%= edits.county_name %>"><%= edits.county_name %></option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                                     <div class="form-group">
                                                                         <label class="form-label">Sub County Name</label>
                                                                         <select name="subCountyName" class="form-control" id="subCountySelect" required>
+                                                                            <option value="<%= edits.sub_county_name %>"><%= edits.sub_county_name %></option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
 
-                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="form-label">Ward Name</label>
                                                                     <select name="wardName" class="form-control" id="wardSelect" required>
+                                                                        <option value="<%= edits.ward_name %>"><%= edits.ward_name %></option>
                                                                     </select>
                                                                 </div>
-                                                                </div>
-
-                                                                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                                                                    <div class="form-group">
-                                                                        <label class="form-label">Enumerator's Name</label>
-                                                                        <input name="enumeratorName" type="text" value="<%= enumerator.fullname ? enumerator.fullname : '' %>" class="form-control" readonly required>
-                                                                    </div>
                                                                 </div>    
                                                             </div>
                                                         </div>
@@ -104,18 +113,18 @@
                                                                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                                                                     <div class="form-group">
                                                                         <label>ID Number/ Passport</label>
-                                                                        <input name="idNumber" type="text" class="form-control" required>
+                                                                        <input name="idNumber" type="text" class="form-control" value="<%= edits.id_number || '' %>" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                                                                     <div class="form-group">
                                                                         <label>Childcare Worker Category</label>
                                                                         <select name="workerCategory" class="form-control" required>
-                                                                            <option value="">- select -</option>
-                                                                            <option value="Facility Owner">Facility Owner</option>
-                                                                            <option value="Caregiver">Caregiver</option>
-                                                                            <option value="Domestic Worker">Domestic Worker</option>
-                                                                            <option value="Volunteer">Volunteer</option>
+                                                                            <option value="">- Select -</option>
+                                                                            <option value="Caregiver" <%= edits.worker_category === 'Caregiver' ? 'selected' : '' %>>Caregiver</option>
+                                                                            <option value="Facility Owner" <%= edits.worker_category === 'Facility Owner' ? 'selected' : '' %>>Facility Owner</option>
+                                                                            <option value="Domestic Worker" <%= edits.worker_category === 'Domestic Worker' ? 'selected' : '' %>>Domestic Worker</option>
+                                                                            <option value="Volunteer" <%= edits.worker_category === 'Volunteer' ? 'selected' : '' %>>Volunteer</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -125,9 +134,9 @@
                                                                         <label>Respondent Gender</label>
                                                                         <select name="gender" class="form-control" required>
                                                                         <option value="">- select gender -</option>
-                                                                        <option value="Male">Male</option>
-                                                                        <option value="Female">Female</option>
-                                                                        <option value="Intersex">Intersex</option>
+                                                                        <option value="Male" <%= edits.gender === 'Male' ? 'selected' : '' %>>Male</option>
+                                                                        <option value="Female" <%= edits.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                                                                        <option value="Intersex" <%= edits.gender === 'Intersex' ? 'selected' : '' %>>Intersex</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -135,7 +144,7 @@
                                                                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                                                                     <div class="form-group">
                                                                         <label>How old are you currently?</label>
-                                                                        <input name="age" type="number" class="form-control" min="18" max="80" required>
+                                                                        <input name="age" type="number" class="form-control" value="<%= edits.age || '' %>" required>
                                                                     </div>
                                                                 </div>
 
@@ -144,14 +153,14 @@
                                                                         <label>Highest Level of Education</label>
                                                                         <select name="educationLevel" class="form-control" required>
                                                                             <option value="">- select -</option>
-                                                                            <option value="No Schooling">None</option>
-                                                                            <option value="Primary">Primary</option>
-                                                                            <option value="Secondary">Secondary</option>
-                                                                            <option value="Certificate">Certificate</option>
-                                                                            <option value="Diploma">Diploma</option>
-                                                                            <option value="Degree">Degree</option>
-                                                                            <option value="Masters">Masters</option>
-                                                                            <option value="PhD">PhD</option>
+                                                                            <option value="No Schooling" <%= edits.education_level === 'No Schooling' ? 'selected' : '' %>>None</option>
+                                                                            <option value="Primary" <%= edits.education_level === 'Primary' ? 'selected' : '' %>>Primary</option>
+                                                                            <option value="Secondary" <%= edits.education_level === 'Secondary' ? 'selected' : '' %>>Secondary</option>
+                                                                            <option value="Certificate" <%= edits.education_level === 'Certificate' ? 'selected' : '' %>>Certificate</option>
+                                                                            <option value="Diploma" <%= edits.education_level === 'Diploma' ? 'selected' : '' %>>Diploma</option>
+                                                                            <option value="Degree" <%= edits.education_level === 'Degree' ? 'selected' : '' %>>Degree</option>
+                                                                            <option value="Masters" <%= edits.education_level === 'Masters' ? 'selected' : '' %>>Masters</option>
+                                                                            <option value="PhD" <%= edits.education_level === 'PhD' ? 'selected' : '' %>>PhD</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>    
@@ -176,8 +185,8 @@
                                                                         <label>Received professional childcare training since you started working here?</label>
                                                                         <select name="receivedTraining" id="receivedTraining" class="form-control" required onchange="toggleCertificateField()">
                                                                             <option value="">- select -</option>
-                                                                            <option value="Yes">Yes</option>
-                                                                            <option value="No">No</option>
+                                                                            <option value="Yes" <%= edits.received_training === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                            <option value="No" <%= edits.received_training === 'No' ? 'selected' : '' %>>No</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -186,8 +195,8 @@
                                                                     <div class="form-group">
                                                                         <label>Were you issued a certificate upon completion?</label>
                                                                         <select name="receivedCertificate" class="form-control">
-                                                                            <option value="Yes">Yes</option>
-                                                                            <option value="No">No</option>
+                                                                            <option value="Yes" <%= edits.received_certificate === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                            <option value="No" <%= edits.received_certificate === 'No' ? 'selected' : '' %>>No</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>   
@@ -210,7 +219,7 @@
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Facility Name</label>
-                                                                        <input name="facilityName" type="text" class="form-control" required>
+                                                                        <input name="facilityName" value="<%= edits.facility_name %>" type="text" class="form-control" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
@@ -218,9 +227,9 @@
                                                                         <label>Facility Classification (Location)</label>
                                                                         <select name="facilityClassification" class="form-control" onchange="toggleOtherClassification()">
                                                                             <option value="">- select -</option>
-                                                                            <option value="School-Based">School Based</option>
-                                                                            <option value="Home based Care">Home Based care</option>
-                                                                            <option value="Center-Based">Center-Based</option>
+                                                                            <option value="School-Based" <%= edits.facility_classification === 'School-Based' ? 'selected' : '' %>>School Based</option>
+                                                                            <option value="Home based Care" <%= edits.facility_classification === 'Home based care' ? 'selected' : '' %>>Home Based care</option>
+                                                                            <option value="Center-Based" <%= edits.facility_classification === 'Center-Based' ? 'selected' : '' %>>Center-Based</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -235,9 +244,9 @@
                                                                         <label>Geographical Location Classification</label>
                                                                         <select name="geoLocation" class="form-control" required>
                                                                             <option value="">- select -</option>
-                                                                            <option value="Urban">Urban</option>
-                                                                            <option value="Semi urban">Semi urban</option>
-                                                                            <option value="Rural">Rural</option>
+                                                                            <option value="Urban" <%= edits.geo_location === 'Urban' ? 'selected' : '' %>>Urban</option>
+                                                                            <option value="Semi urban" <%= edits.geo_location === 'Semi urban' ? 'selected' : '' %>>Semi urban</option>
+                                                                            <option value="Rural" <%= edits.geo_location === 'Rural' ? 'selected' : '' %>>Rural</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -247,7 +256,7 @@
                                                                         <select name="yearEstablished" class="form-control" required>
                                                                             <option value="">- select -</option>
                                                                                 <% for (let y = 1950; y <= 2026; y++) { %>
-                                                                                    <option value="<%= y %>"><%= y %></option>
+                                                                                    <option value="<%= y %>" <%= edits.year_established === y ? 'selected' : '' %>><%= y %></option>
                                                                                 <% } %>
                                                                         </select>
                                                                     </div>
@@ -271,19 +280,19 @@
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Total Children</label>
-                                                                        <input name="totalChildren" id="totalChildren" type="number" class="form-control" required>
+                                                                        <input name="totalChildren" id="totalChildren" value="<%= edits.total_children || 0 %>" type="number" class="form-control" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Girls</label>
-                                                                        <input name="girls" id="girls" type="number" class="form-control" required>
+                                                                        <input name="girls" id="girls" type="number" value="<%= edits.girls || 0 %>" class="form-control" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Boys</label>
-                                                                        <input name="boys" id="boys" type="number" class="form-control" required oninput="checkChildrenTotal()">
+                                                                        <input name="boys" id="boys" type="number" value="<%= edits.boys || 0 %>" class="form-control" required oninput="checkChildrenTotal()">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-12">
@@ -308,31 +317,31 @@
                                                                 <div class="col-lg-2">
                                                                     <div class="form-group">
                                                                         <label>Under 6 months</label>
-                                                                        <input name="age_under6" type="number" class="form-control">
+                                                                        <input name="age_under6" value="<%= edits.age_under6 || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-2">
                                                                     <div class="form-group">
                                                                         <label>06–12 months</label>
-                                                                        <input name="age_6_12" type="number" class="form-control">
+                                                                        <input name="age_6_12" value="<%= edits.age_6_12 || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-2">
                                                                     <div class="form-group">
                                                                         <label>12–24 months</label>
-                                                                        <input name="age_12_24" type="number" class="form-control">
+                                                                        <input name="age_12_24" value="<%= edits.age_12_24 || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-2">
                                                                     <div class="form-group">
                                                                         <label>24–36 months</label>
-                                                                        <input name="age_24_36" type="number" class="form-control">
+                                                                        <input name="age_24_36" value="<%= edits.age_24_36 || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-2">
                                                                     <div class="form-group">
                                                                         <label>36+ months</label>
-                                                                        <input name="age_36_plus" type="number" class="form-control">
+                                                                        <input name="age_36_plus" value="<%= edits.age_36_plus || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>    
                                                             </div>
@@ -354,19 +363,19 @@
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Children with Disabilities</label>
-                                                                        <input name="children_with_disabilities" type="number" class="form-control">
+                                                                        <input name="children_with_disabilities" value="<%= edits.children_with_disabilities || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Boys with Disabilities</label>
-                                                                        <input name="boys_with_disabilities" type="number" class="form-control">
+                                                                        <input name="boys_with_disabilities" value="<%= edits.boys_with_disabilities || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Girls with Disabilities</label>
-                                                                        <input name="girls_with_disabilities" type="number" class="form-control">
+                                                                        <input name="girls_with_disabilities" value="<%= edits.girls_with_disabilities || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>     
                                                             </div>
@@ -388,25 +397,25 @@
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Total Workers</label>
-                                                                        <input name="total_workers" id="total_workers" type="number" class="form-control" required>
+                                                                        <input name="total_workers" id="total_workers" value="<%= edits.total_workers || 0 %>" type="number" class="form-control" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Female Workers</label>
-                                                                        <input name="female_workers" id="female_workers" type="number" class="form-control" required>
+                                                                        <input name="female_workers" value="<%= edits.female_workers || 0 %>" id="female_workers" type="number" class="form-control" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Male Workers</label>
-                                                                        <input name="male_workers" id="male_workers" type="number" class="form-control" required oninput="checkWorkerTotal()">
+                                                                        <input name="male_workers" id="male_workers" value="<%= edits.male_workers || 0 %>" type="number" class="form-control" required oninput="checkWorkerTotal()">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
                                                                     <div class="form-group">
                                                                         <label>Workers with Disabilities</label>
-                                                                        <input name="workers_with_disabilities" type="number" class="form-control">
+                                                                        <input name="workers_with_disabilities" value="<%= edits.workers_with_disabilities || 0 %>" type="number" class="form-control">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-3">
@@ -431,19 +440,19 @@
                                                                 <div class="col-lg-12 mg-b-30">
                                                                     <div class="row">
                                                                         <div class="col-lg-12"><label>Membership in Institutions</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="Bank"> Bank</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="SACCO"> SACCO</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="VSLA/SILK"> VSLA/SILK</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="Merry-go-round"> Merry-go-round</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="Bank" <%= edits.member_institutions.includes('Bank') ? 'checked' : '' %>> Bank</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="SACCO" <%= edits.member_institutions.includes('SACCO') ? 'checked' : '' %>> SACCO</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="VSLA/SILK" <%= edits.member_institutions.includes('VSLA/SILK') ? 'checked' : '' %>> VSLA/SILK</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="member_institutions" value="Merry-go-round" <%= edits.member_institutions.includes('Merry-go-round') ? 'checked' : '' %>> Merry-go-round</label></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-12 mg-b-30">
                                                                     <div class="row">
                                                                         <div class="col-lg-12"><label>Borrowed Loans From</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="Bank"> Bank</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="SACCO"> SACCO</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="VSLA/SILK"> VSLA/SILK</label></div>
-                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="Merry-go-round"> Merry-go-round</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="Bank" <%= edits.loan_institutions.includes('Bank') ? 'checked' : '' %>> Bank</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="SACCO" <%= edits.loan_institutions.includes('SACCO') ? 'checked' : '' %>> SACCO</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="VSLA/SILK" <%= edits.loan_institutions.includes('VSLA/SILK') ? 'checked' : '' %>> VSLA/SILK</label></div>
+                                                                        <div class="col-md-3"><label><input type="checkbox" name="loan_institutions" value="Merry-go-round" <%= edits.loan_institutions.includes('Merry-go-round') ? 'checked' : '' %>> Merry-go-round</label></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-4">
@@ -451,8 +460,8 @@
                                                                     <label>Interested in joining childcare-focused financial institution?</label>
                                                                         <select name="interested_in_finance" class="form-control" required>
                                                                             <option value="">- select -</option>
-                                                                            <option value="Yes">Yes</option>
-                                                                            <option value="No">No</option>
+                                                                            <option value="Yes" <%= edits.interested_in_finance === 'Yes' ? 'selected' : '' %>>Yes</option>
+                                                                            <option value="No" <%= edits.interested_in_finance === 'No' ? 'selected' : '' %>>No</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>    
@@ -475,13 +484,13 @@
                                                                 <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label>Childcare Provider’s Name</label>
-                                                                        <input name="provider_name" type="text" class="form-control" required>
+                                                                        <input name="provider_name" value="<%= edits.provider_name %>" type="text" class="form-control" required>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-lg-6">
                                                                     <div class="form-group">
                                                                         <label>Primary Phone Number</label>
-                                                                        <input name="phone_number" type="text" class="form-control" placeholder="07xxxxxxxx or 01xxxxxxxx" required>
+                                                                        <input name="phone_number" type="text" class="form-control" value="<%= edits.phone_number %>" placeholder="07xxxxxxxx or 01xxxxxxxx" required>
                                                                     </div>
                                                                 </div>     
                                                             </div>
