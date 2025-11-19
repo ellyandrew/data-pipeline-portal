@@ -1,6 +1,6 @@
 const secretKey = require('../generateKey');
 
-const ALLOWED_ROLES = ['Admin', 'Data Clerk', 'Viewer', 'Champion'];
+const ALLOWED_ROLES = ['Admin', 'Data Clerk', 'Viewer', 'Champion', 'Member'];
 
 const pageAccessMap = {
   'dashboard': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
@@ -32,6 +32,13 @@ const pageAccessMap = {
   'reports': ['Admin'],
   'view-user': ['Admin'],
   'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
+  'profile-details': ['Member'],
+  'my-dashboard': ['Member'],
+  'my-profile': ['Member'],
+  'my-facility': ['Member'],
+  'my-facility-details': ['Member'],
+  'my-contributions': ['Member'],
+  'my-sacco': ['Member']
 };
 
 module.exports = {
@@ -51,6 +58,7 @@ module.exports = {
     res.locals.isDataClerk = req.session.user_role === 'Data Clerk';
     res.locals.isChampion = req.session.user_role === 'Champion';
     res.locals.isViewer = req.session.user_role === 'Viewer';
+    res.locals.isMember = req.session.user_role === 'Member';
 
     res.locals.currentPath = req.path;
 

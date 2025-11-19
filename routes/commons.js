@@ -2,23 +2,14 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
-// const commonController = require('../controllers/commonController');
 const session = require('express-session');
-// const { body } = require('express-validator');
 const db = require('../config/db');
-// const { getPaginationRange } = require('../utils/pagination');
-// const { getGlobalSearchProduct } = require('../controllers/notificationController');
-
-// Global search
-// router.use(getGlobalSearchProduct);
 
 // Landing page rendering________________________________________________________________________________
-// Previews Banners, New arrivals
 router.get('/', async (req, res) => {
     try {
         res.render('index', {
-            // message: null,
-            // messageType: null
+            
         });
     } catch (error) {
         console.error('Error loading home page:', error);

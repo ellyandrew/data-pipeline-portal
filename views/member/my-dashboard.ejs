@@ -1,0 +1,369 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Uthabiti Africa | My Dashboard</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Top script start -->
+      <%- include('../partials/top_script'); %>
+    <!-- / Top script end -->
+</head>
+
+<body>
+    <!-- Side bar -->
+     <%- include('../partials/portal_sidebar'); %>
+     <!-- / Side bar -->
+
+    <!-- Start Welcome area -->
+    <div class="all-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="logo-pro">
+                        <a href="/member/my-dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-advance-area">
+            <!-- Header top start -->
+             <%- include('../partials/header_top'); %>
+            <!-- / Header top end -->
+            <!-- Mobile Menu start -->
+            <%- include('../partials/mobile_menu'); %>
+            <!-- Mobile Menu end -->
+        </div>
+        <div class="section-admin container-fluid res-mg-t-15 mg-t-30" style="margin-top: 60px;">
+            <div class="row admins">
+                <div class="col-md-12">
+                   <div class="widgets-programs-area mg-t-15">
+                        <div class="container-fluid">
+
+                        <% if (message && messageType === 'error') { %>
+                            <div class="widget-program-box mg-tb-30">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="hpanel responsive-mg-b-30">
+                                                <div class="panel-body">
+                                                    <div class="text-center content-box">
+                                                        <h2 class="m-b-xs">Sacco Alert</h2>
+                                                        <p class="font-bold text-success">Quick Question</p>
+                                                        <div class="m icon-box">
+                                                            <i class="fa fa-question" aria-hidden="true"></i>
+                                                        </div>
+                                                        <p class="small mg-t-box">
+                                                            Are you interested in joining uthabit Sacco network?
+                                                        </p>
+                                                        <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#confirmSaccoMemberModal">Action button</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <% if (warning) { %>
+                            <div class="alert alert-info alert-success-style2 alert-st-bg1 alert-st-bg12">
+                                <button type="button" class="close sucess-op" data-dismiss="alert" aria-label="Close">
+										<span class="icon-sc-cl" aria-hidden="true">&times;</span>
+									</button>
+                                <i class="fa fa-info-circle adminpro-inform admin-check-pro admin-check-pro-clr1 admin-check-pro-clr12" aria-hidden="true"></i>
+                                <p><strong>Alert!</strong> <%= warning %></p>
+                            </div>
+                        <% } %>
+
+                            <%
+                                // Facility stats
+                                const totalBoys = Number(facility?.total_boys || 0);
+                                const totalGirls = Number(facility?.total_girls || 0);
+                                const totalMale = Number(facility?.male_caregivers || 0);
+                                const totalFemale = Number(facility?.female_caregivers || 0);
+
+                                // Contributions stats
+                                const totalFee = Number(contribution?.membership_fee || 0);
+                                const totalSaving = Number(contribution?.my_savings || 0);
+                                const totalShares = Number(contribution?.my_shares || 0);
+                                const totalRepayment = Number(contribution?.loan_repayment || 0);
+                                const totalPenalty = Number(contribution?.penalty || 0);
+                            %>
+
+                            <% if(hasFacility) { %>
+                            <div class="row mg-b-15">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="hpanel responsive-mg-b-30">
+                                        <div class="panel-body">
+                                            <div class="stats-title pull-left">
+                                                <h4>Children</h4>
+                                            </div>
+                                            <div class="stats-icon pull-right">
+                                                <i class="fa fa-users" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="m-t-xl">
+                                                <h1 class="text-success">
+                                                    <%= parseFloat(facility.total_beneficiaries || 0).toLocaleString(
+                                                        undefined, 
+                                                        { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+                                                    ) %>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="hpanel responsive-mg-b-30">
+                                        <div class="panel-body">
+                                            <div class="stats-title pull-left">
+                                                <h4>Facility</h4>
+                                            </div>
+                                            <div class="stats-icon pull-right">
+                                                <i class="fa fa-square" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="m-t-xl">
+                                                <h1 class="text-info">
+                                                    <%= parseFloat(facility.total_facilities || 0).toLocaleString(
+                                                        undefined, 
+                                                        { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+                                                    ) %>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="hpanel responsive-mg-b-30">
+                                        <div class="panel-body">
+                                            <div class="stats-title pull-left">
+                                                <h4>Workers</h4>
+                                            </div>
+                                            <div class="stats-icon pull-right">
+                                                <i class="fa fa-user" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="m-t-xl">
+                                                <h1 class="text-warning">
+                                                    <%= parseFloat(facility.total_caregivers || 0).toLocaleString(
+                                                        undefined, 
+                                                        { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+                                                    ) %>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+                            <% if(hasSacco) { %>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="hpanel responsive-mg-b-30 hbgred">
+                                        <div class="panel-body">
+                                            <div class="stats-title pull-left">
+                                                <h4>Shares</h4>
+                                            </div>
+                                            <div class="stats-icon pull-right">
+                                                <i class="fa fa-cube" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="m-t-xl">
+                                                <h1 class="text-big font-light">
+                                                    <%= parseFloat(sacco.shares || 0).toLocaleString(
+                                                        undefined, 
+                                                        { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+                                                    ) %>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="hpanel responsive-mg-b-30 hbgyellow">
+                                        <div class="panel-body">
+                                            <div class="stats-title pull-left">
+                                                <h4>Savings</h4>
+                                            </div>
+                                            <div class="stats-icon pull-right">
+                                                <i class="fa fa-briefcase" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="m-t-xl">
+                                                <h1 class="text-big font-light">
+                                                    Ksh. <%= parseFloat(sacco.savings || 0).toLocaleString(
+                                                        undefined, 
+                                                        { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+                                                    ) %>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="hpanel responsive-mg-b-30 hbgblue">
+                                        <div class="panel-body">
+                                            <div class="stats-title pull-left">
+                                                <h4>Loan Balance</h4>
+                                            </div>
+                                            <div class="stats-icon pull-right">
+                                                <i class="fa fa-money" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="m-t-xl">
+                                                <h1 class="text-big font-light">
+                                                    Ksh. <%= parseFloat(sacco.loan_balance || 0).toLocaleString(
+                                                        undefined, 
+                                                        { minimumFractionDigits: 0, maximumFractionDigits: 0 }
+                                                    ) %>
+                                                </h1>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+
+                            <div class="row mg-t-15">
+                                <div class="analysis-rounded-area mg-tb-30">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <% if(hasFacility) { %>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="analytics-rounded reso-mg-b-30">
+                                                    <div class="analytics-rounded-content">
+                                                        <h5>Children</h5>
+                                                        <div class="text-center">
+                                                            <canvas id="childrenChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="analytics-rounded reso-mg-b-30">
+                                                    <div class="analytics-rounded-content">
+                                                        <h5>Workers</h5>
+                                                        <div class="text-center">
+                                                            <canvas id="workerChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% } %>
+
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mg-t-30">
+                                                <div class="analytics-rounded reso-mg-b-30">
+                                                    <div class="analytics-rounded-content">
+                                                        <h5>My Contributions</h5>
+                                                        <div class="text-center">
+                                                            <canvas id="contributionChart"></canvas>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Add Sacco Modal -->
+        <div id="confirmSaccoMemberModal" class="modal FullColor-popup-AlertModal fade">
+            <div class="modal-dialog modal-dialog-centered">
+                <form method="POST" action="/member/confirm-sacco-member-join">
+                    <div class="modal-content">
+                        <div class="modal-header header-color-modal bg-color-4">
+                            <h4 class="modal-title">Confirm Sacco Member Add</h4>
+                            <div class="modal-close-area modal-close-df">
+                                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mg-b-30">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <p>Are you sure you want to Join Uthabiti Sacco?</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Yes</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<!-- Bottom script start -->
+  <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+
+<script>
+    // Children overview
+    const totalBoys = <%= totalBoys %>;
+    const totalGirls = <%= totalGirls %>;
+
+    new Chart("childrenChart", {
+        type: "pie",
+        data: {
+            labels: ["Boys", "Girls"],
+            datasets: [{
+                backgroundColor: ["#b91d47", "#00aba9"],
+                data: [totalBoys, totalGirls]
+            }]
+        },
+        options: {
+            title: { display: true, text: "Facility Children Gender Distribution" }
+        }
+    });
+
+    // Worker overview
+    const totalMale = <%= totalMale %>;
+    const totalFemale = <%= totalFemale %>;
+
+    new Chart("workerChart", {
+        type: "pie",
+        data: {
+            labels: ["Male Workers", "Female Workers"],
+            datasets: [{
+                backgroundColor: ["#2b5797", "#e8c3b9"],
+                data: [totalMale, totalFemale]
+            }]
+        },
+        options: {
+            title: { display: true, text: "Facility Worker Gender Distribution" }
+        }
+    });
+
+    // Contribution overview
+    const totalFee = <%= totalFee %>;
+    const totalSaving = <%= totalSaving %>;
+    const totalShares = <%= totalShares %>;
+    const totalRepayment = <%= totalRepayment %>;
+    const totalPenalty = <%= totalPenalty %>;
+
+    new Chart("contributionChart", {
+        type: "bar",
+        data: {
+            labels: ["Membership Fee", "Savings", "Shares", "Loan Repayment", "Penalty"],
+            datasets: [{
+                backgroundColor: ["red", "green", "blue", "orange", "brown"],
+                data: [totalFee, totalSaving, totalShares, totalRepayment, totalPenalty]
+            }]
+        },
+        options: {
+            legend: { display: false },
+            title: { display: true, text: "My Membership Contributions Overview" }
+        }
+    });
+</script>
+
+</body>
+</html>

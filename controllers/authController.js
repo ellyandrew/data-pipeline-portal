@@ -5,160 +5,118 @@ const session = require('express-session');
 const { validationResult } = require('express-validator');
 const secretKey = require('../generateKey');
 const { logActivity } = require('../utils/logger');
-
+const crypto = require('crypto');
 
 // ------------------------------------------------------------------------------------------------
 // 1. REGISTER USER
 // ------------------------------------------------------------------------------------------------
-// exports.registerUser= async (req, res) => {
+exports.registerUser= async (req, res) => {
 
-//     const errors = validationResult(req);
-//         if (!errors.isEmpty()) {
-//             return res.render('auth/register', {
-//             message: errors.array()[0].msg, messageType: 'error', values: req.body,});
-//         }
+    const { firstName, middleName, lastName, idNumber, membershipType, email, password } = req.body;
 
-//     const { fullName, idNumber, email } = req.body;
+    if (!firstName || !lastName || !email || !membershipType || !idNumber || !password) {
+      req.session.message = "All fields are required!";
+      req.session.messageType = "error";
+      req.session.values = req.body;
+      return res.redirect("/auth/register");
+    }
 
-//     if (!fullName || !idNumber || !email) {
-//         return res.render('auth/register', { message: 'All fields are required!', messageType: 'error', values: req.body });
-//     }
+    const fullName = [firstName, middleName, lastName]
+    .filter(name => name && name.trim() !== "")
+    .join(" ");
 
-//     const fullPhone = `${countryCode.trim()}${phoneNumber.trim()}`;
+    const currentTask = 'Registration';
 
-//     try {
-//         // Check if user exists
-//         const [results] = await db.query('SELECT email, phone_number FROM user_tbl WHERE email = ? OR phone_number = ?', [email, fullPhone]);
+    try {
+        // Check if member exists
+        const [userCheck] = await db.query(`SELECT * FROM user_tbl WHERE email = ? OR idNumber = ? LIMIT 1`, [email, idNumber]);
 
-//         if (results.length > 0) {
-//             return res.render('auth/register', {message: 'Email or phone number already exists!', messageType: 'error', values: req.body });
-//         }
+        if (userCheck.length > 0) {
+          req.session.message = "A member with this Email Address or ID Number already exists!";
+          req.session.messageType = "error";
+          req.session.values = req.body;
+          return res.redirect("/auth/register");
+        }
 
-//         // Hash the password
-//         const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-//         // Generate a 6-digit token
-//         const tokenCode = Math.floor(100000 + Math.random() * 900000);
+        const [addMember] = await db.execute(
+          `INSERT INTO members_tbl (first_name, middle_name, last_name, email, membership_type, role)
+          VALUES (?, ?, ?, ?, ?, ?)`,
+          [firstName, middleName || null, lastName, email, membershipType, "Member"]
+        );
 
-//         // Nodemailer
-//         const transporter = nodemailer.createTransport({
-//             secure: true,
-//             host: 'smtp.gmail.com',
-//             port: 465,
-//             auth: {
-//                 user: process.env.EMAIL_USER,
-//                 pass: process.env.EMAIL_PASS,
-//             },
-//         });
+        const memberId = addMember.insertId;
 
-//         // Email options
-//         const mailOptions = {
-//             from: 'dukarite@gmail.com',
-//             to: email,
-//             subject: 'Verification Code',
-//             // text: `Your verification code is: ${tokenCode}`,
-//             html: `
-//                 <!DOCTYPE html>
-//                 <html>
-//                 <head>
-//                     <style>
-//                         body {font-family: Arial, sans-serif;background-color: #f9f9f9;margin: 0;padding: 0;}
-//                         .container {max-width: 600px;margin: 20px auto;background: #f5f5f5;padding: 20px;border-radius: 8px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
-//                         .header {text-align: center;color: #ffffff;font-size: 20px;margin-bottom: 20px;background-color: #0AAD0A;height: 50px;border-radius: 2px;padding: 20px;font-weight: bold;font-family: monospace;}
-//                         .code {font-size: 24px;color: #007BFF;font-weight: bold;text-align: center;margin: 20px 0;}
-//                         .footer {text-align: center;font-size: 12px;color: #666666;margin-top: 20px;}
-//                     </style>
-//                 </head>
-//                 <body>
-//                     <div class="container">
-//                         <div class="header">Welcome to Dukarite</div>
-//                         <p>Hello,</p>
-//                         <p>Dear customer, use the following code to verify your email address:</p>
-//                         <div class="code">${tokenCode}</div>
-//                         <p>If you did not request this, please ignore this email.</p>
-//                         <div class="footer">Thank you for using our service!</div>
-//                     </div>
-//                 </body>
-//                 </html>
-//                 `,
-//         };
+        const [result] = await db.execute(`INSERT INTO user_tbl (member_id, fullname, email, idNumber, role, password, status) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [memberId, fullName, email, idNumber, 'Member', hashedPassword, 'Pending']);
 
-//         // Send email
-//         transporter.sendMail(mailOptions, async (err, info) => {
-//             if (err) {
-//                 console.error('Error sending email:', err);
-//                 return res.render('auth/register', { message: 'Fail to send email', messageType: 'error', values: req.body });
-//             }
-//             // Insert new user
-//             const [insertUser] = await db.query('INSERT INTO user_tbl SET ?', { first_name: firstName, last_name: lastName, email: email, password: hashedPassword, phone_number: fullPhone, token: tokenCode });
-//             const token = jwt.sign({ userId: insertUser.insertId, email }, secretKey, { expiresIn: '30m' });
-//             req.session.token = token;
-//             res.redirect('/auth/verify');
-//         });
+        const insertId = result.insertId;
+        
+        // Generate a 6-digit token
+        const tokenCode = Math.floor(100000 + Math.random() * 900000);
 
-//     } catch (error) {
-//         return res.render('auth/register', { message: 'Technical error occurred!', messageType: 'error', values: req.body });
-//     }
-// };
+        // Nodemailer
+        const transporter = nodemailer.createTransport({
+            secure: true,
+            host: 'smtp.gmail.com',
+            port: 465,
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
+        });
+
+        // Send email
+        await transporter.sendMail({
+            from: 'uhrturgroup@gmail.com',
+            to: email,
+            subject: '[Uthabiti Africa] Verify Email',
+            html: `
+                <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <style>
+                            body {font-family: Arial, sans-serif;background-color: #f9f9f9;margin: 0;padding: 0;}
+                            .container {max-width: 600px;margin: 20px auto;background: #f5f5f5;padding: 20px;border-radius: 8px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+                            .header {text-align: center;color: #ffffff;font-size: 20px;margin-bottom: 20px;background-color: #e12503;height: 50px;border-radius: 2px;padding: 20px;font-weight: bold;font-family: monospace;}
+                            .code {font-size: 24px;color: #000;font-weight: bold;text-align: center;margin: 20px 0;}
+                            .footer {text-align: center;font-size: 12px;color: #e12503;margin-top: 20px;}
+                        </style>
+                    </head>
+                    <body>
+                        <div class="container">
+                            <div class="header">Email Verification</div>
+                            <p>Dear Member,</p>
+                            <p>We received your request to join Uthabiti Africa: To verify your email address, user the code below:</p>
+                            <div class="code">${tokenCode}</div>
+                            <p>If you did not request this, please ignore this email.</p>
+                            <div class="footer">Thank you for using our service!</div>
+                        </div>
+                    </body>
+                </html>
+            `,
+        });
+
+        await db.execute(
+            `INSERT INTO verification_tbl (user_id, email, verification_code, expires_at) VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))
+             ON DUPLICATE KEY UPDATE verification_code = VALUES(verification_code), expires_at = VALUES(expires_at)`,
+            [insertId, email, tokenCode]
+        );
+
+        req.session.userVerificationDraft = { userId: insertId, userEmail: email, userTask: currentTask };
+        req.session.message = 'Verification Code Sent! Please check your email.';
+        req.session.messageType = 'success';
+        return res.redirect('/auth/verify');
+
+    } catch (error) {
+        return res.render('auth/register', { message: 'Technical error occurred!', messageType: 'error', values: req.body });
+    }
+};
 
 // ------------------------------------------------------------------------------------------------
 // 2. LOGIN USER
 // ------------------------------------------------------------------------------------------------
-// exports.loginUser = async (req, res) => {
-
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.render('auth/login', { message: errors.array()[0].msg, messageType: 'error', });
-//     }
-
-//     const { email, password } = req.body;
-
-//     if (!email || !password) {
-//         return res.render('auth/login', { message: 'All fields are required!', messageType: 'error' });
-//     }
-
-//     try {
-//         let user;
-
-//         if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-//             // Query by email
-//             const [users] = await db.query('SELECT * FROM user_tbl WHERE email = ? AND status = ? LIMIT 1', [email, 'Active']);
-//             user = users[0];
-//         } else {
-//             return res.render('auth/login', { message: 'Invalid email address!', messageType: 'error' });
-//         }
-
-//         // Check if user exists
-//         if (!user) {
-//             return res.render('auth/login', { message: 'Invalid request!', messageType: 'error' });
-//         }
-
-//         const isMatch = await bcrypt.compare(password, user.password);
-        
-//         if (!isMatch) {
-//             return res.render('auth/login', { message: 'Incorrect user request!', messageType: 'error' });
-//         }
-
-//         // Set session variables
-//         req.session.userId = user.user_id;
-//         req.session.user_role = user.role;
-
-//         // log activity
-//         await logActivity(req.session.userId, null, "LOGIN", `User logged in.`, req);
-
-//         await db.execute(`UPDATE user_tbl SET last_login = NOW() WHERE user_id = ? LIMIT 1`, [user.user_id]);
-
-//         if (user.role === 'Admin' || user.role === 'Data Clerk' || user.role === 'Viewer' || user.role === 'Champion') { 
-//             return res.redirect('/portal/dashboard');
-
-//         }  else {
-//             return res.redirect('/');
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         return res.render('auth/login', { message: 'Technical error occurred!', messageType: 'error' });
-//     }
-// };
 
 exports.loginUser = async (req, res) => {
   const errors = validationResult(req);
@@ -238,9 +196,10 @@ exports.loginUser = async (req, res) => {
         messageType: 'error',
       });
     }
-
+    
     req.session.userId = user.user_id;
     req.session.user_role = user.role;
+    req.session.userMember = user.member_id || '';
 
     await db.execute(`UPDATE user_tbl SET last_login = NOW() WHERE user_id = ? LIMIT 1`, [user.user_id]);
 
@@ -248,6 +207,8 @@ exports.loginUser = async (req, res) => {
 
     if (['Admin', 'Data Clerk', 'Viewer', 'Champion'].includes(user.role)) {
       return res.redirect('/portal/dashboard');
+    } else if(['Member'].includes(user.role)) {
+      return res.redirect('/member/my-dashboard');
     } else {
       return res.redirect('/');
     }
@@ -299,6 +260,8 @@ exports.userRequestForgotPassword = async (req, res) => {
             values: req.body 
         });
     }
+
+    const currentTask = 'Reset';
 
     try {
         let member;
@@ -375,7 +338,7 @@ exports.userRequestForgotPassword = async (req, res) => {
         );
 
         
-        req.session.userVerificationDraft = { userId: member.user_id, email };
+        req.session.userVerificationDraft = { userId: member.user_id, userEmail: email, userTask: currentTask };
         req.session.message = 'Verification Code Sent! Please check your email.';
         req.session.messageType = 'success';
         return res.redirect('/auth/verify');
@@ -401,7 +364,7 @@ exports.verifyUserCode = async (req, res) => {
     return res.redirect('/auth/forgot-password');
   }
 
-  const { userId, email } = req.session.userVerificationDraft;
+  const { userId, userEmail, userTask } = req.session.userVerificationDraft;
   const { verificationCode } = req.body;
 
   if (!verificationCode) {
@@ -415,7 +378,7 @@ exports.verifyUserCode = async (req, res) => {
       `SELECT * FROM verification_tbl 
        WHERE user_id = ? AND email = ? AND verification_code = ? AND used = 0 AND expires_at > NOW() 
        LIMIT 1`,
-      [userId, email, verificationCode]
+      [userId, userEmail, verificationCode]
     );
 
     if (rows.length === 0) {
@@ -424,10 +387,10 @@ exports.verifyUserCode = async (req, res) => {
          SET attempts = attempts + 1 
          WHERE user_id = ? AND email = ? AND used = 0 
          ORDER BY id DESC LIMIT 1`,
-        [userId, email]
+        [userId, userEmail]
       );
 
-      await logActivity(userId, null, "VERIFICATION_FAILED", `Invalid verification attempt for ${email}`, req);
+      await logActivity(userId, null, "VERIFICATION_FAILED", `Invalid verification attempt for ${userEmail}`, req);
 
       req.session.message = 'Invalid or expired verification code!';
       req.session.messageType = 'error';
@@ -436,35 +399,49 @@ exports.verifyUserCode = async (req, res) => {
 
     const tokenRow = rows[0];
 
-    // Too many attempts
     if (tokenRow.attempts >= 2) {
-      await logActivity(userId, null, "VERIFICATION_BLOCKED", `User ${email} exceeded verification attempts`, req);
+      await logActivity(userId, null, "VERIFICATION_BLOCKED", `User ${userEmail} exceeded verification attempts`, req);
 
       req.session.message = 'Too many invalid attempts. Please request a new code.';
       req.session.messageType = 'error';
-      return res.redirect('/auth/forgot-password');
+      return res.redirect('/auth/login');
     }
 
-    // Mark as used
     await db.query(
-      `UPDATE verification_tbl SET used = 1, verified_at = NOW() WHERE id = ?`,
+      `UPDATE verification_tbl 
+       SET used = 1, verified_at = NOW() 
+       WHERE id = ?`,
       [tokenRow.id]
     );
 
     req.session.isVerified = true;
-    req.session.verifiedEmail = email;
+    req.session.verifiedEmail = userEmail;
     req.session.verifiedUser = userId;
 
-    await logActivity(userId, null, "VERIFICATION_SUCCESS", `Verified password reset code for ${email}`, req);
+    await logActivity(userId, null, "VERIFICATION_SUCCESS", `Verified code for ${userEmail} (${userTask})`, req);
 
-    req.session.message = 'Code verified successfully! Change your password.';
+    if (userTask === 'Registration') {
+      await db.query(`UPDATE user_tbl SET status = ? WHERE user_id = ? LIMIT 1`, ['Active', userId]);
+
+      req.session.message = 'Email verified successfully! You can now log in.';
+      req.session.messageType = 'success';
+      return res.redirect('/auth/login');
+    }
+
+    if (userTask === 'Reset') {
+      req.session.message = 'Code verified successfully! Change your password.';
+      req.session.messageType = 'success';
+      return res.redirect('/auth/reset-password');
+    }
+
+    req.session.message = 'Verification successful.';
     req.session.messageType = 'success';
-    return res.redirect('/auth/reset-password');
+    return res.redirect('/auth/login');
 
   } catch (error) {
     console.error('Verification error:', error);
 
-    await logActivity(userId, null, "VERIFICATION_ERROR", `System error during code verification for ${email}: ${error.message}`, req);
+    await logActivity(userId, null, "VERIFICATION_ERROR", `System error during code verification for ${userEmail}: ${error.message}`, req);
 
     req.session.message = 'Technical error occurred!';
     req.session.messageType = 'error';

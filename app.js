@@ -75,14 +75,15 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/commons'));
 
 // App routes
-// const commonRoutes = require('./routes/commons');
-// app.use('/app', commonRoutes);
 
 const adminRoutes = require('./routes/portals');
 app.use('/portal', ensureAuthenticated, adminRoutes);
 
 const authRoutes = require('./routes/auths');
 app.use('/auth', authRoutes);
+
+const memberRoutes = require('./routes/members');
+app.use('/member', memberRoutes);
 
 const PORT = process.env.PORT || 5002;
 app.listen(PORT, () => {

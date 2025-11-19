@@ -4,12 +4,86 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Uthabiti Africa | Member details</title>
+    <title>Uthabiti Africa | My Profile</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Top script start -->
       <%- include('../partials/top_script'); %>
     <!-- / Top script end -->
+     <style>
+    .membership-card {
+        width: 400px;
+        height: 216px;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        color: #222;
+        margin: 20px auto;
+        border: 2px solid tomato;
+    }
+
+    .card-header {
+        background: tomato;
+        color: white;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .card-header h2 {
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: 1px;
+    }
+
+    .card-body {
+    display: flex;
+    padding: 16px;
+    gap: 15px;
+    align-items: center;
+    }
+
+    .member-photo {
+    flex-shrink: 0;
+    }
+
+    .member-photo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid tomato;
+    object-fit: cover;
+    }
+
+    .member-details {
+    flex: 1;
+    }
+
+    .member-details h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+    color: black;
+    }
+
+    .member-details p {
+    margin: 3px 0;
+    font-size: 14px;
+    color: #444;
+    }
+
+    .member-number strong {
+    color: tomato;
+    }
+
+    .card-footer {
+    background: black;
+    color: white;
+    text-align: center;
+    font-size: 12px;
+    padding: 6px;
+    }
+</style>
 </head>
 
 <body>
@@ -23,7 +97,7 @@
             <div class="row">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="logo-pro">
-                        <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+                        <a href="/member/my-dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
                     </div>
                 </div>
             </div>
@@ -40,342 +114,407 @@
             <div class="row admin">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <div class="author-area-pro">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-                                            <div class="personal-info-wrap">
-                                                <div class="membership-card">
-                                                    <div class="card-header te">
-                                                        <h2>Uthabiti Membership</h2>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="member-photo">
-                                                            <img src="/img/contact/member.jpg" alt="Member Photo">
-                                                        </div>
-                                                        <div class="member-details text-center">
-                                                            <h3 class="member-name"><%= details.full_name %></h3>
-                                                            <p class="member-number">Member No: <strong><%= details.membership_no %></strong></p>
-                                                            <% 
-                                                            let statusClass = 
-                                                                details.status === 'Active' ? 'label-success' :
-                                                                details.status === 'Inactive' ? 'label-info' :
-                                                                details.status === 'Suspended' ? 'label-danger' :
-                                                                details.status === 'Declined' ? 'label-danger' :
-                                                                details.status === 'Pending' ? 'label-warning' :
-                                                                details.status === 'Draft' ? 'label-default' : '';
-                                                            %>
-                                                            <p class="facility"><strong class="label <%= statusClass %>"><%= details.status %></strong></p>
-                                                            <p class="reg-date">Joined: <strong><%= formatDate(details.reg_date) %></strong></p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 text-center">
+                             <div class="personal-info-wrap">
+                                <div class="membership-card">
+                                    <div class="card-header te">
+                                        <h2>Uthabiti Membership</h2>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="member-photo">
+                                            <img src="/img/contact/member.jpg" alt="Member Photo">
                                         </div>
-                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-                                            <div class="row">
-                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
-                                                    <div class="btn-group">
-                                                        <% if (isAdmin) { %>
-                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editProfileModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-user"></i> Edit Profile</button>
-                                                        <% if(details.status === 'Pending' || details.status === 'Declined') { %>
-                                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#approvalModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-pencil"></i> Approve Member</button>
-                                                        <% } else { %>
-                                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-pencil"></i> Status</button>
-                                                        <% } %>
-                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editBenefitsModal" <%= !isAdmin ? 'disabled' : '' %>><i class="fa fa-tag"></i> Benefits</button>
-                                                        <% } %>
-                                                        <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#idModal"><i class="fa fa-file"></i> Docs</button>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
-                                                    <div class="btn-group">
-                                                        <a class="btn btn-default btn-sm" href="/portal/members"><i class="fa fa-arrow-left"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-                                            <div class="hpanel">
-                                                <div class="panel-body">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover table-bordered">
-                                                            <thead>
-                                                                <tr class="bg-red text-white">
-                                                                    <th colspan="4">Member Details</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td width="25%" align="right"><strong>Contact:</strong></td>
-                                                                    <td width="25%"><%= details.phone %></td>
-                                                                    <td width="25%" align="right"><strong>ID Number:</strong></td>
-                                                                    <td width="25%"><%= details.id_number %></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="25%" align="right"><strong>DoB</strong></td>
-                                                                    <td width="25%"><%= formatDate(details.dob) %></td>
-                                                                    <td width="25%" align="right"><strong>Gender:</strong></td>
-                                                                    <td width="25%"><%= details.gender %></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="25%" align="right"><strong>Disability Status:</strong></td>
-                                                                    <td width="25%"><%= details.disability %></td>
-                                                                    <td width="25%" align="right"><strong>Level of Education:</strong></td>
-                                                                    <td width="25%"><%= details.education_level %></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="25%" align="right"><strong>Location:</strong></td>
-                                                                    <td colspan="3" align="left"><%= details.county %> County - <%= details.sub_county %> Sub County - <%= details.ward %> Ward</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td width="25%" align="right"><strong>Next of Kin:</strong></td>
-                                                                    <td colspan="3" align="left"><%= details.next_kin_name %> - (<b><%= details.kin_rln %></b>) -  <b>From:</b> <%= details.kin_location %>. <b>Phone No:</b> <%= details.kin_phone %></td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-                                            <div class="admin-pro-accordion-wrap responsive-mg-b-30 hpanel">
-                                                <div class="panel-group adminpro-custon-design panel-body" id="accordion">
-                                                    <% if(facility.length > 0) { %>
-                                                    <div class="panel panel-default mg-b-30">
-                                                        <div class="panel-headin accordion-head mg-b-30">
-                                                            <h4 class="panel-title">
-                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Facility Details</a>
-                                                            </h4>
-                                                        </div>
-                                                        <div id="collapse1" class="panel-collapse panel-ic collapse">
-                                                            <div class="panel-body admin-panel-content animated bounce">
-                                                                
-                                                                <% facility.forEach( (f, index) => { %>
-                                                                    <table class="table table-hover table-bordered">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th colspan="4">Facility <%= index + 1 %> - <%= f.status %> </th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td width="25%" align="right"><strong>Name:</strong></td>
-                                                                                <td width="25%"><%= f.facility_name %></td>
-                                                                                <td width="25%" align="right"><strong>Facility Type:</strong></td>
-                                                                                <td width="25%"><%= f.facility_type %></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td width="25%" align="right"><strong>Setup:</strong></td>
-                                                                                <td width="25%"><%= f.setup_type %></td>
-                                                                                <td width="25%" align="right"><strong>Year Started:</strong></td>
-                                                                                <td width="25%"><%= f.facility_estab_year %></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td width="25%" align="right"><strong>Reg Number:</strong></td>
-                                                                                <td width="25%"><%= f.reg_no %></td>
-                                                                                <td width="25%" align="right"><strong>License:</strong></td>
-                                                                                <td width="25%"><%= f.license_no %></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td width="25%" align="right"><strong>Beneficiaries:</strong></td>
-                                                                                <td width="25%"><%= f.total_beneficiaries %></td>
-                                                                                <td width="25%" align="right"><strong>Caregivers:</strong></td>
-                                                                                <td width="25%"><%= f.total_caregivers %></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td width="25%" align="right"><strong>Location:</strong></td>
-                                                                                <td colspan="3" align="left"><%= f.f_county %> County - <%= f.f_subcounty %> Sub County - <%= f.f_area %> Ward</td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                <% }); %>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <% } else { %>
-                                                        <table class="table table-hover table-bordered"><tr><td>No facility found</td></tr></table>
-                                                    <% } %>
-
-                                                    <% if(benefits) { %>
-                                                    <div class="panel panel-default mg-b-30">
-                                                        <div class="panel-headin accordion-head mg-b-30">
-                                                            <h4 class="panel-title">
-                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Benefits & Programs</a>
-                                                            </h4>
-                                                        </div>
-                                                        <div id="collapse2" class="panel-collapse panel-ic collapse">
-                                                            <div class="panel-body admin-panel-content animated bounce">
-                                                                <table class="table table-bordered">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>Benefit</th>
-                                                                            <th>Status</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <% Object.keys(benefits).forEach(key => { %>
-                                                                        <tr>
-                                                                            <td><%= key.replace(/_/g, ' ').toUpperCase() %></td>
-                                                                            <td>
-                                                                            <% if (benefits[key] === 'Yes') { %>
-                                                                                ✅ Yes
-                                                                            <% } else if (benefits[key] === 'No') { %>
-                                                                                ❌ No
-                                                                            <% } else { %>
-                                                                                —
-                                                                            <% } %>
-                                                                            </td>
-                                                                        </tr>
-                                                                        <% }) %>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <% } else { %>
-                                                        <table class="table table-hover table-bordered"><tr><td>No benefit found</td></tr></table>
-                                                    <% } %>
-                                                    <div class="panel panel-default">
-                                                        <div class="panel-headin mg-b-30 accordion-head">
-                                                            <h4 class="panel-title">
-                                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Sacco Details</a>
-                                                            </h4>
-                                                        </div>
-                                                        <% if(saccos) { %>
-                                                            <div id="collapse3" class="panel-collapse panel-ic collapse">
-                                                                <div class="panel-body admin-panel-content animated bounce">
-                                                                    <table class="table table-hover table-bordered">
-                                                                        <thead>
-                                                                            <tr>
-                                                                                <th colspan="4">Sacco Details </th>
-                                                                            </tr>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                            <tr>
-                                                                                <td width="25%" align="right"><strong>Join Date:</strong></td>
-                                                                                <td width="25%"><%= formatDate(saccos.join_date) %></td>
-                                                                                <td width="25%" align="right"><strong>Shares:</strong></td>
-                                                                                <td width="25%"><%= saccos.shares %></td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <td width="25%" align="right"><strong>Savings:</strong></td>
-                                                                                <td width="25%"><%= saccos.savings %></td>
-                                                                                <td width="25%" align="right"><strong>Loan Balance:</strong></td>
-                                                                                <td width="25%"><%= saccos.loan_balance %></td>
-                                                                            </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </div>
-                                                            </div>
-                                                        <% } else { %>
-                                                        <div id="collapse3" class="panel-collapse panel-ic collapse">
-                                                            <div class="panel-body admin-panel-content animated bounce">
-                                                                <p>No SACCO membership details.</p>
-                                                            </div>
-                                                        </div>
-                                                        <% } %>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="member-details text-center">
+                                            <h3 class="member-name">
+                                                <%= details.full_name %>
+                                            </h3>
+                                            <p class="member-number">Member No: <strong>
+                                                    <%= details.membership_no %>
+                                                </strong></p>
+                                            <% let statusClass=details.status==='Active' ? 'label-success' : details.status==='Inactive'
+                                                ? 'label-info' : details.status==='Suspended' ? 'label-danger' : details.status==='Pending'
+                                                ? 'label-warning' : details.status==='Draft' ? 'label-default' : '' ; %>
+                                                <p class="facility"><strong class="label <%= statusClass %>">
+                                                        <%= details.status %>
+                                                    </strong></p>
+                                                <p class="reg-date">Joined: <strong>
+                                                        <%= formatDate(details.reg_date) %>
+                                                    </strong></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-lg-8 col-md-8 col-sm-6 col-xs-12">
+                            <div class="row">
+                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mg-b-15">
+                                    <div class="btn-group">
+                                        <% if (isMember) { %>
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editProfileModal"><i
+                                                    class="fa fa-user"></i> Edit Profile</button>
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal"><i
+                                                    class="fa fa-pencil"></i> Status</button>
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editBenefitsModal"><i
+                                                    class="fa fa-tag"></i> Benefits</button>
+                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#changePasswordModal"><i
+                                                    class="fa fa-lock"></i> Change Password</button>
+                                            <% } %>
+                                                <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#idModal"><i
+                                                        class="fa fa-file"></i> Docs</button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-md-6 col-sm-6 col-xs-12 mailbox-pagination mg-b-15">
+                                    <div class="btn-group">
+                                        <a class="btn btn-default btn-sm" href="/member/my-dashboard"><i class="fa fa-arrow-left"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                            <div class="hpanel">
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr class="bg-red text-white">
+                                                    <th colspan="2">Account Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td align="left"><strong>Email Address:</strong></td>
+                                                    <td align="left">
+                                                        <%= user.email %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Last Update:</strong></td>
+                                                    <td align="left">
+                                                        <%= new Date(user.updated_at).toLocaleDateString() %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Account Status:</strong></td>
+                                                    <td align="left"><span class="label 
+                                                            <% if (user.status === 'Active') { %> label-success 
+                                                            <% } else if (user.status === 'Pending') { %> label-warning text-dark 
+                                                            <% } else { %> label-danger 
+                                                            <% } %>">
+                                                            <%= user.status %>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td align="left"><strong>Last Login:</strong></td>
+                                                    <td align="left">
+                                                        <%= user.last_login ? new Date(user.last_login).toLocaleString() : 'None' %>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Membership Details -->
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mg-t-15">
+                            <div class="hpanel">
+                                <div class="panel-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-bordered">
+                                            <thead>
+                                                <tr class="bg-red text-white">
+                                                    <th colspan="4">Member Details</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td width="25%" align="right"><strong>Contact:</strong></td>
+                                                    <td width="25%">
+                                                        <%= details.phone %>
+                                                    </td>
+                                                    <td width="25%" align="right"><strong>ID Number:</strong></td>
+                                                    <td width="25%">
+                                                        <%= details.id_number %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="25%" align="right"><strong>DoB</strong></td>
+                                                    <td width="25%">
+                                                        <%= formatDate(details.dob) %>
+                                                    </td>
+                                                    <td width="25%" align="right"><strong>Gender:</strong></td>
+                                                    <td width="25%">
+                                                        <%= details.gender %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="25%" align="right"><strong>Disability Status:</strong></td>
+                                                    <td width="25%">
+                                                        <%= details.disability %>
+                                                    </td>
+                                                    <td width="25%" align="right"><strong>Level of Education:</strong></td>
+                                                    <td width="25%">
+                                                        <%= details.education_level %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="25%" align="right"><strong>Location:</strong></td>
+                                                    <td colspan="3" align="left">
+                                                        <%= details.county %> County - <%= details.sub_county %> Sub County - <%= details.ward
+                                                                    %> Ward
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td width="25%" align="right"><strong>Next of Kin:</strong></td>
+                                                    <td colspan="3" align="left">
+                                                        <%= details.next_kin_name %> - (<b>
+                                                                <%= details.kin_rln %>
+                                                            </b>) - <b>From:</b>
+                                                            <%= details.kin_location %>. <b>Phone No:</b>
+                                                                <%= details.kin_phone %>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div class="admin-pro-accordion-wrap responsive-mg-b-30 hpanel">
+                                <div class="panel-group adminpro-custon-design panel-body" id="accordion">
+                                    <% if(facility.length> 0) { %>
+                                        <div class="panel panel-default mg-b-30">
+                                            <div class="panel-headin accordion-head mg-b-30">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Facility Details</a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapse1" class="panel-collapse panel-ic collapse">
+                                                <div class="panel-body admin-panel-content animated bounce">
+
+                                                    <% facility.forEach( (f, index)=> { %>
+                                                        <table class="table table-hover table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th colspan="4">Facility <%= index + 1 %> - <%= f.status %>
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Name:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.facility_name %>
+                                                                    </td>
+                                                                    <td width="25%" align="right"><strong>Facility Type:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.facility_type %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Setup:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.setup_type %>
+                                                                    </td>
+                                                                    <td width="25%" align="right"><strong>Year Started:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.facility_estab_year %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Reg Number:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.reg_no %>
+                                                                    </td>
+                                                                    <td width="25%" align="right"><strong>License:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.license_no %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Beneficiaries:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.total_beneficiaries %>
+                                                                    </td>
+                                                                    <td width="25%" align="right"><strong>Caregivers:</strong></td>
+                                                                    <td width="25%">
+                                                                        <%= f.total_caregivers %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td width="25%" align="right"><strong>Location:</strong></td>
+                                                                    <td colspan="3" align="left">
+                                                                        <%= f.f_county %> County - <%= f.f_subcounty %> Sub County - <%= f.f_area %> Ward
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <% }); %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% } else { %>
+                                            <table class="table table-hover table-bordered">
+                                                <tr>
+                                                    <td>No facility found</td>
+                                                </tr>
+                                            </table>
+                                        <% } %>
+
+                                        <% if(benefits) { %>
+                                        <div class="panel panel-default mg-b-30">
+                                            <div class="panel-headin accordion-head mg-b-30">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Benefits & Programs</a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapse2" class="panel-collapse panel-ic collapse">
+                                                <div class="panel-body admin-panel-content animated bounce">
+                                                    <table class="table table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Benefit</th>
+                                                                <th>Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% Object.keys(benefits).forEach(key=> { %>
+                                                                <tr>
+                                                                    <td>
+                                                                        <%= key.replace(/_/g, ' ' ).toUpperCase() %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% if (benefits[key]==='Yes' ) { %>
+                                                                            ✅ Yes
+                                                                            <% } else if (benefits[key]==='No' ) { %>
+                                                                                ❌ No
+                                                                                <% } else { %>
+                                                                                    —
+                                                                        <% } %>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% } else { %>
+                                            <table class="table table-hover table-bordered">
+                                                <tr>
+                                                    <td>No benefit found</td>
+                                                </tr>
+                                            </table>
+                                    <% } %>
+
+                                    <div class="panel panel-default">
+                                        <div class="panel-headin mg-b-30 accordion-head">
+                                            <h4 class="panel-title">
+                                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Sacco Details</a>
+                                            </h4>
+                                        </div>
+                                        <% if(saccos) { %>
+                                            <div id="collapse3" class="panel-collapse panel-ic collapse">
+                                                <div class="panel-body admin-panel-content animated bounce">
+                                                    <table class="table table-hover table-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="4">Sacco Details </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td width="25%" align="right"><strong>Join Date:</strong></td>
+                                                                <td width="25%">
+                                                                    <%= formatDate(saccos.join_date) %>
+                                                                </td>
+                                                                <td width="25%" align="right"><strong>Shares:</strong></td>
+                                                                <td width="25%">
+                                                                    <%= saccos.shares %>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="25%" align="right"><strong>Savings:</strong></td>
+                                                                <td width="25%">
+                                                                    <%= saccos.savings %>
+                                                                </td>
+                                                                <td width="25%" align="right"><strong>Loan Balance:</strong></td>
+                                                                <td width="25%">
+                                                                    <%= saccos.loan_balance %>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <% } else { %>
+                                                <div id="collapse3" class="panel-collapse panel-ic collapse">
+                                                    <div class="panel-body admin-panel-content animated bounce">
+                                                        <p>No SACCO membership details.</p>
+                                                    </div>
+                                                </div>
+                                        <% } %>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-<!-- Edit member status -->
-<% 
-  let modalTitle = '';
-  let modalMessage = '';
-
-  switch (details.status) {
-    case 'Active':
-      modalTitle = 'Suspend Member?';
-      modalMessage = 'This member is currently active. Do you want to suspend this member’s account?';
-      break;
-    case 'Inactive':
-      modalTitle = 'Activate Member?';
-      modalMessage = 'This member is inactive. Do you want to activate their account so they can access the system?';
-      break;
-    case 'Draft':
-      modalTitle = 'Submit Member Profile?';
-      modalMessage = 'This member’s profile is in draft mode. Do you want to submit and activate this profile?';
-      break;
-    case 'Suspended':
-      modalTitle = 'Reactivate Member?';
-      modalMessage = 'This member is currently suspended. Do you want to reactivate their account?';
-      break;
-  }
-%>
-<div id="editStatusModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content modal-vertical-centered">
-            <div class="modal-close-area modal-close-df">
-                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
-            </div>
-            <form action="/portal/update-member-status/<%= details.member_id %>" method="POST">
-                <div class="modal-body">
-                    <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
-                    <h2><%= modalTitle %></h2>
-                    <p><p><%= modalMessage %></p></p>
-                    <div class="row mg-t-30">
-                        <div class="col-md-12">
-                            <textarea class="form-control" name="reason" placeholder="Give reason ..." required></textarea>
+    <!-- Change password modal -->
+        <div id="changePasswordModal" class="modal FullColor-popup-AlertModal fade">
+            <div class="modal-dialog">
+                <form method="POST" action="/member/user-change-password">
+                    <div class="modal-content">
+                        <div class="modal-header header-color-modal bg-color-4">
+                            <h4 class="modal-title">Change Password</h4>
+                            <div class="modal-close-area modal-close-df">
+                                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Current Password</label>
+                                        <input type="password" name="currentPassword" placeholder="Current Password" id="currentPassword" class="form-control required" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">New Password</label>
+                                        <input type="password" name="newPassword" placeholder="New Password" id="newPassword" class="form-control required" required>
+                                        <span class="help-block small text-danger mg-t-30" id="passwordFeedback"></span>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Confirm Password</label>
+                                        <input type="password" name="confirmPassword" placeholder="Confirm Password" id="confirmPassword" class="form-control required" required>
+                                        <span class="help-block small text-danger mg-t-30" id="confirmPasswordFeedback"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger" id="submitPassword">Save Password</button>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="hidden" name="currentStatus" value="<%= details.status %>">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">Confirm</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Member Approval ? Decline Modal -->
-<div id="approvalModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content modal-vertical-centered">
-            <div class="modal-close-area modal-close-df">
-                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
-            </div>
-            <div class="row text-center">
-                <div class="modal-body">
-                    <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
-                    <h2>Approve Member to Join Uthabiti</h2>
-                    <p>This member status is currently on <%= details.status %></p>
-                </div>
-                <div class="col-md-6">
-                    <form action="/portal/decline-membership/<%= details.member_id %>" method="POST">
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-danger">Decline Application</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-6">
-                    <form action="/portal/approve-membership/<%= details.member_id %>" method="POST">
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Approve Application</button>
-                        </div>
-                    </form>
-                </div>
+                </form>
             </div>
         </div>
-    </div>
-</div>
 
-
-<!-- Members Docs Modal -->
+    <!-- Members Docs Modal -->
 <div id="idModal" class="modal FullColor-popup-AlertModal fade">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -444,7 +583,7 @@
             <div class="modal-header header-color-modal bg-color-4">
                 <h4 class="modal-title">Edit Profile</h4>
             </div>
-            <form action="/portal/update-member-details" method="POST">
+            <form action="/member/update-member-details" method="POST">
                 <div class="modal-body">
                     <div class="row mg-b-30">
                         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -639,7 +778,7 @@
             <div class="modal-header header-color-modal bg-color-4">
                 <h4 class="modal-title">Edit Benefits & Programs</h4>
             </div>
-            <form action="/portal/update-member-benefits" method="POST">
+            <form action="/member/update-member-benefits" method="POST">
                 <div class="modal-body">
                     <div class="row mg-b-30">
                         <div class="sparkline12-hd">
@@ -847,6 +986,7 @@
 <!-- Bottom script start -->
   <%- include('../partials/bottom_script'); %>
 <!-- / Bottom script end -->
-<script src="/jsUtils/add-member.js"></script>
+<script src="/jsUtils/change-password.js"></script>
+
 </body>
 </html>

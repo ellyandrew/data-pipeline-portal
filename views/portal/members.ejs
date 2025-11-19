@@ -49,7 +49,7 @@
                                         </div>
                                         <form method="GET" id="filterForm">
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <div class="text-center p-xs font-normal">
                                                         <div class="input-group">
                                                             <input type="text" name="search" class="form-control input-sm" placeholder="Search fullname, member no, phone..." value="<%= search || '' %>"> 
@@ -60,12 +60,19 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2 ">
+                                                <div class="col-md-1">
                                                     <a href="javascript:;">
                                                         <b><span class="pull-left">
                                                             <%= parseFloat(total).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %> Members
                                                         </span></b>
                                                     </a>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="btn-group">
+                                                        <a href="/portal/members" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>
+                                                        <a href="/portal/add-member" class="btn btn-default btn-sm"><i class="fa fa-plus"></i> Add</a>
+                                                        <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#exportMembersModal"><i class="fa fa-cloud-download"></i> Export</a>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
@@ -77,16 +84,39 @@
                                                         </select>
                                                     </div>
                                                 </div>
+
+                                                <% const countyArray = Array.isArray(county) 
+                                                        ? county 
+                                                        : county ? [county] : [];
+                                                    const multipleCounty = countyArray.length > 1;
+                                                %>
+                                                <% if (!multipleCounty) { %>
                                                 <div class="col-md-1">
+                                                <% } else { %>
+                                                <div class="col-md-3">
+                                                <% } %>
+                                                    <% if (!subcounty && !ward) { %>
+                                                    <div class="form-group">
+                                                        <select data-placeholder="- county -" class="form-control required input-sm chosen-select" name="county" onchange="this.form.submit()" multiple size="5">
+                                                            <option value="">- county -</option>
+                                                            <% counties.forEach(c => { %>
+                                                            <option value="<%= c %>" <%= countyArray.includes(c) ? 'selected' : '' %>><%= c %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                    <% } else { %>
                                                     <div class="form-group">
                                                         <select class="form-control required input-sm" name="county" onchange="this.form.submit()">
                                                             <option value="">- county -</option>
                                                             <% counties.forEach(c => { %>
-                                                                <option value="<%= c %>" <%= county === c ? "selected" : "" %>><%= c %></option>
+                                                            <option value="<%= c %>" <%= countyArray.includes(c) ? 'selected' : '' %>><%= c %></option>
                                                             <% }) %>
                                                         </select>
                                                     </div>
+                                                    <% } %>
                                                 </div>
+
+                                                <% if (!multipleCounty) { %>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
                                                         <select class="form-control required input-sm" name="subcounty" onchange="this.form.submit()">
@@ -97,6 +127,8 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                 <% } %>
+                                                <% if (!multipleCounty) { %>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
                                                         <select class="form-control required input-sm" name="ward" onchange="this.form.submit()">
@@ -104,6 +136,30 @@
                                                             <% wards.forEach(w => { %>
                                                                 <option value="<%= w %>" <%= ward === w ? "selected" : "" %>><%= w %></option>
                                                             <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                 <% } %>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="type" onchange="this.form.submit()">
+                                                            <option value="">- type -</option>
+                                                            <% membershipType.forEach(mt => { %>
+                                                                <option value="<%= mt %>" <%= type === mt ? "selected" : "" %>><%= mt %></option>
+                                                            <% }) %>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <select class="form-control required input-sm" name="ageGroup" onchange="this.form.submit()">
+                                                            <option value="">- Age Group -</option>
+                                                            <option value="">All</option>
+                                                            <option value="18-25" <%= ageGroup === '18-25' ? "selected" : "" %>>18–25</option>
+                                                            <option value="26-35" <%= ageGroup === '26-35' ? "selected" : "" %>>26–35</option>
+                                                            <option value="36-45" <%= ageGroup === '36-45' ? "selected" : "" %>>36–45</option>
+                                                            <option value="46-60" <%= ageGroup === '46-60' ? "selected" : "" %>>46–60</option>
+                                                            <option value="60-100" <%= ageGroup === '60-100' ? "selected" : "" %>>60+</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -117,20 +173,13 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
-                                                    <div class="btn-group">
-                                                        <a href="/portal/members" class="btn btn-danger btn-sm"><i class="fa fa-refresh"></i></a>
-                                                        <a href="/portal/add-member" class="btn btn-danger btn-sm"><i class="fa fa-plus"></i> Add</a>
-                                                        <a href="#" class="btn btn-default btn-sm" data-toggle="modal" data-target="#exportMembersModal"><i class="fa fa-cloud-download"></i> Export</a>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </form>
                                     </div>
                                     <div class="sparkline13-graph">
-                                        <div class="datatable-dashv1-list custom-datatable-overright table-responsive">
+                                        <div class="datatable-dashv1-list custom-datatable-overright table-responsive" style="max-height: 100vh; overflow-y: auto;">
                                             <table class="table table-bordered table-hover table-small">
-                                                <thead>
+                                                <thead style="position: sticky; top: 0; background: #fff; z-index: 2;">
                                                     <tr class="bg-red text-white">
                                                         <th>Membership No.</th>
                                                         <th>Fullname Name</th>
@@ -160,7 +209,7 @@
                                                             <td><%= m.gender %></td>
                                                             <td><%= m.phone %></td>
                                                             <td class="text-uppercase"><%= m.county %>/<%= m.sub_county %>-<%= m.ward %></td>
-                                                            <td class="text-uppercase"><%= m.facility_name ? m.facility_name : '--' %></td>
+                                                            <td><%= m.membership_type %></td>
                                                             <td><%= formatDate(m.reg_date) %></td>
                                                             <td><span class="label <%= statusClass %>"><%= m.status %></span></td>
                                                             <td>
@@ -168,14 +217,14 @@
                                                                     <% if(m.status === 'Draft'){ %>
                                                                         <% if (isAdmin || isDataClerk || isChampion) { %>
                                                                         <form action="/portal/get-draft-member" method="POST">
-                                                                            <input type="hidden" name="membershipNumber" value="<%= m.membership_no %>" required>
+                                                                            <input type="hidden" name="member_id" value="<%= m.member_id %>" required>
                                                                             <button type="submit" class="btn btn-custon-three btn-default btn-xs"><i class="fa fa-edit"></i></button>
                                                                         </form>
                                                                         <% } %>
                                                                     <% } else { %>
                                                                         <% if (isAdmin || isDataClerk) { %>
                                                                         <form action="/portal/view-member" method="POST">
-                                                                            <input type="hidden" name="membershipNumber" value="<%= m.membership_no %>" required>
+                                                                            <input type="hidden" name="membershipNumber" value="<%= m.member_id %>" required>
                                                                             <button type="submit" class="btn btn-custon-three btn-default btn-xs"><i class="fa fa-ellipsis-h"></i></button>
                                                                         </form>
                                                                         <% } %>
@@ -239,7 +288,8 @@
                 </div>
             </div>
         </div>
-<!-- Export Members Modal -->
+        
+        <!-- Export Members Modal -->
         <div id="exportMembersModal" class="modal FullColor-popup-AlertModal fade">
             <div class="modal-dialog modal-lg">
                 <form method="GET" action="/portal/export-members">
@@ -250,99 +300,133 @@
                                 <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
                             </div>
                         </div>
+
                         <div class="modal-body">
+
                             <div class="row mg-b-30">
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="form-label">County</label>
-                                        <select class="form-control required" name="county" id="countySelect" required></select>
+                                <% if(!subcounty && !ward) { %>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label">Counties</label>
+                                            <select class="chosen-select" multiple="" tabindex="-1" name="county[]" readonly>
+                                                <% counties.forEach(c=> { %>
+                                                    <option value="<%= c %>" <%=countyArray.includes(c) ? 'selected' : '' %>><%=
+                                                            c %>
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Sub-County *</label>
-                                        <select class="form-control required" name="subCounty" id="subCountySelect" required></select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
-                                        <label class="form-label">Ward *</label>
-                                        <select class="form-control required" name="ward" id="wardSelect" required></select>
-                                    </div>
-                                </div>
+                                    <% } else { %>
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="form-label">County</label>
+                                                <select class="form-control required" name="county[]" id="exportCounty">
+                                                    <option value="<%= county || '' %>">
+                                                        <%= county || '' %>
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Sub-County *</label>
+                                                <select class="form-control required" name="subCounty" id="exportSubcounty">
+                                                    <option value="<%= subcounty || '' %>">
+                                                        <%= subcounty || 'All' %>
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                            <div class="form-group">
+                                                <label class="form-label">Ward *</label>
+                                                <select class="form-control required" name="ward" id="exportWard">
+                                                    <option value="<%= ward || '' %>">
+                                                        <%= ward || 'All' %>
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <% } %>
                             </div>
+
                             <div class="row mg-b-30">
+
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="status" class="form-label">Member Status</label>
                                         <select id="status" name="status" class="form-control">
-                                            <option value="">All</option>
-                                            <option value="Active">Active</option>
-                                            <option value="Inactive">Inactive</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Suspended">Suspended</option>
-                                            <option value="Draft">Draft</option>
+                                            <option value="<%= status || '' %>">
+                                                <%= status || 'All' %>
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="membershipType" class="form-label">Membership Type</label>
                                         <select id="membershipType" name="membershipType" class="form-control">
                                             <option value="">All</option>
-                                            <option value="Facility In">Facility Owner to Join Uthabity Africa</option>
-                                            <option value="Individual">Individual Joining Uthabiti Africa Network</option>
-                                            <option value="Sacco In">Joining uthabiti SACCO</option>
+                                            <option value="Facility In" <%=membershipType==='Facility In' ? "selected" : "" %>
+                                                >Facility Owner to Join Uthabiti Africa</option>
+                                            <option value="Individual" <%=membershipType==='Individual' ? "selected" : "" %>
+                                                >Individual Joining Uthabiti Africa Network</option>
+                                            <option value="Sacco In" <%=membershipType==='Sacco In' ? "selected" : "" %>>Joining
+                                                Uthabiti SACCO</option>
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="ageGroup" class="form-label">Age Group</label>
                                         <select id="ageGroup" name="ageGroup" class="form-control">
                                             <option value="">All</option>
-                                            <option value="18-25">18–25</option>
-                                            <option value="26-35">26–35</option>
-                                            <option value="36-45">36–45</option>
-                                            <option value="46-60">46–60</option>
-                                            <option value="60-100">60+</option>
+                                            <option value="18-25" <%=ageGroup==='18-25' ? "selected" : "" %>>18–25</option>
+                                            <option value="26-35" <%=ageGroup==='26-35' ? "selected" : "" %>>26–35</option>
+                                            <option value="36-45" <%=ageGroup==='36-45' ? "selected" : "" %>>36–45</option>
+                                            <option value="46-60" <%=ageGroup==='46-60' ? "selected" : "" %>>46–60</option>
+                                            <option value="60-100" <%=ageGroup==='60-100' ? "selected" : "" %>>60+</option>
                                         </select>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row mg-b-30">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
-                                        <label for="limit" class="form-label">Limit Members</label>
-                                        <input type="number" id="limit" name="limit" class="form-control" placeholder="e.g. 100">
+                                        <label for="limit" class="form-label">Total Number</label>
+                                        <input type="number" id="limit" name="limit" class="form-control" placeholder="e.g. 100"
+                                            value="<%= total || '' %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Registration Date Range</label>
+                                        <div class="input-daterange input-group">
+                                            <input type="date" class="form-control" name="startDate" />
+                                            <span class="input-group-addon">to</span>
+                                            <input type="date" class="form-control" name="endDate" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row mg-b-30">
-                                 <div class="col-md-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div class="btn-group">
-                                        <div class="form-group data-custon-pick data-custom-mg" id="data_5">
-                                            <div class="input-daterange input-group" id="datepicker">
-                                                <input type="date" class="form-control" name="startDate" />
-                                                    <span class="input-group-addon">to</span>
-                                                <input type="date" class="form-control" name="endDate" />
-                                            </div>
-                                        </div>
+                                <div class="col-lg-12">
+                                    <div class="form-group">
+                                        <label for="exportType" class="form-label">Export Format</label>
+                                        <select id="exportType" name="exportType" class="form-control">
+                                            <option value="excel">Excel (.xlsx)</option>
+                                            <option value="csv">CSV (.csv)</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
-                             <div class="row mg-b-30">
-                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <label for="exportType" class="form-label">Export Format</label>
-                                            <select id="exportType" name="exportType" class="form-control">
-                                                <option value="excel">Excel (.xlsx)</option>
-                                                <option value="csv">CSV (.csv)</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                             </div>
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                             <button type="submit" class="btn btn-danger">Export</button>
@@ -352,10 +436,9 @@
             </div>
         </div>
 
+
 <!-- Bottom script start -->
 <%- include('../partials/bottom_script'); %>
 <!-- / Bottom script end -->
-<script src="/jsUtils/add-member.js"></script>
 </body>
-
 </html>

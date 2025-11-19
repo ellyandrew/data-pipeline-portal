@@ -5,7 +5,7 @@ const fs = require('fs');
 // Storage location
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const uploadPath = path.join(process.cwd(), 'public', 'uploads', 'documents', 'members', req.session.registrationDraft.membership_no.toString());
+        const uploadPath = path.join(process.cwd(), 'public', 'uploads', 'documents', 'members', req.session.userMember.member_id.toString());
 
         // Create directory none
         fs.mkdirSync(uploadPath, { recursive: true });

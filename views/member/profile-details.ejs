@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Uthabiti Africa | Draft Member</title>
+    <title>Uthabiti Africa | Profile Details</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Top script start -->
@@ -41,30 +41,26 @@
                 <div class="row admin">
                     <div class="col-md-12">
                         <div class="row">
-                            <!-- membership details -->
-                            <!-- If member draft -->
-                            <% if (draft && Object.keys(draft).length > 1) { %>
-                            
                             <!-- if all details complete -->
                             <% if(!hasProfile || !hasBenefits || (membershipType === 'Facility In' && !hasFacility)) { %>
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="admin-pro-accordion-wrap responsive-mg-b-30">
                                         <div class="alert-title">
-                                            <h2><%= member.first_name %> <%= member.middle_name || '' %> <%= member.last_name %> - <%= member.membership_no %></h2>
-                                            <p>Draft details - Please fill only the missing fields.</p>
+                                            <h2><%= member.first_name %> <%= member.middle_name || '' %> <%= member.last_name %></h2>
+                                            <p>Profile details - Please fill only the missing details.</p>
                                         </div>
                                         <div class="panel-group adminpro-custon-design" id="accordion">
                                             <div class="panel panel-default">
                                                 <div class="panel-heading accordion-head bg-purple">
                                                     <h4 class="panel-title">
                                                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
-                                                            Membership Details Complete
+                                                            <%= (!profile.county || !profile.sub_county || !profile.ward) ? 'Membership Details Incomplete' : 'Membership Details Complete' %>
                                                         </a>
                                                     </h4>
                                                 </div>
-                                                <div id="collapse1" class="panel-collapse panel-ic collapse">
+                                                <div id="collapse1" class="panel-collapse panel-ic collapse <%= (!profile.county || !profile.sub_county || !profile.ward) ? 'in' : '' %>">
                                                     <div class="panel-body admin-panel-content animated bounce">
-                                                        <form action="/portal/add-member" method="POST">
+                                                        <form action="/member/add-member-location" method="POST">
                                                             <div class="row">
                                                                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                                                                     <div class="form-group">
@@ -128,8 +124,8 @@
                                                                     <div class="form-group">
                                                                         <label class="form-label">County</label>
                                                                         <select class="form-control required" name="county"
-                                                                            id="countySelect" disabled>
-                                                                            <option value="<%= draft.county || '' %>"><%= draft.county || '' %></option>
+                                                                            id="countySelect" required>
+                                                                            <option value="<%= profile.county || '' %>"><%= profile.county || '- select county -' %></option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -137,8 +133,8 @@
                                                                     <div class="form-group">
                                                                         <label class="form-label">Sub-County *</label>
                                                                         <select class="form-control required" name="subCounty"
-                                                                            id="subCountySelect" disabled>
-                                                                            <option value="<%= draft.sub_county || '' %>"><%= draft.sub_county || '' %></option>
+                                                                            id="subCountySelect" required>
+                                                                            <option value="<%= profile.sub_county || '' %>"><%= profile.sub_county || '' %></option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -146,9 +142,20 @@
                                                                     <div class="form-group">
                                                                         <label class="form-label">Ward *</label>
                                                                         <select class="form-control required" name="ward"
-                                                                            id="wardSelect" disabled>
-                                                                            <option value="<%= draft.ward || '' %>"><%= draft.ward || '' %></option>
+                                                                            id="wardSelect" required>
+                                                                            <option value="<%= profile.ward || '' %>"><%= profile.ward || '' %></option>
                                                                         </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="text-right mg-b-pro-edt custom-pro-edt-ds">
+                                                                        <% if(!profile.county || !profile.sub_county || !profile.ward) { %>
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary waves-effect waves-light m-r-10">Submit
+                                                                        </button>
+                                                                        <% } %>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -167,12 +174,12 @@
                                             <div class="panel panel-default">
                                                 <div class="panel-heading accordion-head">
                                                     <h4 class="panel-title">
-                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2"><%= (!hasProfile) ? 'Personal Details Incomplete' : 'personal Details Complete' %></a>
+                                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2"><%= (!hasProfile) ? 'Personal Details Incomplete' : 'Personal Details Complete' %></a>
                                                     </h4>
                                                 </div>
                                                 <div id="collapse2" class="panel-collapse panel-ic collapse <%= (hasProfile) ? '' : 'in' %>">
                                                     <div class="panel-body admin-panel-content animated bounce">
-                                                        <form action="/portal/add-draft-member-profile" method="POST" enctype="multipart/form-data">
+                                                        <form action="/member/add-member-profile" method="POST" enctype="multipart/form-data">
                                                             <div class="row">
                                                                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                                                                     <div class="form-group">
@@ -396,7 +403,7 @@
                                                 </div>
                                                 <div id="collapse3" class="panel-collapse panel-ic collapse <%= (hasFacility) ? '' : 'in' %>">
                                                     <div class="panel-body admin-panel-content animated bounce">
-                                                        <form action="/portal/add-draft-facility-details" method="POST">
+                                                        <form action="/member/add-facility-details" method="POST">
                                                                 <div class="row">
                                                                     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                                                                         <div class="form-group">
@@ -560,7 +567,7 @@
                                                 </div>
                                                 <div id="collapse4" class="panel-collapse panel-ic collapse in">
                                                     <div class="panel-body admin-panel-content animated bounce">
-                                                        <form action="/portal/add-draft-member-benefits" method="POST">
+                                                        <form action="/member/add-member-benefits" method="POST">
                                                     <div class="row">
                                                         <div class="sparkline12-hd">
                                                             <div class="main-sparkline12-hd">
@@ -813,7 +820,7 @@
                                                 </div>
                                                 <div id="collapse1" class="panel-collapse panel-ic collapse in">
                                                     <div class="panel-body admin-panel-content animated bounce">
-                                                        <form action="/portal/confirm-draft-member-details" method="POST">
+                                                        <form action="/member/confirm-member-details" method="POST">
                                                             <div class="row">
                                                                 <div class="product-confarmation">
                                                                 <h2>Commitment to Uthabiti Africa NetworkMembership</h2>
@@ -860,20 +867,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <% } %>
                             <% } %>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
-        <!-- Bottom script start -->
-        <%- include('../partials/bottom_script'); %>
-            <!-- / Bottom script end -->
-            <script src="/dataUtils/commonCountryCitizenship.js"></script>
-            <!-- <script src="/dataUtils/counties.js"></script> -->
-            <script src="/jsUtils/add-member.js"></script>
+    </div>
+
+<!-- Bottom script start -->
+    <%- include('../partials/bottom_script'); %>
+<!-- / Bottom script end -->
+<script src="/dataUtils/commonCountryCitizenship.js"></script>
+<!-- <script src="/dataUtils/counties.js"></script> -->
+<script src="/jsUtils/add-member.js"></script>
 </body>
 
 </html>

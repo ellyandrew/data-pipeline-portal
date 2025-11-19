@@ -174,13 +174,9 @@ router.post('/view-member', ensureAuthenticated, portalController.getMemberDetai
 // -------------------------------------------------------------------------------------------
 // 2. DASHBOARD OVERVIEW
 // -------------------------------------------------------------------------------------------
-
-router.get('/dashboard', async (req, res) => {
-    try {
-        // USER (Admin , Clerk, Viewer)
-        //-----------------------------------------------------------------------------------
-
-        // 1) Beneficiaries stats
+router.get('/dashboard', ensureAuthenticated, async (req, res) => {
+  try {
+      // 1) Beneficiaries stats
         // ------------------------------------------------------------------------
         // const [beneficiaryCounts] = await db.query(`SELECT 
         //     SUM(CASE WHEN YEAR(reg_date) = YEAR(CURDATE()) THEN 1 ELSE 0 END) AS beneficiary_this_year,
@@ -260,14 +256,13 @@ router.get('/dashboard', async (req, res) => {
             const membersStats = {member_thisYear, member_lastYear, total_member, percentageChangeMB: member_percentageChange.toFixed(2) + "%", member_trend};
 
 
-        res.render('portal/dashboard', {
-            facilityPeople, facilityStats, membersStats
-        });
+      return res.render('portal/dashboard', { facilityPeople, facilityStats, membersStats });
 
-    } catch (error) {
-        console.error('Error loading dashboard:', error);
-        res.status(500).send('Internal Server Error');
-    }
+
+  } catch (error) {
+    console.error('Error loading dashboard:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
 
 // ------------------------------------------------------------------------------------------------
@@ -280,82 +275,118 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
-  const search = (req.query.search || '').trim();
-  const county = req.query.county || '';
-  const subcounty = req.query.subcounty || '';
-  const ward = req.query.ward || '';
-  const status = req.query.status || '';
-
+  const filters = {
+      search: (req.query.search || '').trim(),
+      county: req.query.county,
+      subcounty: req.query.subcounty,
+      ward: req.query.ward,
+      status: req.query.status,
+      type: req.query.type,
+      ageGroup: req.query.ageGroup
+  }
 
   let conditions = [];
   let params = [];
 
-  // Detect if search looks like membership_no
-  let useExactMembership = search && /^[A-Za-z0-9\-_]+$/.test(search);
+  conditions.push(`m.membership_no IS NOT NULL`);
 
-  if (search) {
-    if (useExactMembership) {
-      conditions.push(`m.membership_no = ?`);
-      params.push(search);
+  if (filters.search) {
+    conditions.push(`
+      (m.full_name LIKE ? OR p.phone LIKE ? OR m.membership_no LIKE ?)
+    `);
+    params.push(`%${filters.search}%`, `%${filters.search}%`, `%${filters.search}%`);
+  }
+
+  const counties = Array.isArray(filters.county)
+    ? filters.county.filter(c => c && c.trim() !== '')
+    : filters.county
+    ? [filters.county]
+    : [];
+
+  const multipleCounties = counties.length > 1;
+
+  if (counties.length > 0) {
+    if (multipleCounties) {
+      conditions.push(`p.county IN (${counties.map(() => '?').join(',')})`);
+      params.push(...counties);
     } else {
-      conditions.push(`
-        (CONCAT(m.first_name, ' ', m.last_name) LIKE ?)
-        OR EXISTS (
-          SELECT 1 FROM facilities_tbl f2
-          WHERE f2.member_id = m.member_id
-          AND MATCH(f2.facility_name) AGAINST (? IN NATURAL LANGUAGE MODE)
-        )
-        OR EXISTS (
-          SELECT 1 FROM member_profile_tbl p2
-          WHERE p2.member_id = m.member_id
-          AND MATCH(p2.phone) AGAINST (? IN NATURAL LANGUAGE MODE)
-        )
-      `);
-      params.push(`%${search}%`, search, search);
+      conditions.push(`p.county = ?`);
+      params.push(counties[0]);
     }
   }
 
-  if (county) {
-    conditions.push(`
-      EXISTS (
-        SELECT 1 FROM member_profile_tbl p 
-        WHERE p.member_id = m.member_id AND p.county = ?
-      )
-    `);
-    params.push(county);
+  if (filters.subcounty && !multipleCounties) {
+    conditions.push(`p.sub_county = ?`);
+    params.push(filters.subcounty);
   }
 
-  if (subcounty) {
-    conditions.push(`
-      EXISTS (
-        SELECT 1 FROM member_profile_tbl p 
-        WHERE p.member_id = m.member_id AND p.sub_county = ?
-      )
-    `);
-    params.push(subcounty);
+  if (filters.ward && !multipleCounties) {
+    conditions.push(`p.ward = ?`);
+    params.push(filters.ward);
   }
 
-  if (ward) {
-    conditions.push(`
-      EXISTS (
-        SELECT 1 FROM member_profile_tbl p 
-        WHERE p.member_id = m.member_id AND p.ward = ?
-      )
-    `);
-    params.push(ward);
+  if (filters.type) {
+    conditions.push(`m.membership_type = ?`);
+    params.push(filters.type);
   }
 
-  if (status) {
+  if (filters.status) {
     conditions.push(`m.status = ?`);
-    params.push(status);
+    params.push(filters.status);
   }
+
+  if (filters.ageGroup) {
+    const today = new Date();
+    let startDate, endDate;
+
+    switch (filters.ageGroup) {
+      case '18-25':
+        startDate = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate());
+        endDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+        conditions.push(`p.dob BETWEEN ? AND ?`);
+        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        break;
+
+      case '26-35':
+        startDate = new Date(today.getFullYear() - 35, today.getMonth(), today.getDate());
+        endDate = new Date(today.getFullYear() - 26, today.getMonth(), today.getDate());
+        conditions.push(`p.dob BETWEEN ? AND ?`);
+        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        break;
+
+      case '36-45':
+        startDate = new Date(today.getFullYear() - 45, today.getMonth(), today.getDate());
+        endDate = new Date(today.getFullYear() - 36, today.getMonth(), today.getDate());
+        conditions.push(`p.dob BETWEEN ? AND ?`);
+        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        break;
+
+      case '46-60':
+        startDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
+        endDate = new Date(today.getFullYear() - 46, today.getMonth(), today.getDate());
+        conditions.push(`p.dob BETWEEN ? AND ?`);
+        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        break;
+
+      case '60-100':
+        endDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
+        conditions.push(`p.dob <= ?`);
+        params.push(endDate.toISOString().split('T')[0]);
+        break;
+    }
+
+  conditions.push(`p.dob IS NOT NULL`);
+} else {
+  conditions.push(`(p.dob IS NULL OR p.dob IS NOT NULL)`);
+}
+
 
   const whereSQL = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
   try {
     // 🔹 Step 1: Count total (members same WHERE conditions)
     const [countResult] = await db.execute(
-      `SELECT COUNT(*) AS total FROM members_tbl m ${whereSQL}`,
+      `SELECT COUNT(DISTINCT m.member_id) AS total FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL}`,
       params
     );
     const total = countResult[0].total;
@@ -364,7 +395,7 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     // 🔹 Step 2: Fetch member_ids for this page
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
-       FROM members_tbl m ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
+       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
        [...params, perPage, offset]
     );
 
@@ -374,28 +405,26 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     if (memberIds.length > 0) {
       // 🔹 Step 3: Fetch details for just those IDs
       const [results] = await db.query(
-        `SELECT m.member_id, m.membership_no, CONCAT(m.first_name, ' ', m.last_name) AS full_name, 
-                m.status, m.reg_date, p.phone, p.gender, f.facility_name,
-                p.county, p.sub_county, p.ward
-         FROM members_tbl m 
-         LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
-         LEFT JOIN facilities_tbl f ON m.member_id = f.member_id 
-         WHERE m.member_id IN (?) 
-         ORDER BY m.reg_date DESC`,
+        `SELECT m.member_id, m.membership_no, CONCAT(m.first_name, ' ', m.last_name) AS full_name, m.membership_type, m.status, m.reg_date, p.phone, p.gender,
+        p.county, p.sub_county, p.ward FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
+        WHERE m.member_id IN (?) 
+        ORDER BY m.reg_date DESC`,
         [memberIds]
       );
       members = results;
     }
 
     // For county & sub county dropdowns
-    const [counties] = await db.query(`SELECT DISTINCT county FROM member_profile_tbl WHERE county IS NOT NULL`);
+    const [countiesList] = await db.query(`SELECT DISTINCT county FROM member_profile_tbl WHERE county IS NOT NULL`);
+
     let subcounties = [];
     let wards = [];
-    if (county) {
-      [subcounties] = await db.query(`SELECT DISTINCT sub_county FROM member_profile_tbl WHERE county = ?`, [county]);
+
+    if (counties.length === 1) {
+      [subcounties] = await db.query(`SELECT DISTINCT sub_county FROM member_profile_tbl WHERE county = ?`, [counties[0]]);
     }
-    if (subcounty) {
-      [wards] = await db.query(`SELECT DISTINCT ward FROM member_profile_tbl WHERE sub_county = ?`, [subcounty]);
+    if (filters.subcounty && !multipleCounties) {
+      [wards] = await db.query(`SELECT DISTINCT ward FROM member_profile_tbl WHERE sub_county = ?`, [filters.subcounty]);
     }
 
     res.render('portal/members', {
@@ -406,15 +435,18 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
       paginationRange: getPaginationRange(page, totalPages),
       perPageOptions,
       perPage,
-      search,
-      county,
-      subcounty,
-      ward,
-      status,
-      counties: counties.map(c => c.county),
+      search: filters.search,
+      county: filters.county,
+      subcounty: filters.subcounty,
+      ward: filters.ward,
+      status: filters.status,
+      type: filters.type,
+      ageGroup: filters.ageGroup,
+      counties: countiesList.map(c => c.county),
       subcounties: subcounties.map(s => s.sub_county),
       wards: wards.map(w => w.ward),
-      statusOptions: ['Active', 'Inactive', 'Draft', 'Pending', 'Suspended']
+      statusOptions: ['Active', 'Inactive', 'Draft', 'Pending', 'Suspended'],
+      membershipType: ['Facility In', 'Individual', 'Sacco In']
     });
   } catch (error) {
     console.error('Members fetch error:', error);
@@ -424,9 +456,9 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
 
 router.get('/view-member', ensureAuthenticated, async (req, res) => {
   
-  const view = req.session.memberDetails;
+  const memberId = req.session.memberDetails;
 
-  if (!view) {
+  if (!memberId) {
     req.session.message = 'Member not found!';
     req.session.messageType = 'error';
     return res.redirect('/portal/members');
@@ -441,8 +473,8 @@ router.get('/view-member', ensureAuthenticated, async (req, res) => {
           m.status, m.reg_date, p.phone, p.gender, p.id_number, p.county, p.sub_county, p.ward, p.disability, p.education_level, p.next_kin_name,
           p.kin_rln, p.kin_phone, p.kin_location, p.member_doc, p.member_id_doc
          FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
-         WHERE m.membership_no = ? LIMIT 1`,
-        [view.membership_no]
+         WHERE m.member_id = ? LIMIT 1`,
+        [memberId]
       );
 
       if (results.length === 0) {
@@ -453,8 +485,6 @@ router.get('/view-member', ensureAuthenticated, async (req, res) => {
 
 
       const details = results[0] || null;
-
-      const memberId = results[0].member_id;
 
       const [facilityRows] = await db.query(`SELECT * FROM facilities_tbl WHERE member_id = ?`, [memberId]);
       
@@ -481,7 +511,7 @@ router.post('/update-member-benefits', ensureAuthenticated, ensureRole(['Admin']
 
 router.get('/export-members', ensureAuthenticated, ensureRole(['Admin']), async (req, res) => {
   try {
-    const { county, sub_county, ward, status, disability, membershipType, startDate, endDate, ageGroup, limit, exportType = 'excel' } = req.query;
+    const { county, sub_county, ward, status, membershipType, startDate, endDate, ageGroup, limit, exportType = 'excel' } = req.query;
 
     let query = `
       SELECT 
@@ -495,9 +525,21 @@ router.get('/export-members', ensureAuthenticated, ensureRole(['Admin']), async 
 
     // Add filters dynamically
     if (county) {
-      query += ` AND p.county = ?`;
-      params.push(county);
+      const countyList = county.split(',').map(c => c.trim()).filter(Boolean);
+      if (countyList.length === 1) {
+        query += ` AND p.county = ?`;
+        params.push(countyList[0]);
+      } else if (countyList.length > 1) {
+        if (!(status || membershipType || ageGroup)) {
+          req.session.message = "Select either a status, membership type, or age group to export multiple counties.";
+          req.session.messageType = "error";
+          return res.redirect('/portal/members');
+        }
+        query += ` AND p.county IN (${countyList.map(() => '?').join(',')})`;
+        params.push(...countyList);
+      }
     }
+
     if (sub_county) {
       query += ` AND p.sub_county = ?`;
       params.push(sub_county);
@@ -509,10 +551,6 @@ router.get('/export-members', ensureAuthenticated, ensureRole(['Admin']), async 
     if (status) {
       query += ` AND m.status = ?`;
       params.push(status);
-    }
-    if (disability) {
-      query += ` AND m.disability = ?`;
-      params.push(disability);
     }
     if (membershipType) {
       query += ` AND m.membership_type = ?`;
@@ -603,6 +641,105 @@ router.get('/export-members', ensureAuthenticated, ensureRole(['Admin']), async 
   }
 });
 
+router.get('/approval', ensureAuthenticated, async (req, res) => {
+  const perPageOptions = [10, 25, 50, 100, 250];
+  const perPage = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
+  const offset = (page - 1) * perPage;
+
+  const search = (req.query.search || '').trim();
+  const category = req.query.category || '';
+  const status = req.query.status || '';
+  const sortBy = req.query.sortBy || 'reg_date';
+
+
+  let conditions = [];
+  let params = [];
+
+  conditions.push(`m.membership_no IS NULL`);
+
+  if (search) {
+    conditions.push(`
+      (m.full_name LIKE ? OR p.phone LIKE ?)
+    `);
+    params.push(`%${search}%`, `%${search}%`);
+  }
+
+  if (category) {
+    conditions.push(`m.membership_type = ?`);
+    params.push(category);
+  }
+
+  if (status) {
+    conditions.push(`m.status = ?`);
+    params.push(status);
+  }
+
+  const whereSQL = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  //  Sorting
+  let orderSQL = 'm.reg_date DESC';
+  if (sortBy === 'latest_date') {
+    orderSQL = `m.reg_date DESC`;
+  } else if (sortBy === 'old_date'){
+    orderSQL = `m.reg_date ASC`;
+  } 
+
+  try {
+    // 🔹 Step 1: Count total (members same WHERE conditions)
+    const [countResult] = await db.execute(
+      `SELECT COUNT(DISTINCT m.member_id) AS total FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL}`,
+      params
+    );
+    const total = countResult[0].total;
+    const totalPages = Math.ceil(total / perPage);
+
+    // 🔹 Step 2: Fetch member_ids for this page
+    const [memberIdsResult] = await db.execute(
+      `SELECT m.member_id 
+       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, 
+       [...params, perPage, offset]
+    );
+
+    const memberIds = memberIdsResult.map(r => r.member_id);
+    let applications = [];
+
+    if (memberIds.length > 0) {
+      // 🔹 Step 3: Fetch details for just those IDs
+      const [results] = await db.query(
+        `SELECT m.member_id, m.membership_no, CONCAT(m.first_name, ' ', m.last_name) AS full_name, m.membership_type, m.status, m.reg_date, p.phone, p.gender,
+        p.county, p.sub_county, p.ward FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
+        WHERE m.member_id IN (?) 
+        ORDER BY ${orderSQL}`,
+        [memberIds]
+      );
+      applications = results;
+    }
+
+    res.render('portal/approval', {
+      total,
+      applications,
+      currentPage: page,
+      totalPages,
+      paginationRange: getPaginationRange(page, totalPages),
+      perPageOptions,
+      perPage,
+      search,
+      category,
+      sortBy,
+      status,
+      memberTypes: ['Facility In', 'Individual', 'Sacco In'],
+      statusOptions: ['Pending', 'Suspended']
+    });
+  } catch (error) {
+    console.error('Members Application fetch error:', error);
+    res.status(500).send('Server Error');
+  }
+});
+
+router.post('/approve-membership/:member_id', ensureAuthenticated, ensureRole(['Admin']), portalController.approveMember);
+
+router.post('/decline-membership/:member_id', ensureAuthenticated, ensureRole(['Admin']), portalController.declineMember);
 
 // ------------------------------------------------------------------------------------------------
 // 4. Facilities OVERVIEW FILTER LOGIC AND DETAILS VIEW
@@ -614,96 +751,118 @@ router.get('/facilities', ensureAuthenticated, async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
-  const search = (req.query.search || '').trim();
-  const county = req.query.county || '';
-  const subcounty = req.query.subcounty || '';
-  const ward = req.query.ward || '';
-  const type = req.query.type || '';
-  const status = req.query.status || '';
-  const sortBy = req.query.sortBy || 'reg_date'; // reg_date, beneficiaries high-low, caregivers high-low
+  const filters = {
+    search: (req.query.search || '').trim(),
+    county: req.query.county,
+    subcounty: req.query.subcounty,
+    ward: req.query.ward,
+    type: req.query.type,
+    status: req.query.status,
+    sortBy: req.query.sortBy || 'reg_date',
+  };
 
   let conditions = [];
   let params = [];
 
-  //  Search conditions
-  if (search) {
-    conditions.push(`
-      (f.facility_name LIKE ? OR f.reg_no LIKE ? OR m.membership_no LIKE ?)
-    `);
-    params.push(`%${search}%`, `%${search}%`, `%${search}%`);
+  // --- SEARCH ---
+  if (filters.search) {
+    conditions.push(`(f.facility_name LIKE ? OR f.reg_no LIKE ? OR m.membership_no LIKE ?)`);
+    params.push(`%${filters.search}%`, `%${filters.search}%`, `%${filters.search}%`);
   }
 
-  if (county) {
-    conditions.push(`f.f_county = ?`);
-    params.push(county);
+  // --- COUNTY / SUBCOUNTY / WARD LOGIC ---
+  const counties = Array.isArray(filters.county)
+    ? filters.county.filter(c => c && c.trim() !== '')
+    : filters.county
+    ? [filters.county]
+    : [];
+
+  const multipleCounties = counties.length > 1;
+
+  if (counties.length > 0) {
+    if (multipleCounties) {
+      conditions.push(`f.f_county IN (${counties.map(() => '?').join(',')})`);
+      params.push(...counties);
+    } else {
+      conditions.push(`f.f_county = ?`);
+      params.push(counties[0]);
+    }
   }
 
-  if (subcounty) {
+  if (filters.subcounty && !multipleCounties) {
     conditions.push(`f.f_subcounty = ?`);
-    params.push(subcounty);
+    params.push(filters.subcounty);
   }
 
-  if (ward) {
+  if (filters.ward && !multipleCounties) {
     conditions.push(`f.f_area = ?`);
-    params.push(ward);
+    params.push(filters.ward);
   }
 
-  if (status) {
+  if (filters.status) {
     conditions.push(`f.status = ?`);
-    params.push(status);
+    params.push(filters.status);
   }
 
-  if (type) {
+  if (filters.type) {
     conditions.push(`f.facility_type = ?`);
-    params.push(type);
+    params.push(filters.type);
   }
 
-  const whereSQL = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  // --- WHERE CLAUSE ---
+  const whereSQL = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
 
-  //  Sorting
-  let orderSQL = 'f.reg_date DESC';
-  if (sortBy === 'beneficiaries_high') {
-    orderSQL = `f.total_beneficiaries DESC`;
-  } else if (sortBy === 'beneficiaries_low'){
-    orderSQL = 'f.total_beneficiaries ASC';
-  } else if (sortBy === 'caregivers_high') {
-    orderSQL = 'f.total_caregivers DESC';
-  } else if (sortBy === 'caregivers_low') {
-    orderSQL = 'f.total_caregivers ASC';
-  }
+  // --- SORTING ---
+  const sortMap = {
+    beneficiaries_high: 'f.total_beneficiaries DESC',
+    beneficiaries_low: 'f.total_beneficiaries ASC',
+    caregivers_high: 'f.total_caregivers DESC',
+    caregivers_low: 'f.total_caregivers ASC',
+    reg_date: 'f.reg_date DESC',
+  };
+  const orderSQL = sortMap[filters.sortBy] || sortMap.reg_date;
 
   try {
-    // Step 1: Count total institutions
-    const [countResult] = await db.execute(`SELECT COUNT(DISTINCT f.facility_id) AS total FROM facilities_tbl f 
-        LEFT JOIN members_tbl m ON f.member_id = m.member_id ${whereSQL}`, params);
+    // --- COUNT ---
+    const [countResult] = await db.execute(`SELECT COUNT(DISTINCT f.facility_id) AS total
+       FROM facilities_tbl f
+       LEFT JOIN members_tbl m ON f.member_id = m.member_id
+       ${whereSQL}`,
+      params
+    );
     const total = countResult[0].total;
     const totalPages = Math.ceil(total / perPage);
 
-    // Step 2: Fetch paginated facilities with aggregates
-    const [institutions] = await db.query(`
-        SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
-        f.total_caregivers, m.member_id, m.membership_no AS owner_membership
-        FROM facilities_tbl f
-        LEFT JOIN members_tbl m ON f.member_id = m.member_id
-        ${whereSQL}
-        ORDER BY ${orderSQL}
-        LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+    // --- FETCH DATA ---
+    const [institutions] = await db.query(
+      `SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.f_area, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
+      f.total_caregivers, m.member_id, m.membership_no AS owner_membership FROM facilities_tbl f LEFT JOIN members_tbl m ON f.member_id = m.member_id
+      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, perPage, offset]
     );
 
-    // County & subcounty dropdowns
-    const [counties] = await db.query(`SELECT DISTINCT f_county FROM facilities_tbl WHERE f_county IS NOT NULL`);
+    // --- DROPDOWN DATA ---
+    const [countiesList] = await db.query(
+      `SELECT DISTINCT f_county FROM facilities_tbl WHERE f_county IS NOT NULL`
+    );
 
     let subcounties = [];
     let wards = [];
 
-    if (county) {
-      [subcounties] = await db.query(`SELECT DISTINCT f_subcounty FROM facilities_tbl WHERE f_county = ?`, [county]);
-    }
-    if (subcounty) {
-      [wards] = await db.query(`SELECT DISTINCT f_area FROM facilities_tbl WHERE f_subcounty = ?`, [subcounty]);
+    if (counties.length === 1) {
+      [subcounties] = await db.query(
+        `SELECT DISTINCT f_subcounty FROM facilities_tbl WHERE f_county = ?`,
+        [counties[0]]
+      );
     }
 
+    if (filters.subcounty && !multipleCounties) {
+      [wards] = await db.query(
+        `SELECT DISTINCT f_area FROM facilities_tbl WHERE f_subcounty = ?`,
+        [filters.subcounty]
+      );
+    }
+
+    // --- RENDER PAGE ---
     res.render('portal/facilities', {
       total,
       institutions,
@@ -712,18 +871,18 @@ router.get('/facilities', ensureAuthenticated, async (req, res) => {
       paginationRange: getPaginationRange(page, totalPages),
       perPageOptions,
       perPage,
-      search,
-      county,
-      subcounty,
-      ward,
-      status,
-      type,
+      search: filters.search,
+      county: filters.county,
+      subcounty: filters.subcounty,
+      ward: filters.ward,
+      type: filters.type,
+      status: filters.status,
+      sortBy: filters.sortBy,
       typeOptions: ['Daycare', 'Home-care', 'ECD Playgroup'],
-      sortBy,
-      counties: counties.map(c => c.f_county),
+      statusOptions: ['Active', 'Inactive', 'Pending'],
+      counties: countiesList.map(c => c.f_county),
       subcounties: subcounties.map(s => s.f_subcounty),
       wards: wards.map(w => w.f_area),
-      statusOptions: ['Active', 'Inactive', 'Pending']
     });
   } catch (error) {
     console.error('Facility fetch error:', error);
@@ -786,7 +945,7 @@ router.get('/export-facilities', ensureAuthenticated, ensureRole(['Admin']), asy
       facilityType,
       startDate,
       endDate,
-      orderBy,       // beneficiaries, caregivers, or reg_date
+      orderBy,      
       limit,
       exportType = 'excel'
     } = req.query;
@@ -825,9 +984,22 @@ router.get('/export-facilities', ensureAuthenticated, ensureRole(['Admin']), asy
 
     // --- Filters ---
     if (county) {
-      query += ` AND f.f_county = ?`;
-      params.push(county);
+      const countyList = county.split(',').map(c => c.trim()).filter(Boolean);
+      if (countyList.length === 1) {
+        query += ` AND f.f_county = ?`;
+        params.push(countyList[0]);
+      } else if (countyList.length > 1) {
+        // Check required filters when exporting multiple counties
+        if (!(status || facilityType || orderBy)) {
+          req.session.message = "Select either a status, facility type, or order by to export multiple counties.";
+          req.session.messageType = "error";
+          return res.redirect('/portal/facilities');
+        }
+        query += ` AND f.f_county IN (${countyList.map(() => '?').join(',')})`;
+        params.push(...countyList);
+      }
     }
+
     if (sub_county) {
       query += ` AND f.f_subcounty = ?`;
       params.push(sub_county);
@@ -2303,6 +2475,9 @@ router.get('/edit-survey', async (req, res) => {
 
 router.post('/update-survey-data', ensureAuthenticated, ensureRole(['Admin']), portalController.updateSurveyData);
 
+
+router.post("/import-survey", upload.single("excelFile"), portalController.importExcel);
+
 // -------------------------------------------------------------------------------------------------
 // SETTINGS
 // -------------------------------------------------------------------------------------------------
@@ -2364,7 +2539,7 @@ const pageAccessMap = {
   'edit-survey': ['Admin'],
   'reports': ['Admin'],
   'view-user': ['Admin'],
-  'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
+  'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer']
 };
 
 router.get('/:page', ensureAuthenticated, async (req, res) => {

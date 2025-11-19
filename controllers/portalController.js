@@ -10,10 +10,24 @@ const xlsx = require('xlsx');
 const regionMap = require('../utils/regionMap');
 const { normalizeValue, normalizeNumber } = require('../utils/dataHelper');
 const { logActivity } = require('../utils/logger');
+const nodemailer = require('nodemailer');
+const { notifyActivity } = require('../utils/notifier');
 
 // -----------------------------------------------------------------------------------------------
 // Membership number validator
 // -----------------------------------------------------------------------------------------------
+const getYearOnly = (val) => {
+  if (!val) return null;
+  if (!isNaN(val) && val > 30000 && val < 60000) {
+    const jsDate = new Date((val - 25569) * 86400 * 1000); 
+    return jsDate.getFullYear();
+  }
+  const dateMatch = val.toString().match(/\d{4}/);
+  if (dateMatch) return parseInt(dateMatch[0]);
+
+  return null;
+};
+
 function parseMembership(membership) {
   const rx = /^(\d{3})-(\d{3})-(\d{2})-(\d{4,6})$/;
   const match = String(membership).trim().match(rx);
@@ -160,105 +174,6 @@ exports.addMember = async (req, res) => {
   }
 };
 
-// exports.addMember = async (req, res) => {
-
-//   if (!req.session.userId) {
-//     req.session.message = 'Session expired, please try again!';
-//     req.session.messageType = 'error';
-//     return res.redirect('/auth/login');
-//   }
-
-//   const connection = await db.getConnection();
-//   await connection.beginTransaction();
-
-//   try {
-//     const { firstName, middleName, lastName, email, membershipType, county, subCounty, ward } = req.body;
-
-//     if (!firstName || !lastName || !email || !membershipType || !county || !subCounty || !ward) {
-//       req.session.message = "All fields are required!";
-//       req.session.messageType = "error";
-//       req.session.values = req.body;
-//       await connection.release();
-//       return res.redirect("/portal/add-member");
-//     }
-
-//     const [memberCheck] = await connection.query(`SELECT email FROM members_tbl WHERE email = ? LIMIT 1`, [email]);
-
-//     if (memberCheck.length > 0) {
-//       req.session.message = "A member with this email already exists!";
-//       req.session.messageType = "error";
-//       req.session.values = req.body;
-//       await connection.release();
-//       return res.redirect("/portal/add-member");
-//     }
-
-//     const [result] = await connection.execute(
-//       `INSERT INTO members_tbl (first_name, middle_name, last_name, email, membership_type, role)
-//        VALUES (?, ?, ?, ?, ?, ?)`,
-//       [firstName, middleName || null, lastName, email, membershipType, "Member"]
-//     );
-
-//     const insertId = result.insertId;
-//     const fullName = `${firstName} ${lastName}`.trim();
-
-//     const countyCode = regionMap[county].code;
-//     const subCountyCode = regionMap[county].subcounties[subCounty].code;
-//     const wardCode = regionMap[county].subcounties[subCounty].wards[ward];
-//     const membershipNo = `${countyCode}-${subCountyCode}-${wardCode}-${insertId}`;
-
-//     const hashedPassword = await bcrypt.hash(membershipNo, 10);
-
-//     await connection.query(
-//       `UPDATE members_tbl SET membership_no = ?, password = ? WHERE member_id = ? LIMIT 1`, [membershipNo, hashedPassword, insertId] );
-
-//     if (membershipType === 'Sacco In') {
-//       await connection.query(
-//         `INSERT INTO sacco_members_tbl (member_id, membership_no, county, sub_county, ward)
-//          VALUES (?, ?, ?, ?, ?)`,
-//         [insertId, membershipNo, county, subCounty, ward]
-//       );
-//     }
-
-//     // ✅ Commit transaction
-//     await connection.commit();
-
-//     // ✅ Log activity
-//     await logActivity(
-//       req.session.userId,
-//       insertId,
-//       "MEMBER CREATED",
-//       `New member created with membership number ${membershipNo}`,
-//       req
-//     );
-
-//     // ✅ Prepare next step (profile setup)
-//     req.session.registrationDraft = {
-//       isStep: 1,
-//       membership_type: membershipType,
-//       membership_no: membershipNo,
-//       full_name: fullName,
-//       county,
-//       sub_county: subCounty,
-//       ward,
-//       member_id: insertId,
-//     };
-
-//     req.session.message = "Membership details created successfully! Continue with Profile details.";
-//     req.session.messageType = "success";
-//     await connection.release();
-//     return res.redirect("/portal/add-member");
-
-//   } catch (err) {
-//     await connection.rollback();
-//     console.error("Add Member Error:", err);
-//     req.session.message = "Error adding member: " + err.message;
-//     req.session.messageType = "error";
-//     await connection.release();
-//     return res.redirect("/portal/members");
-//   }
-// };
-
-
 // ------------------------------------------------------------------------------------------------
 // 2. ADD MEMBERS PROFILE 
 // ------------------------------------------------------------------------------------------------
@@ -270,17 +185,14 @@ exports.addMemberProfile = async (req, res) => {
     return res.redirect('/auth/login');
   }
 
-  const {
-    county, sub_county, membership_type, membership_no, ward, member_id
-  } = req.session.registrationDraft;
+  const { county, sub_county, membership_type, membership_no, ward, member_id } = req.session.registrationDraft;
 
-  const {
-    phoneNumber, idNumber, dob, gender, disability, educationLevel,
-    citizenship, country, kinName, kinRln, kinPhone, kinLocation
-  } = req.body;
+  const { phoneNumber, idNumber, dob, gender, disability, educationLevel, citizenship, country, kinName, kinRln, kinPhone, kinLocation } = req.body;
+
+  req.session.userMember = member_id;
 
   const files = req.files || {};
-  const basePath = `/uploads/documents/members/${membership_no}`;
+  const basePath = `/uploads/documents/members/${req.session.userMember}`;
   const memberDoc = files.memberDoc ? `${basePath}/${files.memberDoc[0].filename}` : null;
   const memberIdDoc = files.memberIdDoc ? `${basePath}/${files.memberIdDoc[0].filename}` : null;
 
@@ -384,9 +296,10 @@ exports.addMemberProfileDraft = async (req, res) => {
 
     const { phoneNumber, idNumber, dob, gender, disability, educationLevel, citizenship, country, kinName, kinRln, kinPhone, kinLocation } = req.body;
 
+    req.session.userMember = member_id;
 
     const files = req.files || {};
-    const basePath = `/uploads/documents/members/${membership_no}`;
+    const basePath = `/uploads/documents/members/${req.session.userM}`;
     const memberDoc = files.memberDoc ? `${basePath}/${files.memberDoc[0].filename}` : null;
     const memberIdDoc = files.memberIdDoc ? `${basePath}/${files.memberIdDoc[0].filename}` : null;
 
@@ -790,6 +703,205 @@ exports.memberDetailsConfirmDraft = async (req, res) => {
   }
 };
 
+exports.approveMember = async (req, res) => {
+
+  const memberId = req.params.member_id;
+
+  try {
+
+    const [userCheck] = await db.query(`SELECT user_id FROM user_tbl WHERE member_id = ? LIMIT 1`, [memberId]);
+
+    if (userCheck.length === 0) {
+      req.session.message = "Member details cannot be confirmed for Approval!";
+      req.session.messageType = "error";
+      req.session.values = req.body;
+      return res.redirect("/portal/members");
+    }
+    const user = userCheck[0];
+  
+    const [memberCheck] = await db.query(`SELECT membership_type, email FROM members_tbl WHERE member_id = ? LIMIT 1`, [memberId]);
+
+    if (memberCheck.length === 0) {
+      req.session.message = "Member details cannot be confirmed for Approval!";
+      req.session.messageType = "error";
+      req.session.values = req.body;
+      return res.redirect("/portal/members");
+    }
+    const member = memberCheck[0];
+
+    const [profileCheck] = await db.query(`SELECT county, sub_county, ward FROM member_profile_tbl WHERE member_id = ? LIMIT 1`, [memberId]);
+
+    if (profileCheck.length === 0) {
+      req.session.message = "Member profile not found for approval!";
+      req.session.messageType = "error";
+      req.session.values = req.body;
+      return res.redirect("/portal/members");
+    }
+    const profile = profileCheck[0];
+
+    const [checkFee] = await db.query(`SELECT membership_fee FROM settings_tbl`);
+    const feeAmount = checkFee[0].membership_fee;
+
+    const countyCode = regionMap[profile.county].code;
+    const subCountyCode = regionMap[profile.county].subcounties[profile.sub_county].code;
+    const wardCode = regionMap[profile.county].subcounties[profile.sub_county].wards[profile.ward];
+    const membershipNo = `${countyCode}-${subCountyCode}-${wardCode}-${memberId}`;
+
+    await db.query(`UPDATE members_tbl SET membership_no = ?, status = 'Active' WHERE member_id = ? LIMIT 1`, [membershipNo, memberId]);
+
+    if (member.membership_type === 'Sacco In') {
+      await db.execute(
+        `INSERT INTO sacco_members_tbl (member_id, membership_no, shares, savings, loan_balance, status)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [memberId, membershipNo, 0, 0, 0, 'Active']);
+    }
+
+    await logActivity(req.session.userId, memberId, "MEMBER_APPROVED", `New member approved with membership number ${membershipNo}`, req);
+    
+    await db.execute(`INSERT INTO contributions_tbl (member_id, contribution_type, amount) VALUES(?, ?, ?)`, [memberId, 'Membership Fee', feeAmount]);
+
+    // Nodemailer
+    const transporter = nodemailer.createTransport({
+                secure: true,
+                host: 'smtp.gmail.com',
+                port: 465,
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+    
+    // Send email
+    await transporter.sendMail({
+                from: 'uhrturgroup@gmail.com',
+                to: member.email,
+                subject: '[Uthabiti Africa] Membership Approval',
+                html: `
+                    <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>
+                                body {font-family: Arial, sans-serif;background-color: #f9f9f9;margin: 0;padding: 0;}
+                                .container {max-width: 600px;margin: 20px auto;background: #f5f5f5;padding: 20px;border-radius: 8px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+                                .header {text-align: center;color: #ffffff;font-size: 20px;margin-bottom: 20px;background-color: #e12503;height: 50px;border-radius: 2px;padding: 20px;font-weight: bold;font-family: monospace;}
+                                .code {font-size: 24px;color: #000;font-weight: bold;text-align: center;margin: 20px 0;}
+                                .footer {text-align: center;font-size: 12px;color: #e12503;margin-top: 20px;}
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="header">Membership Approval</div>
+                                <p>Dear Member,</p>
+                                <p>We are pleased to inform you that your membership account has been successfully approved.</p>
+                                <p>Welcome to the <b>Uthabiti Membership Network</b></p>.
+                                <p>Your Membership Number is:</p>
+                                <div class="code">${membershipNo}</div>
+                                <p>If you did not apply for membership, please disregard this email.</p>
+                                <div class="footer">Thank you for choosing our services.</div>
+                            </div>
+                        </body>
+                    </html>
+                `,
+            });
+
+    await notifyActivity('Admin',user.user_id, 'Membership Approval', `Your membership account has been approved. Your membership number is : ${membershipNo}. Welcome to Uthabiti Network`, req);
+
+    req.session.message = "Membership details Approved successfully!";
+    req.session.messageType = "success";
+    return res.redirect("/portal/view-member");
+
+  } catch (err) {
+    req.session.message = err.message;
+    req.session.messageType = "error";
+    return res.redirect("/portal/view-member");
+  }
+};
+
+
+exports.declineMember = async (req, res) => {
+
+  const memberId = req.params.member_id;
+
+  try {
+
+    const [userCheck] = await db.query(`SELECT user_id, email FROM user_tbl WHERE member_id = ? LIMIT 1`, [memberId]);
+
+    if (userCheck.length === 0) {
+      req.session.message = "Member details cannot be confirmed for Approval!";
+      req.session.messageType = "error";
+      req.session.values = req.body;
+      return res.redirect("/portal/members");
+    }
+    const user = userCheck[0];
+  
+    const [facilities] = await db.query(`SELECT facility_id FROM facilities_tbl WHERE member_id = ?`, [memberId]);
+
+      if (facilities.length > 0) {
+        await db.execute(`UPDATE facilities_tbl SET status = 'Inactive' WHERE member_id = ?`, [memberId]);
+
+        await logActivity(req.session.userId, memberId,'FACILITY_STATUS_UPDATE',`Facilities set to 'Closed' because member application was declined`, req);
+      }
+
+    await db.execute(`UPDATE members_tbl SET status = 'Declined' WHERE member_id = ? LIMIT 1`, [memberId]);
+
+    await db.execute(`UPDATE user_tbl SET status = 'Suspended' WHERE user_id = ? LIMIT 1`, [user.user_id])
+
+  
+    await logActivity(req.session.userId, memberId, "MEMBER_DECLINED", `New member application declined`, req);
+
+
+    // Nodemailer
+    const transporter = nodemailer.createTransport({
+                secure: true,
+                host: 'smtp.gmail.com',
+                port: 465,
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+    
+    // Send email
+    await transporter.sendMail({
+                from: 'uhrturgroup@gmail.com',
+                to: member.email,
+                subject: '[Uthabiti Africa] Membership Declined',
+                html: `
+                    <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <style>
+                                body {font-family: Arial, sans-serif;background-color: #f9f9f9;margin: 0;padding: 0;}
+                                .container {max-width: 600px;margin: 20px auto;background: #f5f5f5;padding: 20px;border-radius: 8px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+                                .header {text-align: center;color: #ffffff;font-size: 20px;margin-bottom: 20px;background-color: #e12503;height: 50px;border-radius: 2px;padding: 20px;font-weight: bold;font-family: monospace;}
+                                .code {font-size: 24px;color: #000;font-weight: bold;text-align: center;margin: 20px 0;}
+                                .footer {text-align: center;font-size: 12px;color: #e12503;margin-top: 20px;}
+                            </style>
+                        </head>
+                        <body>
+                            <div class="container">
+                                <div class="header">Membership Approval</div>
+                                <p>Dear Member,</p>
+                                <p>We regret to inform you that your membership application has been declined.</p>
+                                <p>If you did not apply for membership, please disregard this email.</p>
+                                <div class="footer">Thank you for choosing our services.</div>
+                            </div>
+                        </body>
+                    </html>
+                `,
+            });
+
+    req.session.message = "Membership details Declined successfully!";
+    req.session.messageType = "success";
+    return res.redirect("/portal/view-member");
+
+  } catch (err) {
+    req.session.message = err.message;
+    req.session.messageType = "error";
+    return res.redirect("/portal/view-member");
+  }
+};
+
 // -----------------------------------------------------------------------------------------------
 // 3. GET DRAFT MEMBER
 // -----------------------------------------------------------------------------------------------
@@ -857,31 +969,23 @@ exports.getMemberDetails = async (req, res) => {
     return res.redirect('/auth/login');
   }
 
-  const { membershipNumber } = req.body;
+  const { member_id } = req.body;
 
   try {
 
-    const parsed = parseMembership(membershipNumber);
-
-    if (!parsed) {
-      req.session.message = "Invalid view request";
-      req.session.messageType = "error";
-      return res.redirect('/portal/members');
-    }
-
     const [rows] = await db.query(
-      `SELECT membership_no, member_id FROM members_tbl WHERE membership_no = ? LIMIT 1`,
-      [membershipNumber]
+      `SELECT * FROM members_tbl WHERE member_id = ? LIMIT 1`,
+      [member_id]
     );
 
     if (rows.length === 0) {
-      req.session.message = "Data not found for this membership number";
+      req.session.message = "Data not found for this member";
       req.session.messageType = "error";
       return res.redirect('/portal/members');
     }
     const memberId = rows[0].member_id;
 
-    req.session.memberDetails = { membership_no: membershipNumber, member_id: memberId};
+    req.session.memberDetails = memberId;
 
     res.redirect('/portal/view-member');
 
@@ -1000,7 +1104,6 @@ exports.updateMemberStatus = async (req, res) => {
         newStatus = 'Suspended';
         break;
       case 'Inactive':
-      case 'Pending':
       case 'Draft':
       case 'Suspended':
         newStatus = 'Active';
@@ -1945,6 +2048,98 @@ exports.updateSurveyData = async (req, res) => {
   }
 };
 
+exports.importExcel = async (req, res) => {
+  try {
+    if (!req.file) {
+      req.session.message = 'No file uploaded!';
+      req.session.messageType = 'error';
+      return res.redirect('/portal/survey');
+    }
+
+    // Read Excel file
+    const workbook = xlsx.readFile(req.file.path);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = xlsx.utils.sheet_to_json(sheet);
+
+    for (const row of rows) {
+      const member_institutions = [
+        row["Member Bank"] ? "Bank" : "",
+        row["Member SACCO"] ? "SACCO" : "",
+        row["Member VSLA/SILK"] ? "VSLA/SILK" : "",
+        row["Member Merry-g-round"] ? "Merry-go-round" : ""
+      ].filter(Boolean).join(", ");
+
+      const loan_institutions = [
+        row["Loan Bank"] ? "Bank" : "",
+        row["Loan SACCO"] ? "SACCO" : "",
+        row["Loan VSLA/SILK"] ? "VSLA/SILK" : "",
+        row["Loan Merry-go-round"] ? "Merry-go-round" : ""
+      ].filter(Boolean).join(", ");
+
+      const values = [
+        row["County"] || null,
+        row["Sub county"] || null,
+        row["Ward name"] || null,
+        row["Enumerator's Name"] || null,
+        row["Enumerator's ID Number"] || null,
+        row["Childcare worker category"] || null,
+        row["Respondent gender"] || null,
+        row["Age"],
+        row["Education"] || null,
+        row["Have you received any professional training related to childcare ?"] || null,
+        row["Were you issued with a certificate upon completion of this childcare training course?"] || null,
+        row["What is the name of this childcare facility?"] || null,
+        row["How would you classify this childcare facility based on its location?"] || null,
+        row["How would you classify the geographical location of this childcare center?"] || null,
+        getYearOnly(row["Year"]),
+        row["Total Children"] || null,
+        row["Total Girls"] || null,
+        row["Total Boys"] || null,
+        row["No of children Under 6 months"] || null,
+        row["No of children 06 – 12 months"] || null,
+        row["No of children 12 – 24 months"] || null,
+        row["No of children 24 – 36 months"] || null,
+        row["No of children 36 + months"] || null,
+        row["Children with any form of disability?"] || null,
+        row["Boys with any disabilities"] || null,
+        row["Girls with any disabilities"] || null,
+        row["Total childcare workers"] || null,
+        row["Female childcare worker"] || null,
+        row["Male childcare worker"] || null,
+        row["Childcare workers with disability"] || null,
+        member_institutions,
+        loan_institutions,
+        row["Would you be interested in joining a financial institution that is dedicated to empowerment of Childcare providers?"] || null,
+        row["Childcare Provider’s Name"] || null,
+        row["Phone"] || null,
+        "Active",
+        new Date()
+      ];
+
+      const sql = `
+        INSERT INTO childcare_survey_tbl (
+          county_name, sub_county_name, ward_name, enumerator_name, id_number, worker_category,
+          gender, age, education_level, received_training, received_certificate, facility_name,
+          facility_classification, geo_location, year_established, total_children, girls, boys,
+          age_under6, age_6_12, age_12_24, age_24_36, age_36_plus, children_with_disabilities,
+          boys_with_disabilities, girls_with_disabilities, total_workers, female_workers, male_workers,
+          workers_with_disabilities, member_institutions, loan_institutions, interested_in_finance,
+          provider_name, phone_number, status, created_at
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+      `;
+
+      await db.execute(sql, values);
+    }
+
+    req.session.message = 'Survey data imported successfully!';
+    req.session.messageType = 'success';
+    res.redirect('/portal/survey');
+
+  } catch (error) {
+    console.error("Error inserting survey data:", error);
+    res.status(500).json({ message: "Error inserting survey data", error });
+  }
+};
 
 // -------------------------------------------------------------------------------------------
 // SETTINGS

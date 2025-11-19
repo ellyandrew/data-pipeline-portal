@@ -7,25 +7,40 @@ const session = require('express-session');
 // const auth = require('../middleware/authMiddleware');
 const { body } = require('express-validator');
 const secretKey = require('../generateKey');
+const regionMap = require('../utils/regionMap');
 
+// -----------------------------------------------------------------------------------------------
+// REGISTER USER
+// -----------------------------------------------------------------------------------------------
 
-// Handle registration form submission
-// router.post('/register', [
-//         body('firstName')
-//             .isAlpha().withMessage('Invalide first name.')
-//             .isLength({ min: 2 }).withMessage('First name too short'),
-//         body('lastName')
-//             .isAlpha().withMessage('Invalid last.')
-//             .isLength({ min: 2 }).withMessage('Last name too short.'),
-//         body('email')
-//             .isEmail().withMessage('Enter a valid email address.'),
-//         body('password')
-//             .isLength({ min: 6 }).withMessage('Password must be at least 6 characters long.'),
-//         body('confirmPassword')
-//             .custom((value, { req }) => value === req.body.password)
-//             .withMessage('Passwords must match.')
-//     ], authController.postRegister);
+router.post('/register-user', authController.registerUser);
 
+// -----------------------------------------------------------------------------------------------
+// GET COUNTY , SUB-COUNTY & WARDS
+// ----------------------------------------------------------------------------------------------
+router.get("/api/regions/counties", (req, res) => { // Get all counties
+  const counties = Object.keys(regionMap).map(name => ({ name, code: regionMap[name].code }));
+  res.json(counties);
+});
+// -----------------------------------------------------------------------------------------------
+router.get("/api/regions/subcounties/:county", (req, res) => { // Get subcounties by county
+  const { county } = req.params;
+  if (!regionMap[county]) return res.status(404).json({ error: "County not found" });
+  const subcounties = Object.keys(regionMap[county].subcounties).map(name => ({
+    name,
+    code: regionMap[county].subcounties[name].code
+  }));
+  res.json(subcounties);
+});
+// -----------------------------------------------------------------------------------------------
+router.get("/api/regions/wards/:county/:subcounty", (req, res) => { // Get wards by county + subcounty
+  const { county, subcounty } = req.params;
+  if (!regionMap[county] || !regionMap[county].subcounties[subcounty]) {
+    return res.status(404).json({ error: "Subcounty not found" });
+  }
+  const wards = regionMap[county].subcounties[subcounty].wards;
+  res.json(wards);
+});
 
 // -------------------------------------------------------------------------------------------------
 // LOGIN USER 
@@ -111,10 +126,6 @@ router.get('/:page', (req, res) => {
         // messageType: req.session.messageType || null,
         // values: {},
     });
-
-    // Clear messages after rendering
-    // req.session.message = null;
-    // req.session.messageType = null;
 });
 
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Uthabiti Africa | Institutions</title>
+    <title>Uthabiti Africa | My Facility</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Top script start -->
@@ -23,7 +23,7 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="logo-pro">
-                            <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px"
+                            <a href="/member/my-dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px"
                                     width="80px" alt="" /></a>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                                 <div class="sparkline10-list mt-b-30">
                                     <div class="sparkline10-hd">
                                         <div class="main-sparkline10-hd">
-                                            <h1>Facilities</h1>
+                                            <h1>My Facilities</h1>
                                         </div>
                                         <form method="GET" id="filterForm">
                                             <div class="row">
@@ -65,9 +65,19 @@
                                                     </a>
                                                 </div>
                                                 <div class="col-md-1">
-                                                    <div class="btn-group">
-                                                        <a href="/portal/facilities" class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></a>
-                                                        <a class="btn btn-default btn-sm" data-toggle="modal" data-target="#exportFacilityModal"><i class="fa fa-cloud-download"></i> Export</a>
+                                                  <div class="btn-group btn-custom-groups btn-custom-groups-one btn-mg-b-10">
+                                                    <button type="button" class="btn btn-default dropdown-toggle btn-sm" data-toggle="dropdown"><i class="fa fa-gears adminpro-home-admin" aria-hidden="true"></i> Actions <i class="fa fa-angle-down"></i></button>
+                                                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                                                            <li>
+                                                              <a href="/member/my-facility"><i class="fa fa-refresh"></i> Refresh</a>
+                                                            </li>
+                                                            <li>
+                                                              <a  data-toggle="modal" data-target="#exportFacilityModal"><i class="fa fa-cloud-download"></i> Export Data</a>
+                                                            </li>
+                                                            <li>
+                                                              <a data-toggle="modal" data-target="#addFacilityModal"><i class="fa fa-building"></i> Add Facility</a>
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
@@ -207,8 +217,7 @@
                                                             <td><span class="label <%= statusClass %>"><%= f.status %></span></td>
                                                             <td>
                                                                 <div class="button-style-three">
-                                                                    <form action="/portal/view-facility-details" method="POST">
-                                                                        <input type="hidden" name="member_id" value="<%= f.member_id %>" required>
+                                                                    <form action="/member/view-facility-details" method="POST">
                                                                         <input type="hidden" name="facility_id" value="<%= f.facility_id %>" required>
                                                                         <button type="submit" class="btn btn-custon-three btn-default btn-xs"><i class="fa fa-ellipsis-h"></i></button>
                                                                     </form>
@@ -279,7 +288,7 @@
         <!-- Export Facility Modal -->
         <div id="exportFacilityModal" class="modal FullColor-popup-AlertModal fade">
             <div class="modal-dialog modal-lg">
-                <form method="GET" action="/portal/export-facilities">
+                <form method="GET" action="/member/export-facilities">
                     <div class="modal-content">
                         <div class="modal-header header-color-modal bg-color-4">
                             <h4 class="modal-title">Export Facilities</h4>
@@ -399,8 +408,172 @@
                 </form>
             </div>
         </div>
+
+        <!-- Add Facility -->
+         <div id="addFacilityModal" class="modal FullColor-popup-AlertModal fade">
+            <div class="modal-dialog modal-lg">
+                <form method="POST" action="/member/add-facility-details">
+                    <div class="modal-content">
+                        <div class="modal-header header-color-modal bg-color-4">
+                            <h4 class="modal-title">Add Facility</h4>
+                            <div class="modal-close-area modal-close-df">
+                                <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+                            </div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Facility
+                                            Name
+                                            *</label>
+                                        <input name="facilityName" type="text" placeholder="Name of your Facility" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Facility
+                                            Type</label>
+                                        <select class="form-control required" name="facilityType" required>
+                                            <option value="">- select -</option>
+                                            <option value="Daycare">Daycare</option>
+                                            <option value="Home-Care">Home-Care</option>
+                                            <option value="ECD Playgroup">ECD Playgroup
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Setup Type</label>
+                                        <select class="form-control required" name="setupType" required>
+                                            <option value="">- select -</option>
+                                            <option value="School Based">School-based (Within education system)</option>
+                                            <option value="Center Based">Center-based (Autonomous rented space)</option>
+                                            <option value="Home Based">Home-based (Within your house)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Year Started *</label>
+                                        <select name="yearStarted" class="form-control" required>
+                                            <option value="">- select -</option>
+                                            <% for (let y=1950; y <=2025; y++) { %>
+                                                <option value="<%= y %>"><%= y %></option>
+                                                <% } %>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Registration Number
+                                        </label>
+                                        <input name="registrationNumber" type="text" placeholder="Reg number" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">License Number</label>
+                                        <input name="licenseNumber" type="text" placeholder="License Number" class="form-control">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">County</label>
+                                        <select class="form-control required" name="county" id="countySelect" required>
+                                            <option value="">- select county -</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Sub-County *</label>
+                                        <select class="form-control required" name="subCounty" id="subCountySelect" required>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Ward *</label>
+                                        <select class="form-control required" name="ward" id="wardSelect" required>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No of Male Children</label>
+                                        <input name="maleB" type="number" placeholder="Male Beneficiaries" class="form-control" value="0">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No of Female Children
+                                        </label>
+                                        <input name="femaleB" type="number" placeholder="Female Beneficiaries" class="form-control"
+                                            value="0">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No of Male Children with disability
+                                        </label>
+                                        <input name="maleBD" type="number" placeholder="Male Beneficiaries with disability" class="form-control"
+                                            value="0">
+                                    </div>
+                                </div>
+
+                               <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No of
+                                            Female Children with
+                                            disability
+                                        </label>
+                                        <input name="femaleBD" type="number" placeholder="Female Beneficiaries with disability" class="form-control"
+                                            value="0">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No of Male
+                                            Center Workers
+                                        </label>
+                                        <input name="maleC" type="number" placeholder="Male Caregivers" class="form-control"
+                                            value="0">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">No of
+                                            Female Center Workers
+                                        </label>
+                                        <input name="femaleC" type="number" placeholder="Female Caregivers" class="form-control"
+                                            value="0">
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div class="form-group">
+                                        <label class="form-label">Attach One copy of Facility Registration/License *</label>
+                                        <input name="facilityDoc" type="file" class="form-control" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
 <!-- Bottom script start -->
 <%- include('../partials/bottom_script'); %>
 <!-- / Bottom script end -->
+ <script src="/jsUtils/add-member.js"></script>
 </body>
 </html>

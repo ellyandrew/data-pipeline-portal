@@ -1,7 +1,12 @@
 <div class="left-sidebar-pro">
     <nav id="sidebar" class="">
         <div class="sidebar-header mg-t-15">
+            <% if (hasAccess('dashboard')) { %>
             <a href="/portal/dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+            <% } %>
+            <% if (hasAccess('my-dashboard')) { %>
+            <a href="/member/my-dashboard"><img class="main-logo" src="/img/logo/logo.png" height="30px" width="80px" alt="" /></a>
+            <% } %>
             <strong><img src="/img/logo/logosn.png" alt="" /></strong>
         </div>
 
@@ -227,6 +232,53 @@
                         </ul>
                     </li>
                     <% } %>
+
+                    <!-- member links -->
+                     <% if (hasAccess('my-dashboard')) { %>
+                    <li class="<%= currentPath.startsWith('/member/my-dashboard') ? 'active' : '' %>">
+                        <a title="Dashboard" href="/member/my-dashboard" aria-expanded="false">
+                            <i class="fa big-icon fa-tachometer icon-wrap"></i>
+                            <span class="mini-click-non">Dashboard</span>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('my-facility') || hasAccess('my-facility-details')) { %>
+                    <li class="<%= currentPath.startsWith('/member/my-facility') || currentPath.startsWith('/member/my-facility-details') ? 'active' : '' %>">
+                        <a title="Facility" href="/member/my-facility" aria-expanded="false">
+                            <i class="fa big-icon fa-building icon-wrap"></i>
+                            <span class="mini-click-non">My Facility</span>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('my-contributions')) { %>
+                    <li class="<%= currentPath.startsWith('/member/my-contributions') ? 'active' : '' %>">
+                        <a title="Contributions" href="/member/my-contributions" aria-expanded="false">
+                            <i class="fa big-icon fa-credit-card icon-wrap"></i>
+                            <span class="mini-click-non">My Contributions</span>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('my-sacco')) { %>
+                    <li class="<%= currentPath.startsWith('/member/my-sacco') ? 'active' : '' %>">
+                        <a title="Sacco" href="/member/my-sacco" aria-expanded="false">
+                            <i class="fa big-icon fa-users icon-wrap"></i>
+                            <span class="mini-click-non">My Sacco</span>
+                        </a>
+                    </li>
+                    <% } %>
+
+                    <% if (hasAccess('my-profile')) { %>
+                    <li class="<%= currentPath.startsWith('/member/my-profile') ? 'active' : '' %>">
+                        <a title="Profile" href="/member/my-profile" aria-expanded="false">
+                            <i class="fa big-icon fa-user icon-wrap"></i>
+                            <span class="mini-click-non">My Profile</span>
+                        </a>
+                    </li>
+                    <% } %>
+
                 </ul>
             </nav>
         </div>

@@ -90,7 +90,7 @@
                                                         <select class="form-control required input-sm" name="contributionType" onchange="this.form.submit()">
                                                             <option value="">- contribution type -</option>
                                                             <% types.forEach(t => { %>
-                                                                <option value="<%= t %>" <%= types === t ? "selected" : "" %>><%= t %></option>
+                                                                <option value="<%= t %>" <%= contributionType === t ? "selected" : "" %>><%= t %></option>
                                                             <% }) %>
                                                         </select>
                                                     </div>
@@ -100,7 +100,7 @@
                                                         <select class="form-control required input-sm" name="paymentMethod" onchange="this.form.submit()">
                                                             <option value="">- payment methods -</option>
                                                             <% methods.forEach(m => { %>
-                                                                <option value="<%= m %>" <%= methods === m ? "selected" : "" %>><%= m %></option>
+                                                                <option value="<%= m %>" <%= paymentMethod === m ? "selected" : "" %>><%= m %></option>
                                                             <% }) %>
                                                         </select>
                                                     </div>
