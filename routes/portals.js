@@ -395,8 +395,8 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     // 🔹 Step 2: Fetch member_ids for this page
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
-       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
-       [...params, perPage, offset]
+       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ${perPage} OFFSET ${offset}`, 
+       [...params]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
