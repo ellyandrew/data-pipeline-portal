@@ -396,7 +396,7 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
        FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
-       [...params, perPage, offset]
+       [...params, Number(perPage), Number(offset)]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
@@ -698,7 +698,7 @@ router.get('/approval', ensureAuthenticated, async (req, res) => {
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
        FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, 
-       [...params, perPage, offset]
+       [...params, Numnber(perPage), Number(offset)]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
@@ -837,7 +837,7 @@ router.get('/facilities', ensureAuthenticated, async (req, res) => {
     const [institutions] = await db.query(
       `SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.f_area, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
       f.total_caregivers, m.member_id, m.membership_no AS owner_membership FROM facilities_tbl f LEFT JOIN members_tbl m ON f.member_id = m.member_id
-      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, perPage, offset]
+      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, Number(perPage), Number(offset)]
     );
 
     // --- DROPDOWN DATA ---
@@ -1160,43 +1160,6 @@ router.post('/edit-user-role/:user_id', ensureAuthenticated, ensureRole(['Admin'
 
 router.post('/get-user-details', ensureAuthenticated, ensureRole(['Admin']), portalController.viewUserDetails);
 
-// router.get('/view-user', async (req, res) => {
-
-//   if (!req.session.userDetails) {
-//     req.session.message = 'Unable to get the selected user details, try again!';
-//     req.session.messageType = 'error';
-//     return res.redirect('/portal/users');
-//   }
-
-//   const { userId } = req.session.userDetails;
-
-//   try {
-//     const [rows] = await db.execute(
-//       `SELECT user_id, fullname, idNumber, email, role, status, last_login, create_at, updated_at FROM user_tbl WHERE user_id = ? LIMIT 1`, [userId]);
-
-//     if (rows.length === 0) {
-//       req.session.message = 'User not found.';
-//       req.session.messageType = 'error';
-//       return res.redirect('/portal/users');
-//     }
-
-//     const user = rows[0];
-
-//     const [logs] = await db.execute(`SELECT id, user_id, member_id, action, description, ip_address, user_agent, created_at FROM activity_logs_tbl WHERE user_id = ?
-//       ORDER BY created_at DESC
-//     `, [userId]);
-
-//     res.render('portal/view-user', { user, logs });
-
-//   } catch (err) {
-//     console.error('Error loading user details:', err);
-//     req.session.message = 'Error loading user details.';
-//     req.session.messageType = 'error';
-//     res.redirect('/portal/users');
-//   }
-
-// });
-
 router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req, res) => {
 
   if (!req.session.userDetails) {
@@ -1268,7 +1231,7 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
        ${whereSQL}
        ORDER BY created_at DESC
        LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+      [...params, Number(perPage), Number(offset)]
     );
 
     // Export logs
@@ -1620,7 +1583,7 @@ router.get('/sacco-details', ensureAuthenticated, async (req, res) => {
       const details = results[0] || null;
 
       const [loanRows] = await db.query(`SELECT * FROM loans_tbl ${whereSQL} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]);
+      [...params, Number(perPage), Number(offset)]);
 
       const [rowTypes] = await db.query(`SELECT * FROM loan_types_tbl`);
       
@@ -2249,7 +2212,7 @@ router.get('/survey', ensureAuthenticated, async (req, res) => {
       ${whereSQL}
       ORDER BY ${orderSQL}
       LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+      [...params, Number(perPage), Number(offset)]
     );
 
     const [counties] = await db.query(`SELECT DISTINCT county_name FROM childcare_survey_tbl WHERE county_name IS NOT NULL`);

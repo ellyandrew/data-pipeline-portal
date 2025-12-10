@@ -387,7 +387,7 @@ router.get('/my-facility', ensureAuthenticated, async (req, res) => {
     const [institutions] = await db.query(
       `SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.f_area, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
       f.total_caregivers, m.member_id, m.membership_no AS owner_membership FROM facilities_tbl f LEFT JOIN members_tbl m ON f.member_id = m.member_id
-      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, perPage, offset]
+      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, Number(perPage), Number(offset)]
     );
 
     // --- DROPDOWN DATA ---
