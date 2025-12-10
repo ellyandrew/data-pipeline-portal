@@ -271,8 +271,8 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
 
 router.get('/members', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const filters = {
@@ -396,7 +396,7 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
        FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
-       [...params, Number(perPage), Number(offset)]
+       [...params, perPage, offset]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
@@ -643,8 +643,8 @@ router.get('/export-members', ensureAuthenticated, ensureRole(['Admin']), async 
 
 router.get('/approval', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const search = (req.query.search || '').trim();
@@ -698,7 +698,7 @@ router.get('/approval', ensureAuthenticated, async (req, res) => {
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
        FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, 
-       [...params, Numnber(perPage), Number(offset)]
+       [...params, perPage, offset]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
@@ -747,8 +747,8 @@ router.post('/decline-membership/:member_id', ensureAuthenticated, ensureRole(['
 
 router.get('/facilities', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const filters = {
@@ -837,7 +837,7 @@ router.get('/facilities', ensureAuthenticated, async (req, res) => {
     const [institutions] = await db.query(
       `SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.f_area, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
       f.total_caregivers, m.member_id, m.membership_no AS owner_membership FROM facilities_tbl f LEFT JOIN members_tbl m ON f.member_id = m.member_id
-      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, Number(perPage), Number(offset)]
+      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, perPage, offset]
     );
 
     // --- DROPDOWN DATA ---
@@ -1170,8 +1170,8 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
 
   const { userId } = req.session.userDetails;
 
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const startDate = req.query.start || '';
@@ -1231,7 +1231,7 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
        ${whereSQL}
        ORDER BY created_at DESC
        LIMIT ? OFFSET ?`,
-      [...params, Number(perPage), Number(offset)]
+      [...params, perPage, offset]
     );
 
     // Export logs
@@ -1313,8 +1313,8 @@ router.post('/add-sacco-member', ensureAuthenticated, ensureRole(['Admin', 'Data
 
 router.get('/sacco-member', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const search = (req.query.search || '').trim();
@@ -1433,8 +1433,8 @@ router.post('/update-member-sacco-status/:sacco_member_id', ensureAuthenticated,
 
 router.get('/contributions', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
   const search = (req.query.search || '').trim(); // reference_no search
   const contributionType = req.query.contributionType || '';
@@ -1518,8 +1518,8 @@ router.post('/view-sacco', ensureAuthenticated, ensureRole(['Admin', 'Data Clerk
 
 router.get('/sacco-details', ensureAuthenticated, async (req, res) => {
 
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const startDate = req.query.start || '';
@@ -1583,7 +1583,7 @@ router.get('/sacco-details', ensureAuthenticated, async (req, res) => {
       const details = results[0] || null;
 
       const [loanRows] = await db.query(`SELECT * FROM loans_tbl ${whereSQL} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-      [...params, Number(perPage), Number(offset)]);
+      [...params, perPage, offset]);
 
       const [rowTypes] = await db.query(`SELECT * FROM loan_types_tbl`);
       
@@ -1623,8 +1623,8 @@ router.post('/loans-issue', ensureAuthenticated, ensureRole(['Admin']), portalCo
 
 router.get('/loans', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const search = (req.query.search || '').trim();
@@ -2136,8 +2136,8 @@ router.get('/export-loans', ensureAuthenticated, ensureRole(['Admin']), async (r
 
 router.get('/survey', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const search = (req.query.search || '').trim();
@@ -2212,7 +2212,7 @@ router.get('/survey', ensureAuthenticated, async (req, res) => {
       ${whereSQL}
       ORDER BY ${orderSQL}
       LIMIT ? OFFSET ?`,
-      [...params, Number(perPage), Number(offset)]
+      [...params, perPage, offset]
     );
 
     const [counties] = await db.query(`SELECT DISTINCT county_name FROM childcare_survey_tbl WHERE county_name IS NOT NULL`);

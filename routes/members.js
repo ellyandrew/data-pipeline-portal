@@ -292,8 +292,8 @@ router.get('/my-facility', ensureAuthenticated, async (req, res) => {
   const memberId = req.session.userMember;
 
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const filters = {
@@ -387,7 +387,7 @@ router.get('/my-facility', ensureAuthenticated, async (req, res) => {
     const [institutions] = await db.query(
       `SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.f_area, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
       f.total_caregivers, m.member_id, m.membership_no AS owner_membership FROM facilities_tbl f LEFT JOIN members_tbl m ON f.member_id = m.member_id
-      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, Number(perPage), Number(offset)]
+      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, perPage, offset]
     );
 
     // --- DROPDOWN DATA ---
@@ -658,8 +658,8 @@ router.get('/export-facilities', ensureAuthenticated, ensureRole(['Member']), as
 
 router.get('/my-sacco', ensureAuthenticated, async (req, res) => {
 
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const startDate = req.query.start || '';
@@ -763,8 +763,8 @@ router.get('/my-contributions', ensureAuthenticated, async (req, res) => {
   const memberId = req.session.userMember;
 
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Number(req.query.limit) || 10;
+  const page = Number(req.query.page) || 1;
   const offset = (page - 1) * perPage;
   const search = (req.query.search || '').trim(); // reference_no search
   const contributionType = req.query.contributionType || '';
