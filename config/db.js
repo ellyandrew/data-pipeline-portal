@@ -1,7 +1,5 @@
 const mysql = require('mysql2/promise');
 
-const fs = require('fs');
-
 require('dotenv').config();
 
 // Local
@@ -17,18 +15,25 @@ require('dotenv').config();
 // });
 
 // Production
+function getSSLConfig() {
+    if (process.env.DB_SSL === "true") {
+        return {
+            rejectUnauthorized: false
+        };
+    }
+    return false;
+}
+
 const db = mysql.createPool({
-  host: process.env.DATABASE_HOST,
-  user: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE,
-  port: process.env.DATABASE_PORT || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  ssl: {
-    ca: fs.readFileSync(__dirname + '/BaltimoreCyberTrustRoot.crt.pem')
-  }
+    host: process.env.DATABASE_HOST,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD,
+    database: process.env.DATABASE,
+    port: process.env.DATABASE_PORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    ssl: getSSLConfig()
 });
 
 module.exports = db;
