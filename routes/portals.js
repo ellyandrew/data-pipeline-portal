@@ -697,8 +697,8 @@ router.get('/approval', ensureAuthenticated, async (req, res) => {
     // 🔹 Step 2: Fetch member_ids for this page
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
-       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, 
-       [...params, perPage, offset]
+       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY ${orderSQL} ${perPage} OFFSET ${offset}`, 
+       [...params]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
@@ -837,7 +837,7 @@ router.get('/facilities', ensureAuthenticated, async (req, res) => {
     const [institutions] = await db.query(
       `SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.f_area, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
       f.total_caregivers, m.member_id, m.membership_no AS owner_membership FROM facilities_tbl f LEFT JOIN members_tbl m ON f.member_id = m.member_id
-      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, perPage, offset]
+      ${whereSQL} ORDER BY ${orderSQL} ${perPage} OFFSET ${offset}`, [...params]
     );
 
     // --- DROPDOWN DATA ---
@@ -1230,8 +1230,8 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
        FROM activity_logs_tbl
        ${whereSQL}
        ORDER BY created_at DESC
-       LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+       ${perPage} OFFSET ${offset}`,
+      [...params]
     );
 
     // Export logs
@@ -1388,9 +1388,9 @@ router.get('/sacco-member', ensureAuthenticated, async (req, res) => {
       LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id
       ${whereSQL}
       ORDER BY s.created_at DESC
-      LIMIT ? OFFSET ?
+      ${perPage} OFFSET ${offset}
       `,
-      [...params, perPage, offset]
+      [...params]
     );
 
     const [counties] = await db.query(`SELECT DISTINCT county FROM member_profile_tbl WHERE county IS NOT NULL`);
@@ -1486,8 +1486,8 @@ router.get('/contributions', ensureAuthenticated, async (req, res) => {
           FROM contributions_tbl c INNER JOIN members_tbl m ON c.member_id = m.member_id
         ${whereSQL}
         ORDER BY ${orderSQL}
-        LIMIT ? OFFSET ?`,
-        [...params, perPage, offset]
+        ${perPage} OFFSET ${offset}`,
+        [...params]
     );
 
     const [types] = await db.query(`SELECT DISTINCT contribution_type FROM contributions_tbl WHERE contribution_type IS NOT NULL`);
@@ -1582,8 +1582,8 @@ router.get('/sacco-details', ensureAuthenticated, async (req, res) => {
 
       const details = results[0] || null;
 
-      const [loanRows] = await db.query(`SELECT * FROM loans_tbl ${whereSQL} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]);
+      const [loanRows] = await db.query(`SELECT * FROM loans_tbl ${whereSQL} ORDER BY created_at DESC ${perPage} OFFSET ${offset}`,
+      [...params]);
 
       const [rowTypes] = await db.query(`SELECT * FROM loan_types_tbl`);
       
@@ -1708,8 +1708,8 @@ router.get('/loans', ensureAuthenticated, async (req, res) => {
        INNER JOIN members_tbl m ON s.member_id = m.member_id
        ${whereSQL}
        ORDER BY ${sortColumn} ${sortOrder}
-       LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+       ${perPage} OFFSET ${offset}`,
+      [...params]
     );
 
     const today = new Date();
@@ -2211,8 +2211,8 @@ router.get('/survey', ensureAuthenticated, async (req, res) => {
       FROM childcare_survey_tbl
       ${whereSQL}
       ORDER BY ${orderSQL}
-      LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+      ${perPage} OFFSET ${offset}`,
+      [...params]
     );
 
     const [counties] = await db.query(`SELECT DISTINCT county_name FROM childcare_survey_tbl WHERE county_name IS NOT NULL`);

@@ -387,7 +387,7 @@ router.get('/my-facility', ensureAuthenticated, async (req, res) => {
     const [institutions] = await db.query(
       `SELECT f.facility_id, f.facility_name, f.facility_type, f.f_county, f.f_subcounty, f.f_area, f.reg_no, f.status, f.reg_date, f.total_beneficiaries, 
       f.total_caregivers, m.member_id, m.membership_no AS owner_membership FROM facilities_tbl f LEFT JOIN members_tbl m ON f.member_id = m.member_id
-      ${whereSQL} ORDER BY ${orderSQL} LIMIT ? OFFSET ?`, [...params, perPage, offset]
+      ${whereSQL} ORDER BY ${orderSQL} ${perPage} OFFSET ${offset}`, [...params]
     );
 
     // --- DROPDOWN DATA ---
@@ -723,8 +723,8 @@ router.get('/my-sacco', ensureAuthenticated, async (req, res) => {
     const total = countResult[0].total;
     const totalPages = Math.ceil(total / perPage);
 
-    const [loanRows] = await db.query(`SELECT * FROM loans_tbl ${whereSQL} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]);
+    const [loanRows] = await db.query(`SELECT * FROM loans_tbl ${whereSQL} ORDER BY created_at DESC ${perPage} OFFSET ${offset}`,
+      [...params]);
 
       const [rowTypes] = await db.query(`SELECT * FROM loan_types_tbl`);
       
@@ -819,8 +819,8 @@ router.get('/my-contributions', ensureAuthenticated, async (req, res) => {
           FROM contributions_tbl c INNER JOIN members_tbl m ON c.member_id = m.member_id
         ${whereSQL}
         ORDER BY ${orderSQL}
-        LIMIT ? OFFSET ?`,
-        [...params, perPage, offset]
+        ${perPage} OFFSET ${offset}`,
+        [...params]
     );
 
     const [types] = await db.query(`SELECT DISTINCT contribution_type FROM contributions_tbl WHERE contribution_type IS NOT NULL AND member_id = ?`, [memberId]);
