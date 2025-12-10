@@ -224,7 +224,7 @@
                                                                     <% } else { %>
                                                                         <% if (isAdmin || isDataClerk) { %>
                                                                         <form action="/portal/view-member" method="POST">
-                                                                            <input type="hidden" name="membershipNumber" value="<%= m.member_id %>" required>
+                                                                            <input type="hidden" name="member_id" value="<%= m.member_id %>" required>
                                                                             <button type="submit" class="btn btn-custon-three btn-default btn-xs"><i class="fa fa-ellipsis-h"></i></button>
                                                                         </form>
                                                                         <% } %>
