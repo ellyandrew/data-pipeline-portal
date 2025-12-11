@@ -647,11 +647,11 @@ router.get('/members', async (req, res) => {
     });
 
   } catch (error) {
-    // console.error('Members fetch error:', error);
-    // res.status(500).send('Server Error');
+    console.error('Members fetch error:', error);
+    res.status(500).send('Server Error');
     req.session.message = error.message;
     req.session.messageType = 'error';
-    res.redirect('/portal/members');
+    // res.redirect('/portal/members');
   }
 });
 
