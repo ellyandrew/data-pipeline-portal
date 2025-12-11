@@ -1230,7 +1230,7 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
        FROM activity_logs_tbl
        ${whereSQL}
        ORDER BY created_at DESC
-       ${perPage} OFFSET ${offset}`,
+       LIMIT ${perPage}, OFFSET ${offset}`,
       [...params]
     );
 
