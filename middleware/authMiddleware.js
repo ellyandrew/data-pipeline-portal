@@ -2,44 +2,44 @@ const secretKey = require('../generateKey');
 
 const ALLOWED_ROLES = ['Admin', 'Data Clerk', 'Viewer', 'Champion', 'Member'];
 
-// const pageAccessMap = {
-//   'dashboard': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
-//   'members': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
-//   'add-member': ['Admin', 'Data Clerk', 'Champion'],
-//   'draft': ['Admin', 'Data Clerk', 'Champion'],
-//   'view-member': ['Admin', 'Data Clerk'],
-//   'approval': ['Admin'],
-//   'beneficiaries': ['Admin', 'Data Clerk'],
-//   'add-beneficiary': ['Admin', 'Data Clerk'], 
-//   'facilities': ['Admin', 'Data Clerk'],
-//   'view-facility': ['Admin', 'Data Clerk'],
-//   'add-facility': ['Admin', 'Data Clerk'],
-//   'caregiver': ['Admin', 'Data Clerk'],
-//   'add-caregiver': ['Admin', 'Data Clerk'],
-//   'contributions': ['Admin', 'Data Clerk'],
-//   'loans': ['Admin', 'Data Clerk'],
-//   'sacco-member': ['Admin', 'Data Clerk'],
-//   'sacco-details': ['Admin', 'Data Clerk'],
-//   'profile': ['Admin', 'Data Clerk','Viewer', 'Champion'],
-//   'settings': ['Admin'],
-//   'details': ['Admin'],
-//   'users': ['Admin'],
-//   'analysis': ['Admin', 'Data Clerk', 'Viewer'],
-//   'survey': ['Admin', 'Data Clerk', 'Viewer'],
-//   'survey-details': ['Admin', 'Data Clerk'],
-//   'collect-data': ['Admin', 'Data Clerk', 'Champion'],
-//   'edit-survey': ['Admin'],
-//   'reports': ['Admin'],
-//   'view-user': ['Admin'],
-//   'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
-//   'profile-details': ['Member'],
-//   'my-dashboard': ['Member'],
-//   'my-profile': ['Member'],
-//   'my-facility': ['Member'],
-//   'my-facility-details': ['Member'],
-//   'my-contributions': ['Member'],
-//   'my-sacco': ['Member']
-// };
+const pageAccessMap = {
+  'dashboard': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
+  'members': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
+  'add-member': ['Admin', 'Data Clerk', 'Champion'],
+  'draft': ['Admin', 'Data Clerk', 'Champion'],
+  'view-member': ['Admin', 'Data Clerk'],
+  'approval': ['Admin'],
+  'beneficiaries': ['Admin', 'Data Clerk'],
+  'add-beneficiary': ['Admin', 'Data Clerk'], 
+  'facilities': ['Admin', 'Data Clerk'],
+  'view-facility': ['Admin', 'Data Clerk'],
+  'add-facility': ['Admin', 'Data Clerk'],
+  'caregiver': ['Admin', 'Data Clerk'],
+  'add-caregiver': ['Admin', 'Data Clerk'],
+  'contributions': ['Admin', 'Data Clerk'],
+  'loans': ['Admin', 'Data Clerk'],
+  'sacco-member': ['Admin', 'Data Clerk'],
+  'sacco-details': ['Admin', 'Data Clerk'],
+  'profile': ['Admin', 'Data Clerk','Viewer', 'Champion'],
+  'settings': ['Admin'],
+  'details': ['Admin'],
+  'users': ['Admin'],
+  'analysis': ['Admin', 'Data Clerk', 'Viewer'],
+  'survey': ['Admin', 'Data Clerk', 'Viewer'],
+  'survey-details': ['Admin', 'Data Clerk'],
+  'collect-data': ['Admin', 'Data Clerk', 'Champion'],
+  'edit-survey': ['Admin'],
+  'reports': ['Admin'],
+  'view-user': ['Admin'],
+  'help': ['Admin', 'Champion', 'Data Clerk', 'Viewer'],
+  'profile-details': ['Member'],
+  'my-dashboard': ['Member'],
+  'my-profile': ['Member'],
+  'my-facility': ['Member'],
+  'my-facility-details': ['Member'],
+  'my-contributions': ['Member'],
+  'my-sacco': ['Member']
+};
 
 module.exports = {
   
@@ -48,7 +48,7 @@ module.exports = {
     if (!req.session || !req.session.userId) {
       req.session.message = 'Unauthorized user access declined.';
       req.session.messageType = 'error';
-      return res.redirect('/auth/login');
+      // return res.redirect('/auth/login');
     }
 
     // Now role and path available in all EJS files
