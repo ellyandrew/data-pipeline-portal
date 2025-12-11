@@ -648,7 +648,7 @@ router.get('/members', async (req, res) => {
 
   } catch (error) {
     console.error('Members fetch error:', error);
-    res.status(500).send('Server Error');
+    res.status(500).send('Server Error', error);
     req.session.message = error.message;
     req.session.messageType = 'error';
     // res.redirect('/portal/members');
