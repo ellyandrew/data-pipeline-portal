@@ -48,7 +48,7 @@ module.exports = {
     if (!req.session || !req.session.userId) {
       req.session.message = 'Unauthorized user access declined.';
       req.session.messageType = 'error';
-      // return res.redirect('/auth/login');
+      return res.redirect('/auth/login');
     }
 
     // Now role and path available in all EJS files

@@ -454,7 +454,7 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
 //   }
 // });
 
-router.get('/members', async (req, res) => {
+router.get('/members', ensureAuthenticated, async (req, res) => {
 
   const perPageOptions = [10, 25, 50, 100, 250];
   const perPage = parseInt(req.query.limit) || 10;
@@ -647,11 +647,9 @@ router.get('/members', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Members fetch error:', error);
-    res.status(500).send('Server Error', error);
     req.session.message = error.message;
     req.session.messageType = 'error';
-    // res.redirect('/portal/members');
+    res.redirect('/portal/members');
   }
 });
 
