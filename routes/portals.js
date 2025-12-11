@@ -651,7 +651,7 @@ router.get('/members', async (req, res) => {
     // res.status(500).send('Server Error');
     req.session.message = error.message;
     req.session.messageType = 'error';
-    res.redirect('/portal/dashboard');
+    res.redirect('/portal/members');
   }
 });
 
