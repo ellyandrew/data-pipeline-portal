@@ -377,7 +377,7 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
 
   conditions.push(`p.dob IS NOT NULL`);
 } else {
-  conditions.push(`(p.dob IS NULL OR p.dob IS NOT NULL)`);
+  // conditions.push(`(p.dob IS NULL OR p.dob IS NOT NULL)`);
 }
 
 
@@ -395,8 +395,8 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     // 🔹 Step 2: Fetch member_ids for this page
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
-       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC OFFSET ? LIMIT ?`, 
-       [...params, Number(offset), Number(perPage)]
+       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
+       [...params, perPage, offset]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
@@ -1230,8 +1230,8 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
        FROM activity_logs_tbl
        ${whereSQL}
        ORDER BY created_at DESC
-       OFFSET ? LIMIT ?`,
-      [...params, Number(offset), Number(perPage)]
+       LIMIT ? OFFSET ?`,
+      [...params, perPage, offset]
     );
 
     // Export logs
