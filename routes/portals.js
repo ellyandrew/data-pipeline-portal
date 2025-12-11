@@ -271,8 +271,8 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
 
 router.get('/members', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = Math.max(1, Number(req.query.limit) || 10);
-    const page = Math.max(1, Number(req.query.page) || 1);
+  const perPage = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const filters = {
@@ -396,7 +396,7 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     const [memberIdsResult] = await db.execute(
       `SELECT m.member_id 
        FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
-       [...params, perPage, offset]
+       [...params, Number(offset), Number(perPage)]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
@@ -1170,8 +1170,8 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
 
   const { userId } = req.session.userDetails;
 
-  const perPage = Math.max(1, Number(req.query.limit) || 10);
-    const page = Math.max(1, Number(req.query.page) || 1);
+  const perPage = parseInt(req.query.limit) || 10;
+  const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
   const startDate = req.query.start || '';
@@ -1231,7 +1231,7 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
        ${whereSQL}
        ORDER BY created_at DESC
        LIMIT ? OFFSET ?`,
-      [...params, perPage, offset]
+      [...params, Number(offset), Number(perPage)]
     );
 
     // Export logs
