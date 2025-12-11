@@ -269,34 +269,222 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
 // FETCH MEMBERS TABLE, VIEW MEMBER DETAILS
 // ------------------------------------------------------------------------------------------------
 
+// router.get('/members', ensureAuthenticated, async (req, res) => {
+//   const perPageOptions = [10, 25, 50, 100, 250];
+//   const perPage = parseInt(req.query.limit) || 10;
+//   const page = parseInt(req.query.page) || 1;
+//   const offset = (page - 1) * perPage;
+
+//   const filters = {
+//       search: (req.query.search || '').trim(),
+//       county: req.query.county,
+//       subcounty: req.query.subcounty,
+//       ward: req.query.ward,
+//       status: req.query.status,
+//       type: req.query.type,
+//       ageGroup: req.query.ageGroup
+//   }
+
+//   let conditions = [];
+//   let params = [];
+
+//   conditions.push(`m.membership_no IS NOT NULL`);
+
+//   if (filters.search) {
+//     conditions.push(`
+//       (m.full_name LIKE ? OR p.phone LIKE ? OR m.membership_no LIKE ?)
+//     `);
+//     params.push(`%${filters.search}%`, `%${filters.search}%`, `%${filters.search}%`);
+//   }
+
+//   const counties = Array.isArray(filters.county)
+//     ? filters.county.filter(c => c && c.trim() !== '')
+//     : filters.county
+//     ? [filters.county]
+//     : [];
+
+//   const multipleCounties = counties.length > 1;
+
+//   if (counties.length > 0) {
+//     if (multipleCounties) {
+//       conditions.push(`p.county IN (${counties.map(() => '?').join(',')})`);
+//       params.push(...counties);
+//     } else {
+//       conditions.push(`p.county = ?`);
+//       params.push(counties[0]);
+//     }
+//   }
+
+//   if (filters.subcounty && !multipleCounties) {
+//     conditions.push(`p.sub_county = ?`);
+//     params.push(filters.subcounty);
+//   }
+
+//   if (filters.ward && !multipleCounties) {
+//     conditions.push(`p.ward = ?`);
+//     params.push(filters.ward);
+//   }
+
+//   if (filters.type) {
+//     conditions.push(`m.membership_type = ?`);
+//     params.push(filters.type);
+//   }
+
+//   if (filters.status) {
+//     conditions.push(`m.status = ?`);
+//     params.push(filters.status);
+//   }
+
+//   if (filters.ageGroup) {
+//     const today = new Date();
+//     let startDate, endDate;
+
+//     switch (filters.ageGroup) {
+//       case '18-25':
+//         startDate = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate());
+//         endDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+//         conditions.push(`p.dob BETWEEN ? AND ?`);
+//         params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+//         break;
+
+//       case '26-35':
+//         startDate = new Date(today.getFullYear() - 35, today.getMonth(), today.getDate());
+//         endDate = new Date(today.getFullYear() - 26, today.getMonth(), today.getDate());
+//         conditions.push(`p.dob BETWEEN ? AND ?`);
+//         params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+//         break;
+
+//       case '36-45':
+//         startDate = new Date(today.getFullYear() - 45, today.getMonth(), today.getDate());
+//         endDate = new Date(today.getFullYear() - 36, today.getMonth(), today.getDate());
+//         conditions.push(`p.dob BETWEEN ? AND ?`);
+//         params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+//         break;
+
+//       case '46-60':
+//         startDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
+//         endDate = new Date(today.getFullYear() - 46, today.getMonth(), today.getDate());
+//         conditions.push(`p.dob BETWEEN ? AND ?`);
+//         params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+//         break;
+
+//       case '60-100':
+//         endDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
+//         conditions.push(`p.dob <= ?`);
+//         params.push(endDate.toISOString().split('T')[0]);
+//         break;
+//     }
+
+//   conditions.push(`p.dob IS NOT NULL`);
+// } else {
+//   // conditions.push(`(p.dob IS NULL OR p.dob IS NOT NULL)`);
+// }
+
+
+//   const whereSQL = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+//   try {
+//     // 🔹 Step 1: Count total (members same WHERE conditions)
+//     const [countResult] = await db.execute(
+//       `SELECT COUNT(DISTINCT m.member_id) AS total FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL}`,
+//       params
+//     );
+//     const total = countResult[0].total;
+//     const totalPages = Math.ceil(total / perPage);
+
+//     // 🔹 Step 2: Fetch member_ids for this page
+//     const [memberIdsResult] = await db.execute(
+//       `SELECT m.member_id 
+//        FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
+//        [...params, perPage, offset]
+//     );
+
+//     const memberIds = memberIdsResult.map(r => r.member_id);
+//     let members = [];
+
+//     if (memberIds.length > 0) {
+//       // 🔹 Step 3: Fetch details for just those IDs
+//       const [results] = await db.query(
+//         `SELECT m.member_id, m.membership_no, CONCAT(m.first_name, ' ', m.last_name) AS full_name, m.membership_type, m.status, m.reg_date, p.phone, p.gender,
+//         p.county, p.sub_county, p.ward FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
+//         WHERE m.member_id IN (?) 
+//         ORDER BY m.reg_date DESC`,
+//         [memberIds]
+//       );
+//       members = results;
+//     }
+
+//     // For county & sub county dropdowns
+//     const [countiesList] = await db.query(`SELECT DISTINCT county FROM member_profile_tbl WHERE county IS NOT NULL`);
+
+//     let subcounties = [];
+//     let wards = [];
+
+//     if (counties.length === 1) {
+//       [subcounties] = await db.query(`SELECT DISTINCT sub_county FROM member_profile_tbl WHERE county = ?`, [counties[0]]);
+//     }
+//     if (filters.subcounty && !multipleCounties) {
+//       [wards] = await db.query(`SELECT DISTINCT ward FROM member_profile_tbl WHERE sub_county = ?`, [filters.subcounty]);
+//     }
+
+//     res.render('portal/members', {
+//       total,
+//       members,
+//       currentPage: page,
+//       totalPages,
+//       paginationRange: getPaginationRange(page, totalPages),
+//       perPageOptions,
+//       perPage,
+//       search: filters.search,
+//       county: filters.county,
+//       subcounty: filters.subcounty,
+//       ward: filters.ward,
+//       status: filters.status,
+//       type: filters.type,
+//       ageGroup: filters.ageGroup,
+//       counties: countiesList.map(c => c.county),
+//       subcounties: subcounties.map(s => s.sub_county),
+//       wards: wards.map(w => w.ward),
+//       statusOptions: ['Active', 'Inactive', 'Draft', 'Pending', 'Suspended'],
+//       membershipType: ['Facility In', 'Individual', 'Sacco In']
+//     });
+//   } catch (error) {
+//     console.error('Members fetch error:', error);
+//     res.status(500).send('Server Error');
+//   }
+// });
+
 router.get('/members', ensureAuthenticated, async (req, res) => {
+
   const perPageOptions = [10, 25, 50, 100, 250];
   const perPage = parseInt(req.query.limit) || 10;
   const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
+  // --- FILTERS ---
   const filters = {
-      search: (req.query.search || '').trim(),
-      county: req.query.county,
-      subcounty: req.query.subcounty,
-      ward: req.query.ward,
-      status: req.query.status,
-      type: req.query.type,
-      ageGroup: req.query.ageGroup
-  }
+    search: (req.query.search || '').trim(),
+    county: req.query.county,
+    subcounty: req.query.subcounty,
+    ward: req.query.ward,
+    status: req.query.status,
+    type: req.query.type,
+    ageGroup: req.query.ageGroup
+  };
 
   let conditions = [];
   let params = [];
 
+  // Always ensure membership exists
   conditions.push(`m.membership_no IS NOT NULL`);
 
+  // --- SEARCH ---
   if (filters.search) {
-    conditions.push(`
-      (m.full_name LIKE ? OR p.phone LIKE ? OR m.membership_no LIKE ?)
-    `);
+    conditions.push(`(m.full_name LIKE ? OR p.phone LIKE ? OR m.membership_no LIKE ?)`);
     params.push(`%${filters.search}%`, `%${filters.search}%`, `%${filters.search}%`);
   }
 
+  // --- COUNTY / SUBCOUNTY / WARD ---
   const counties = Array.isArray(filters.county)
     ? filters.county.filter(c => c && c.trim() !== '')
     : filters.county
@@ -325,96 +513,112 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     params.push(filters.ward);
   }
 
+  // --- MEMBERSHIP TYPE ---
   if (filters.type) {
     conditions.push(`m.membership_type = ?`);
     params.push(filters.type);
   }
 
+  // --- STATUS ---
   if (filters.status) {
     conditions.push(`m.status = ?`);
     params.push(filters.status);
   }
 
+  // --- AGE GROUP ---
   if (filters.ageGroup) {
     const today = new Date();
     let startDate, endDate;
+
+    const toDate = (d) => d.toISOString().split('T')[0];
 
     switch (filters.ageGroup) {
       case '18-25':
         startDate = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate());
         endDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
         conditions.push(`p.dob BETWEEN ? AND ?`);
-        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        params.push(toDate(startDate), toDate(endDate));
         break;
 
       case '26-35':
         startDate = new Date(today.getFullYear() - 35, today.getMonth(), today.getDate());
         endDate = new Date(today.getFullYear() - 26, today.getMonth(), today.getDate());
         conditions.push(`p.dob BETWEEN ? AND ?`);
-        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        params.push(toDate(startDate), toDate(endDate));
         break;
 
       case '36-45':
         startDate = new Date(today.getFullYear() - 45, today.getMonth(), today.getDate());
         endDate = new Date(today.getFullYear() - 36, today.getMonth(), today.getDate());
         conditions.push(`p.dob BETWEEN ? AND ?`);
-        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        params.push(toDate(startDate), toDate(endDate));
         break;
 
       case '46-60':
         startDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
         endDate = new Date(today.getFullYear() - 46, today.getMonth(), today.getDate());
         conditions.push(`p.dob BETWEEN ? AND ?`);
-        params.push(startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]);
+        params.push(toDate(startDate), toDate(endDate));
         break;
 
       case '60-100':
         endDate = new Date(today.getFullYear() - 60, today.getMonth(), today.getDate());
         conditions.push(`p.dob <= ?`);
-        params.push(endDate.toISOString().split('T')[0]);
+        params.push(toDate(endDate));
         break;
     }
 
-  conditions.push(`p.dob IS NOT NULL`);
-} else {
-  // conditions.push(`(p.dob IS NULL OR p.dob IS NOT NULL)`);
-}
+    conditions.push(`p.dob IS NOT NULL`);
+  }
 
-
-  const whereSQL = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+  // --- WHERE CLAUSE (fixed spacing bug!) ---
+  const whereSQL = conditions.length ? `WHERE ${conditions.join(' AND ')} ` : '';
 
   try {
-    // 🔹 Step 1: Count total (members same WHERE conditions)
+
+    // --- COUNT TOTAL ---
     const [countResult] = await db.execute(
-      `SELECT COUNT(DISTINCT m.member_id) AS total FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL}`,
+      `SELECT COUNT(DISTINCT m.member_id) AS total 
+       FROM members_tbl m 
+       LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
+       ${whereSQL}`,
       params
     );
+
     const total = countResult[0].total;
     const totalPages = Math.ceil(total / perPage);
 
-    // 🔹 Step 2: Fetch member_ids for this page
+    // --- GET MEMBER IDS FOR PAGE ---
     const [memberIdsResult] = await db.execute(
-      `SELECT m.member_id 
-       FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id ${whereSQL} ORDER BY m.reg_date DESC LIMIT ? OFFSET ?`, 
-       [...params, perPage, offset]
+      `SELECT DISTINCT m.member_id
+       FROM members_tbl m 
+       LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id
+       ${whereSQL}
+       ORDER BY m.reg_date DESC
+       LIMIT ? OFFSET ?`,
+      [...params, perPage, offset]
     );
 
     const memberIds = memberIdsResult.map(r => r.member_id);
     let members = [];
 
+    // --- GET DETAILS ONLY IF IDS EXIST ---
     if (memberIds.length > 0) {
-      // 🔹 Step 3: Fetch details for just those IDs
       const [results] = await db.query(
-        `SELECT m.member_id, m.membership_no, CONCAT(m.first_name, ' ', m.last_name) AS full_name, m.membership_type, m.status, m.reg_date, p.phone, p.gender,
-        p.county, p.sub_county, p.ward FROM members_tbl m LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
-        WHERE m.member_id IN (?) 
-        ORDER BY m.reg_date DESC`,
-        [memberIds]
+        `SELECT m.member_id, m.membership_no, m.first_name, m.last_name,
+                CONCAT(m.first_name, ' ', m.last_name) AS full_name,
+                m.membership_type, m.status, m.reg_date,
+                p.phone, p.gender, p.county, p.sub_county, p.ward
+         FROM members_tbl m 
+         LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id 
+         WHERE m.member_id IN (${memberIds.map(() => '?').join(',')})
+         ORDER BY m.reg_date DESC`,
+        memberIds
       );
       members = results;
     }
 
-    // For county & sub county dropdowns
+    // --- DROPDOWNS ---
     const [countiesList] = await db.query(`SELECT DISTINCT county FROM member_profile_tbl WHERE county IS NOT NULL`);
 
     let subcounties = [];
@@ -427,6 +631,7 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
       [wards] = await db.query(`SELECT DISTINCT ward FROM member_profile_tbl WHERE sub_county = ?`, [filters.subcounty]);
     }
 
+    // --- RENDER ---
     res.render('portal/members', {
       total,
       members,
@@ -448,11 +653,13 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
       statusOptions: ['Active', 'Inactive', 'Draft', 'Pending', 'Suspended'],
       membershipType: ['Facility In', 'Individual', 'Sacco In']
     });
+
   } catch (error) {
     console.error('Members fetch error:', error);
     res.status(500).send('Server Error');
   }
 });
+
 
 router.get('/view-member', ensureAuthenticated, async (req, res) => {
   
