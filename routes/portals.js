@@ -271,8 +271,8 @@ router.get('/dashboard', ensureAuthenticated, async (req, res) => {
 
 router.get('/members', ensureAuthenticated, async (req, res) => {
   const perPageOptions = [10, 25, 50, 100, 250];
-  const perPage = parseInt(req.query.limit) || 10;
-  const page = parseInt(req.query.page) || 1;
+  const perPage = Math.max(1, Number(req.query.limit) || 10);
+    const page = Math.max(1, Number(req.query.page) || 1);
   const offset = (page - 1) * perPage;
 
   const filters = {
@@ -1230,8 +1230,8 @@ router.get('/view-user', ensureAuthenticated, ensureRole(['Admin']), async (req,
        FROM activity_logs_tbl
        ${whereSQL}
        ORDER BY created_at DESC
-       LIMIT ${perPage}, OFFSET ${offset}`,
-      [...params]
+       LIMIT ? OFFSET ?`,
+      [...params, perPage, offset]
     );
 
     // Export logs
