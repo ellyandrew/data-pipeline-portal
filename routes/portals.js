@@ -461,7 +461,6 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const offset = (page - 1) * perPage;
 
-  // --- FILTERS ---
   const filters = {
     search: (req.query.search || '').trim(),
     county: req.query.county,
@@ -475,7 +474,6 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
   let conditions = [];
   let params = [];
 
-  // Always ensure membership exists
   conditions.push(`m.membership_no IS NOT NULL`);
 
   // --- SEARCH ---
@@ -571,12 +569,10 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     conditions.push(`p.dob IS NOT NULL`);
   }
 
-  // --- WHERE CLAUSE (fixed spacing bug!) ---
   const whereSQL = conditions.length ? `WHERE ${conditions.join(' AND ')} ` : '';
 
   try {
 
-    // --- COUNT TOTAL ---
     const [countResult] = await db.execute(
       `SELECT COUNT(DISTINCT m.member_id) AS total 
        FROM members_tbl m 
@@ -588,13 +584,12 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     const total = countResult[0].total;
     const totalPages = Math.ceil(total / perPage);
 
-    // --- GET MEMBER IDS FOR PAGE ---
     const [memberIdsResult] = await db.execute(
       `SELECT DISTINCT m.member_id
        FROM members_tbl m 
        LEFT JOIN member_profile_tbl p ON m.member_id = p.member_id
        ${whereSQL}
-       ORDER BY m.reg_date DESC
+       ORDER BY m.member_id DESC
        LIMIT ? OFFSET ?`,
       [...params, perPage, offset]
     );
@@ -602,7 +597,6 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     const memberIds = memberIdsResult.map(r => r.member_id);
     let members = [];
 
-    // --- GET DETAILS ONLY IF IDS EXIST ---
     if (memberIds.length > 0) {
       const [results] = await db.query(
         `SELECT m.member_id, m.membership_no, m.first_name, m.last_name,
@@ -618,7 +612,6 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
       members = results;
     }
 
-    // --- DROPDOWNS ---
     const [countiesList] = await db.query(`SELECT DISTINCT county FROM member_profile_tbl WHERE county IS NOT NULL`);
 
     let subcounties = [];
@@ -631,7 +624,6 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
       [wards] = await db.query(`SELECT DISTINCT ward FROM member_profile_tbl WHERE sub_county = ?`, [filters.subcounty]);
     }
 
-    // --- RENDER ---
     res.render('portal/members', {
       total,
       members,
