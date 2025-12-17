@@ -647,12 +647,12 @@ router.get('/members', ensureAuthenticated, async (req, res) => {
     });
 
   } catch (error) {
-    req.session.message = error.message;
+    console.error(error);
+    req.session.message = 'Error getting member details. Please try again';
     req.session.messageType = 'error';
-    res.redirect('/portal/members');
+    res.redirect('/portal/dashboard');
   }
 });
-
 
 router.get('/view-member', ensureAuthenticated, async (req, res) => {
   
