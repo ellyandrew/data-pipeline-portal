@@ -2638,8 +2638,11 @@ router.get('/edit-survey', async (req, res) => {
 
 router.post('/update-survey-data', ensureAuthenticated, ensureRole(['Admin']), portalController.updateSurveyData);
 
-
 router.post("/import-survey", upload.single("excelFile"), portalController.importExcel);
+
+router.post('/creating-membership-in-survey/:survey_id', ensureAuthenticated, ensureRole(['Admin']), portalController.createMemberFromSurvey);
+
+router.post('/create-bulk-membership-in-survey', ensureAuthenticated, ensureRole(['Admin']), portalController.bulkCreateMembersFromSurveys);
 
 // -------------------------------------------------------------------------------------------------
 // SETTINGS

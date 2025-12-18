@@ -2141,6 +2141,342 @@ exports.importExcel = async (req, res) => {
   }
 };
 
+exports.createMemberFromSurvey = async (req, res) => {
+  const { survey_id } = req.params;
+
+  try {
+
+    const [surveyRows] = await db.query(
+      `SELECT * FROM childcare_survey_tbl WHERE survey_id = ? LIMIT 1`,
+      [survey_id]
+    );
+
+    if (!surveyRows.length) {
+      req.session.message = 'Survey not found!';
+      req.session.messageType = 'error';
+      return res.redirect('/portal/survey-details');
+    }
+
+    const s = surveyRows[0];
+
+    if (!s.provider_name || !s.provider_name.trim()) {
+      req.session.message = 'Provider name is empty!';
+      req.session.messageType = 'error';
+      return res.redirect('/portal/survey-details');
+    }
+
+    const fullName = s.provider_name.trim();
+
+    const [memberExists] = await db.query(
+      `SELECT member_id FROM members_tbl WHERE full_name = ? LIMIT 1`,
+      [fullName]
+    );
+
+    if (memberExists.length) {
+      req.session.message = 'Member already exists!';
+      req.session.messageType = 'error';
+      return res.redirect('/portal/survey-details');
+    }
+
+    /* ---- NAME PARSING ---- */
+    const nameParts = fullName.replace(/\s+/g, " ").split(" ");
+
+    let firstName = null;
+    let middleName = null;
+    let lastName = null;
+
+    if (nameParts.length === 1) {
+      firstName = nameParts[0];
+    } else if (nameParts.length === 2) {
+      [firstName, lastName] = nameParts;
+    } else if (nameParts.length === 3) {
+      [firstName, middleName, lastName] = nameParts;
+    } else {
+      firstName = nameParts[0];
+      lastName = nameParts[nameParts.length - 1];
+      middleName = nameParts.slice(1, -1).join(" ");
+    }
+
+    /* ---- INSERT MEMBER ---- */
+    const [memberResult] = await db.execute(
+      `INSERT INTO members_tbl
+       (first_name, middle_name, last_name, membership_type, role, status, reg_date)
+       VALUES (?, ?, ?, ?, ?, ?, NOW())`,
+      [
+        firstName,
+        middleName,
+        lastName,
+        'Facility In',
+        'Member',
+        'Pending'
+      ]
+    );
+
+    const member_id = memberResult.insertId;
+
+    const countyCode = regionMap[s.county_name].code;
+    const subCountyCode = regionMap[s.county_name].subcounties[s.sub_county_name].code;
+    const wardCode = regionMap[s.county_name].subcounties[s.sub_county_name].wards[s.ward_name];
+    const membershipNo = `${countyCode}-${subCountyCode}-${wardCode}-${member_id}`;
+
+    await db.execute(
+      `UPDATE members_tbl SET membership_no = ? WHERE member_id = ? LIMIT 1`,
+      [membershipNo, member_id]
+    );
+
+    /* ---- PROFILE ---- */
+    await db.execute(
+      `INSERT INTO member_profile_tbl
+       (member_id, phone, id_number, gender, education_level, county, sub_county, ward, country)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Kenya')`,
+      [
+        member_id,
+        s.phone_number || null,
+        s.id_number || null,
+        s.gender,
+        s.education_level || null,
+        s.county_name,
+        s.sub_county_name,
+        s.ward_name
+      ]
+    );
+
+    /* ---- FACILITY (OPTIONAL) ---- */
+    if (s.facility_name && s.facility_name.trim()) {
+      await db.execute(
+        `INSERT INTO facilities_tbl
+         (member_id, facility_name, facility_type, facility_estab_year,
+          male_b, female_b, male_b_dis, female_b_dis, male_c, female_c,
+          f_county, f_subcounty, f_area)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          member_id,
+          s.facility_name,
+          s.facility_classification,
+          s.year_established,
+          s.boys || 0,
+          s.girls || 0,
+          s.boys_with_disabilities || 0,
+          s.girls_with_disabilities || 0,
+          s.male_workers || 0,
+          s.female_workers || 0,
+          s.county_name,
+          s.sub_county_name,
+          s.ward_name
+        ]
+      );
+    }
+
+    /* ---- BENEFITS ---- */
+    const benefits = {
+      competency_cert: s.received_certificate,
+      childcare_training_done: s.received_training,
+      childcare_training_access: s.received_training,
+      biz_dev_mentorship: "No",
+      childcare_design_benefit: "No",
+      active_bank: s.member_institutions,
+      banking_services: s.interested_in_finance,
+      loan_business: s.loan_institutions
+    };
+
+    await db.execute(
+      `INSERT INTO benefits_tbl (member_id, benefits)
+       VALUES (?, ?)`,
+      [member_id, JSON.stringify(benefits)]
+    );
+
+    req.session.message = 'Respondent added to membership successfully!';
+    req.session.messageType = 'success';
+    return res.redirect('/portal/survey-details');
+
+  } catch (err) {
+    console.error(err);
+    req.session.message = err.message;
+    req.session.messageType = 'error';
+    return res.redirect('/portal/survey-details');
+  }
+};
+
+exports.bulkCreateMembersFromSurveys = async (req, res) => {
+
+  const { county } = req.body;
+  let created = 0;
+  let skipped = 0;
+  let errors = 0;
+
+  try {
+    const [surveys] = await db.query(
+      `SELECT * FROM childcare_survey_tbl WHERE county_name = ?`, [county]
+    );
+
+    if (!surveys.length) {
+      req.session.message = `No surveys found for ${county} county`;
+      req.session.messageType = 'warning';
+      return res.redirect('/portal/survey');
+    }
+
+    for (const s of surveys) {
+      const conn = await db.getConnection();
+
+      try {
+        if (!s.provider_name || !s.provider_name.trim()) {
+          skipped++;
+          conn.release();
+          continue;
+        }
+
+        const fullName = s.provider_name.trim();
+
+        const [exists] = await conn.query(
+          `SELECT member_id FROM members_tbl WHERE full_name = ? LIMIT 1`,
+          [fullName]
+        );
+
+        if (exists.length) {
+          skipped++;
+          conn.release();
+          continue;
+        }
+
+        if (
+          !regionMap[s.county_name] ||
+          !regionMap[s.county_name].subcounties?.[s.sub_county_name] ||
+          !regionMap[s.county_name].subcounties[s.sub_county_name].wards?.[s.ward_name]
+        ) {
+          skipped++;
+          conn.release();
+          continue;
+        }
+
+        await conn.beginTransaction();
+
+        const nameParts = fullName.replace(/\s+/g, " ").split(" ");
+
+        let firstName = null;
+        let middleName = null;
+        let lastName = null;
+
+        if (nameParts.length === 1) {
+          firstName = nameParts[0];
+        } else if (nameParts.length === 2) {
+          [firstName, lastName] = nameParts;
+        } else if (nameParts.length === 3) {
+          [firstName, middleName, lastName] = nameParts;
+        } else {
+          firstName = nameParts[0];
+          lastName = nameParts[nameParts.length - 1];
+          middleName = nameParts.slice(1, -1).join(" ");
+        }
+
+        const [memberResult] = await conn.execute(
+          `INSERT INTO members_tbl
+           (first_name, middle_name, last_name, membership_type, role, status, reg_date)
+           VALUES (?, ?, ?, ?, ?, ?, NOW())`,
+          [
+            firstName,
+            middleName,
+            lastName,
+            'Facility In',
+            'Member',
+            'Pending'
+          ]
+        );
+
+        const member_id = memberResult.insertId;
+
+        const countyCode = regionMap[s.county_name].code;
+        const subCountyCode = regionMap[s.county_name].subcounties[s.sub_county_name].code;
+        const wardCode = regionMap[s.county_name].subcounties[s.sub_county_name].wards[s.ward_name];
+
+        const membershipNo = `${countyCode}-${subCountyCode}-${wardCode}-${member_id}`;
+
+        await conn.execute(
+          `UPDATE members_tbl SET membership_no = ? WHERE member_id = ? LIMIT 1`,
+          [membershipNo, member_id]
+        );
+
+        await conn.execute(
+          `INSERT INTO member_profile_tbl
+           (member_id, phone, id_number, gender, education_level, county, sub_county, ward, country)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Kenya')`,
+          [
+            member_id,
+            s.phone_number || null,
+            s.id_number || null,
+            s.gender,
+            s.education_level || null,
+            s.county_name,
+            s.sub_county_name,
+            s.ward_name
+          ]
+        );
+
+        // Optional
+        if (s.facility_name && s.facility_name.trim()) {
+          await conn.execute(
+            `INSERT INTO facilities_tbl
+             (member_id, facility_name, facility_type, facility_estab_year,
+              male_b, female_b, male_b_dis, female_b_dis, male_c, female_c,
+              f_county, f_subcounty, f_area)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              member_id,
+              s.facility_name,
+              s.facility_classification,
+              s.year_established,
+              s.boys || 0,
+              s.girls || 0,
+              s.boys_with_disabilities || 0,
+              s.girls_with_disabilities || 0,
+              s.male_workers || 0,
+              s.female_workers || 0,
+              s.county_name,
+              s.sub_county_name,
+              s.ward_name
+            ]
+          );
+        }
+
+        const benefits = {
+          competency_cert: s.received_certificate,
+          childcare_training_done: s.received_training,
+          childcare_training_access: s.received_training,
+          biz_dev_mentorship: "No",
+          childcare_design_benefit: "No",
+          active_bank: s.member_institutions,
+          banking_services: s.interested_in_finance,
+          loan_business: s.loan_institutions
+        };
+
+        await conn.execute(
+          `INSERT INTO benefits_tbl (member_id, benefits)
+           VALUES (?, ?)`,
+          [member_id, JSON.stringify(benefits)]
+        );
+
+        await conn.commit();
+        created++;
+
+      } catch (err) {
+        await conn.rollback();
+        errors++;
+      } finally {
+        conn.release();
+      }
+    }
+
+    req.session.message = `County import (${county}) complete. Created: ${created}, Skipped: ${skipped}, Errors: ${errors}`;
+    req.session.messageType = errors > 0 ? 'error' : 'success';
+    return res.redirect('/portal/survey');
+
+  } catch (err) {
+    req.session.message = err.message;
+    req.session.messageType = 'error';
+    return res.redirect('/portal/survey');
+  }
+};
+
+
 // -------------------------------------------------------------------------------------------
 // SETTINGS
 // -------------------------------------------------------------------------------------------

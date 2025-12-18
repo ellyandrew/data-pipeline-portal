@@ -76,15 +76,16 @@
 
                                 <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
                                     <div class="row">
-                                        <div class="col-md-2 col-sm-2 col-xs-12 mg-b-15">
-                                        <div class="btn-group">
-                                            <% if (isAdmin) { %>
-                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal"><i class="fa fa-pencil"></i> Status</button>
-                                            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editSurveyModal"><i class="fa fa-edit"></i> Edit</button>
-                                            <% } %>
+                                        <div class="col-md-4 col-sm-4 col-xs-12 mg-b-15">
+                                          <div class="btn-group">
+                                              <% if (isAdmin) { %>
+                                              <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editStatusModal"><i class="fa fa-pencil"></i> Status</button>
+                                              <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editSurveyModal"><i class="fa fa-edit"></i> Edit</button>
+                                              <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#membershipModal"><i class="fa fa-user"></i> Membership</button>
+                                              <% } %>
+                                          </div>
                                         </div>
-                                        </div>
-                                        <div class="col-md-10 col-sm-10 col-xs-12 mailbox-pagination mg-b-15">
+                                        <div class="col-md-8 col-sm-8 col-xs-12 mailbox-pagination mg-b-15">
                                         <div class="btn-group">
                                             <a class="btn btn-default btn-sm" href="/portal/survey"><i class="fa fa-arrow-left"></i></a>
                                         </div>
@@ -262,7 +263,26 @@
   </div>
 </div>
 
-
+<div id="membershipModal" class="modal modal-adminpro-general FullColor-popup-AlertModal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content modal-vertical-centered">
+      <div class="modal-close-area modal-close-df">
+        <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+      </div>
+      <form action="/portal/creating-membership-in-survey/<%= details.survey_id %>" method="POST">
+        <div class="modal-body">
+          <span class="adminpro-icon adminpro-warning modal-check-pro information-icon-pro"></span>
+          <h2>Create Membership</h2>
+          <p>Do you want to create Membership with the Respondent's details?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-danger">Yes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- Bottom script start -->
   <%- include('../partials/bottom_script'); %>

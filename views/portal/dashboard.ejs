@@ -67,27 +67,40 @@
                 <div class="col-md-12">
                     <div class="row">
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            <div class="admin-content analysis-progrebar-ctn">
-                                <h4 class="text-left text-uppercase"><b>Beneficiaries</b></h4>
+                            <div class="admin-content analysis-progrebar-ctn res-mg-t-30">
+                                <h4 class="text-left text-uppercase"><b>Network Members</b></h4>
+                                <% 
+                                let m_change = parseFloat(membersStats.percentageChangeMB); 
+                                let m_trendClass = "bg-secondary";
+                                let m_icon = "";
+
+                                if (membersStats.member_trend === "Increase") {
+                                    m_trendClass = "bg-green"; 
+                                    m_icon = "fa fa-level-up";
+                                } else if (membersStats.member_trend === "Decrease") {
+                                    m_trendClass = "bg-red"; 
+                                    m_icon = "fa fa-level-down";
+                                }
+                                %>
                                 <div class="row vertical-center-box vertical-center-box-tablet">
-                                    <div class="col-xs-3 mar-bot-15 text-left">
-                                        <label class="label bg-brown">%0 <i class="fa fa-level-down" aria-hidden="true"></i></label>
+                                    <div class="text-left col-xs-3 mar-bot-15">
+                                        <label class="label <%= m_trendClass %>"><%= membersStats.percentageChangeMB %> <i class="<%= m_icon %>" aria-hidden="true"></i></label>
                                     </div>
                                     <div class="col-xs-9 cus-gh-hd-pro">
                                         <h2 class="text-right no-margin">
-                                            <%= parseFloat(facilityPeople.totalBeneficiary).toLocaleString(undefined, { minimumFractionDigits: 0,
+                                            <%= parseFloat(membersStats.total_member).toLocaleString(undefined, { minimumFractionDigits: 0,
                                     maximumFractionDigits: 0 }) %>
                                         </h2>
                                     </div>
                                 </div>
                                 <div class="progress progress-mini">
-                                    <div style="width: 0%;" class="progress-bar bg-red"></div>
+                                    <div style="width: <%= membersStats.percentageChangeMB %>;" class="progress-bar <%= m_trendClass %>"></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12" style="margin-bottom:1px;">
                             <div class="admin-content analysis-progrebar-ctn res-mg-t-30">
-                                <h4 class="text-left text-uppercase"><b>Facilities</b></h4>
+                                <h4 class="text-left text-uppercase"><b>Childcare Facilities</b></h4>
                                 <% 
                                 let f_change = parseFloat(facilityStats.percentageChangeFT); 
                                 let f_trendClass = "bg-secondary";
@@ -119,39 +132,7 @@
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
                             <div class="admin-content analysis-progrebar-ctn res-mg-t-30">
-                                <h4 class="text-left text-uppercase"><b>Members</b></h4>
-                                <% 
-                                let m_change = parseFloat(membersStats.percentageChangeMB); 
-                                let m_trendClass = "bg-secondary";
-                                let m_icon = "";
-
-                                if (membersStats.member_trend === "Increase") {
-                                    m_trendClass = "bg-green"; 
-                                    m_icon = "fa fa-level-up";
-                                } else if (membersStats.member_trend === "Decrease") {
-                                    m_trendClass = "bg-red"; 
-                                    m_icon = "fa fa-level-down";
-                                }
-                                %>
-                                <div class="row vertical-center-box vertical-center-box-tablet">
-                                    <div class="text-left col-xs-3 mar-bot-15">
-                                        <label class="label <%= m_trendClass %>"><%= membersStats.percentageChangeMB %> <i class="<%= m_icon %>" aria-hidden="true"></i></label>
-                                    </div>
-                                    <div class="col-xs-9 cus-gh-hd-pro">
-                                        <h2 class="text-right no-margin">
-                                            <%= parseFloat(membersStats.total_member).toLocaleString(undefined, { minimumFractionDigits: 0,
-                                    maximumFractionDigits: 0 }) %>
-                                        </h2>
-                                    </div>
-                                </div>
-                                <div class="progress progress-mini">
-                                    <div style="width: <%= membersStats.percentageChangeMB %>;" class="progress-bar <%= m_trendClass %>"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                            <div class="admin-content analysis-progrebar-ctn res-mg-t-30">
-                                <h4 class="text-left text-uppercase"><b>Careggivers</b></h4>
+                                <h4 class="text-left text-uppercase"><b>Caregivers</b></h4>
                                 <div class="row vertical-center-box vertical-center-box-tablet">
                                     <div class="text-left col-xs-3 mar-bot-15">
                                         <label class="label bg-purple">0% <i class="fa fa-level-up" aria-hidden="true"></i></label>
@@ -163,6 +144,25 @@
                                 </div>
                                 <div class="progress progress-mini">
                                     <div style="width: 0%;" class="progress-bar bg-purple"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                            <div class="admin-content analysis-progrebar-ctn">
+                                <h4 class="text-left text-uppercase"><b>Children</b></h4>
+                                <div class="row vertical-center-box vertical-center-box-tablet">
+                                    <div class="col-xs-3 mar-bot-15 text-left">
+                                        <label class="label bg-brown">%0 <i class="fa fa-level-down" aria-hidden="true"></i></label>
+                                    </div>
+                                    <div class="col-xs-9 cus-gh-hd-pro">
+                                        <h2 class="text-right no-margin">
+                                            <%= parseFloat(facilityPeople.totalBeneficiary).toLocaleString(undefined, { minimumFractionDigits: 0,
+                                    maximumFractionDigits: 0 }) %>
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div class="progress progress-mini">
+                                    <div style="width: 0%;" class="progress-bar bg-red"></div>
                                 </div>
                             </div>
                         </div>

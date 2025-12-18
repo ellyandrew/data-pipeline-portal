@@ -155,10 +155,13 @@
                                                               <a href="/portal/survey"><i class="fa fa-refresh"></i> Refresh</a>
                                                             </li>
                                                             <li>
-                                                              <a  data-toggle="modal" data-target="#exportSurveyModal"><i class="fa fa-cloud-download"></i> Export Data</a>
+                                                              <a href="#"  data-toggle="modal" data-target="#exportSurveyModal"><i class="fa fa-cloud-download"></i> Export Data</a>
                                                             </li>
                                                             <li>
-                                                              <a data-toggle="modal" data-target="#importSurveyModal"><i class="fa fa-cloud-upload"></i> Import Excel</a>
+                                                              <a href="#" data-toggle="modal" data-target="#importSurveyModal"><i class="fa fa-cloud-upload"></i> Import Excel</a>
+                                                            </li>
+                                                            <li>
+                                                              <a href="#"  data-toggle="modal" data-target="#membershipModal"><i class="fa fa-users"></i> Create Membership</a>
                                                             </li>
                                                         </ul>
                                                     </div>
@@ -418,19 +421,52 @@
   </div>
 </div>
 
-<div id="importSurveyModal" class="modal FullColor-popup-AlertModal fade">
+<div id="membershipModal" class="modal FullColor-popup-AlertModal fade">
   <div class="modal-dialog modal-lg">
-    <form method="POST" action="/portal/import-survey" enctype="multipart/form-data">
+    <form method="POST" action="/portal/create-bulk-membership-in-survey">
       <div class="modal-content">
         <div class="modal-header header-color-modal bg-color-4">
-          <h4 class="modal-title">Import Survey Data</h4>
+          <h4 class="modal-title">Create Membership From Survey Data</h4>
           <div class="modal-close-area modal-close-df">
             <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
           </div>
         </div>
         <div class="modal-body">
           <div class="row mg-b-30">
-            <div class="col-lg-4">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <select class="form-control required input-sm" name="county">
+                        <option value="">- county -</option>
+                        <% counties.forEach(c=> { %>
+                            <option value="<%= c %>" <%=county===c ? "selected" : "" %>><%= c %>
+                            </option>
+                            <% }); %>
+                    </select>
+                </div>
+            </div>
+          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-danger">Import</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="importSurveyModal" class="modal FullColor-popup-AlertModal fade">
+  <div class="modal-dialog modal-lg">
+    <form method="POST" action="/portal/import-survey" enctype="multipart/form-data">
+      <div class="modal-content">
+        <div class="modal-header header-color-modal bg-color-4">
+          <h4 class="modal-title">Import Survey data</h4>
+          <div class="modal-close-area modal-close-df">
+            <a class="close" data-dismiss="modal" href="#"><i class="fa fa-close"></i></a>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="row mg-b-30">
+            <div class="col-lg-12">
               <div class="form-group">
                 <label class="form-label">Upload Excel File (.xlsx):</label>
                 <input type="file" class="form-control" name="excelFile" accept=".xlsx,.xls" required>
@@ -439,7 +475,7 @@
           </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-danger">Import</button>
+          <button type="submit" class="btn btn-danger">Create</button>
         </div>
       </div>
     </form>
