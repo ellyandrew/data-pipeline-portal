@@ -511,39 +511,11 @@
                                     *</label>
                                 <select class="form-control required" name="educationLevel" required>
                                     <option value="" <%=!details.education_level ? 'selected' : '' %>>- education -</option>
-                                    <option value="None" <%=details.education_level==='None' ? 'selected' : '' %>>No Formal
-                                        Education
-                                    </option>
-                                    <option value="Primary Incomplete" <%=details.education_level==='Primary Incomplete' ? 'selected' : '' %>>
-                                        Primary
-                                        Incomplete</option>
-                                    <option value="Primary Complete" <%=details.education_level==='Primary Complete' ? 'selected' : '' %>>
-                                        Primary
-                                        Complete
-                                        (KCPE or equivalent)</option>
-                                    <option value="Secondary Incomplete" <%=details.education_level==='Secondary Incomplete' ? 'selected' : ''
-                                        %>>
-                                        Secondary
-                                        Incomplete</option>
-                                    <option value="Secondary Complete" <%=details.education_level==='Secondary Complete' ? 'selected' : '' %>>
-                                        Secondary
-                                        Complete (KCSE or equivalent)
-                                    </option>
-                                    <option value="Certificate" <%=details.education_level==='Certificate' ? 'selected' : '' %>>
-                                        Certificate /
-                                        Artisan
-                                        Course</option>
-                                    <option value="Diploma" <%=details.education_level==='Diploma' ? 'selected' : '' %>>Diploma
-                                    </option>
-                                    <option value="Bachelors" <%=details.education_level==='Bachelors' ? 'selected' : '' %>>Bachelor’s
-                                        Degree
-                                    </option>
-                                    <option value="Masters" <%=details.education_level==='Masters' ? 'selected' : '' %>>Master’s
-                                        Degree
-                                    </option>
-                                    <option value="PHD" <%=details.education_level==='PHD' ? 'selected' : '' %>>Doctorate (PhD /
-                                        equivalent)
-                                    </option>
+                                    <option value="None" <%=details.education_level==='None' ? 'selected' : '' %>>No Formal Education</option>
+                                    <option value="Primary" <%=details.education_level==='Primary' ? 'selected' : '' %>>Primary</option>
+                                    <option value="Secondary" <%=details.education_level==='Secondary' ? 'selected' : '' %>>Secondary</option>
+                                    <option value="College" <%=details.education_level==='College' ? 'selected' : '' %>>College</option>
+                                    <option value="University" <%=details.education_level==='University' ? 'selected' : '' %>>University</option>
                                 </select>
                             </div>
                         </div>

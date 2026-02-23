@@ -153,14 +153,11 @@
                                                                         <label>Highest Level of Education</label>
                                                                         <select name="educationLevel" class="form-control" required>
                                                                             <option value="">- select -</option>
-                                                                            <option value="No Schooling" <%= edits.education_level === 'No Schooling' ? 'selected' : '' %>>None</option>
+                                                                            <option value="None" <%= edits.education_level === 'Noone' ? 'selected' : '' %>>No Schooling</option>
                                                                             <option value="Primary" <%= edits.education_level === 'Primary' ? 'selected' : '' %>>Primary</option>
                                                                             <option value="Secondary" <%= edits.education_level === 'Secondary' ? 'selected' : '' %>>Secondary</option>
-                                                                            <option value="Certificate" <%= edits.education_level === 'Certificate' ? 'selected' : '' %>>Certificate</option>
-                                                                            <option value="Diploma" <%= edits.education_level === 'Diploma' ? 'selected' : '' %>>Diploma</option>
-                                                                            <option value="Degree" <%= edits.education_level === 'Degree' ? 'selected' : '' %>>Degree</option>
-                                                                            <option value="Masters" <%= edits.education_level === 'Masters' ? 'selected' : '' %>>Masters</option>
-                                                                            <option value="PhD" <%= edits.education_level === 'PhD' ? 'selected' : '' %>>PhD</option>
+                                                                            <option value="College" <%= edits.education_level === 'College' ? 'selected' : '' %>>College</option>
+                                                                            <option value="University" <%= edits.education_level === 'University' ? 'selected' : '' %>>University</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>    

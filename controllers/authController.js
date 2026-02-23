@@ -298,7 +298,7 @@ exports.userRequestForgotPassword = async (req, res) => {
 
         // Send email
         await transporter.sendMail({
-            from: 'uhrturgroup@gmail.com',
+            from: ' Uthabiti.ChildcarePortal@uthabitiafrica.org',
             to: email,
             subject: '[Uthabiti Africa] Reset password request',
             html: `
@@ -317,7 +317,7 @@ exports.userRequestForgotPassword = async (req, res) => {
                         <div class="container">
                             <div class="header">Password Reset</div>
                             <p>Dear Member,</p>
-                            <p>We received a request to update the password for Uthabiti Affrica: To reset your password, use the code below:</p>
+                            <p>We received a request to update the password for Uthabiti Africa: To reset your password, use the code below:</p>
                             <div class="code">${tokenCode}</div>
                             <p>If you did not request this, please ignore this email.</p>
                             <div class="footer">Thank you for using our service!</div>
@@ -492,7 +492,7 @@ exports.resetPassword = async (req, res) => {
 
         req.session.message = 'Password reset successful! Now log in.';
         req.session.messageType = 'success';
-        return res.redirect('/auth/reset-password');
+        return res.redirect('/auth/login');
 
     } catch (error) {
         console.error('Reset password error:', error);
@@ -573,7 +573,7 @@ exports.changeUserPassword = async (req, res) => {
 
     req.session.message = 'Password changed successfully!';
     req.session.messageType = 'success';
-    return res.redirect('/auth/change-password');
+    return res.redirect('/auth/login');
   } catch (err) {
     console.error('Error changing password:', err);
     req.session.message = 'Error changing password.';
