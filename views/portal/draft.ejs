@@ -235,38 +235,11 @@
                                                                         <select class="form-control required"
                                                                             name="educationLevel" required>
                                                                             <option value="" <%= !profile.education_level ? 'selected' : '' %>>- education -</option>
-                                                                            <option value="None" <%= profile.education_level === 'None' ? 'selected' : '' %>>No Formal
-                                                                                Education
-                                                                            </option>
-                                                                            <option value="Primary Incomplete" <%= profile.education_level === 'Primary Incomplete' ? 'selected' : '' %>>
-                                                                                Primary
-                                                                                Incomplete</option>
-                                                                            <option value="Primary Complete" <%= profile.education_level === 'Primary Complete' ? 'selected' : '' %>>
-                                                                                Primary
-                                                                                Complete
-                                                                                (KCPE or equivalent)</option>
-                                                                            <option value="Secondary Incomplete" <%= profile.education_level === 'Secondary Incomplete' ? 'selected' : '' %>>
-                                                                                Secondary
-                                                                                Incomplete</option>
-                                                                            <option value="Secondary Complete" <%= profile.education_level === 'Secondary Complete' ? 'selected' : '' %>>
-                                                                                Secondary
-                                                                                Complete (KCSE or equivalent)
-                                                                            </option>
-                                                                            <option value="Certificate" <%= profile.education_level === 'Certificate' ? 'selected' : '' %>>
-                                                                                Certificate /
-                                                                                Artisan
-                                                                                Course</option>
-                                                                            <option value="Diploma" <%= profile.education_level === 'Diploma' ? 'selected' : '' %>>Diploma
-                                                                            </option>
-                                                                            <option value="Bachelors" <%= profile.education_level === 'Bachelors' ? 'selected' : '' %>>Bachelor’s
-                                                                                Degree
-                                                                            </option>
-                                                                            <option value="Masters" <%= profile.education_level === 'Masters' ? 'selected' : '' %>>Master’s
-                                                                                Degree
-                                                                            </option>
-                                                                            <option value="PHD" <%= profile.education_level === 'PHD' ? 'selected' : '' %>>Doctorate (PhD /
-                                                                                equivalent)
-                                                                            </option>
+                                                                            <option value="None" <%= profile.education_level === 'None' ? 'selected' : '' %>>No Formal Education</option>
+                                                                            <option value="Primary" <%= profile.education_level === 'Primary' ? 'selected' : '' %>>Primary</option>
+                                                                            <option value="Secondary" <%= profile.education_level === 'Secondary' ? 'selected' : '' %>>Secondary</option>
+                                                                            <option value="College" <%= profile.education_level === 'College' ? 'selected' : '' %>>College</option>
+                                                                            <option value="University" <%= profile.education_level === 'University' ? 'selected' : '' %>>University</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>

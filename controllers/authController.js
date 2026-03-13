@@ -58,9 +58,9 @@ exports.registerUser= async (req, res) => {
 
         // Nodemailer
         const transporter = nodemailer.createTransport({
-            secure: true,
-            host: 'smtp.gmail.com',
-            port: 465,
+            secure: false,
+            host: 'smtp.office365.com',
+            port: 587,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
@@ -69,9 +69,9 @@ exports.registerUser= async (req, res) => {
 
         // Send email
         await transporter.sendMail({
-            from: 'uhrturgroup@gmail.com',
+            from: process.env.EMAIL_USER,
             to: email,
-            subject: '[Uthabiti Africa] Verify Email',
+            subject: 'Email Verification',
             html: `
                 <!DOCTYPE html>
                     <html>
@@ -287,9 +287,9 @@ exports.userRequestForgotPassword = async (req, res) => {
 
         // Setup transporter
         const transporter = nodemailer.createTransport({
-            secure: true,
-            host: 'smtp.gmail.com',
-            port: 465,
+            secure: false,
+            host: 'smtp.office365.com',
+            port: 587,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
@@ -298,9 +298,9 @@ exports.userRequestForgotPassword = async (req, res) => {
 
         // Send email
         await transporter.sendMail({
-            from: 'uhrturgroup@gmail.com',
+            from: process.env.EMAIL_USER,
             to: email,
-            subject: '[Uthabiti Africa] Reset password request',
+            subject: 'Reset password request',
             html: `
                 <!DOCTYPE html>
                     <html>
